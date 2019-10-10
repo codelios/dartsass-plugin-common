@@ -5,19 +5,18 @@
 
 
 'use strict';
-import * as path from 'path';
-
 import { CompilerConfig } from './config';
 import { ILog } from './log';
+import { IDocument } from './document';
 let lastCompiledTime = Date.now() - 100 * 1000;
 
 export interface ISassCompiler {
 
     sayVersion(_log: ILog) : string;
 
-    compileAll(projectRoot: vscode.Uri, _log: ILog) : boolean;
+    compileAll(projectRoot: string, _log: ILog) : boolean;
 
-    compileDocument(document: vscode.TextDocument, config: CompilerConfig,
+    compileDocument(document: IDocument, config: CompilerConfig,
         compileSingleFile: boolean, _log: ILog) : void;
 
 }
@@ -30,10 +29,10 @@ function isTooSoon(pauseInterval: number) {
 }
 
 export function compileCurrentFile(compiler: ISassCompiler,
-    document: vscode.TextDocument,
+    document: IDocument,
     extensionConfig: CompilerConfig,
     _log: ILog, compileSingleFile: boolean) {
-    if (document.languageId !== 'scss' && document.languageId !== 'sass') {
+    if (!document.isSass()) {
         return;
     }
     if (!extensionConfig.enableStartWithUnderscores && doesStartWithUnderscore(document)) {
@@ -47,25 +46,15 @@ export function compileCurrentFile(compiler: ISassCompiler,
         return;
     }
     if (extensionConfig.debug) {
-        _log.appendLine(`About to compile ${document.fileName}`);
+        _log.appendLine(`About to compile ${document.getFileName()}`);
     }
     compiler.compileDocument(document, extensionConfig, compileSingleFile, _log);
     lastCompiledTime = Date.now();
 }
 
 
-export function getFileName(document: vscode.TextDocument) {
-    if (document.languageId === 'scss') {
-        return  path.basename(document.fileName, '.scss');
-    } else if (document.languageId === 'sass') {
-        return  path.basename(document.fileName, '.sass');
-    } else {
-        return "";
-    }
-}
-
-export function doesStartWithUnderscore(document: vscode.TextDocument) {
-    const fileOnly = getFileName(document);
+export function doesStartWithUnderscore(document: IDocument) {
+    const fileOnly = document.getFileName();
     if (fileOnly.length === 0) {
         return true;
     }

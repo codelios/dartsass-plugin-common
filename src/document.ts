@@ -4,12 +4,12 @@
 // https://opensource.org/licenses/MIT
 'use strict';
 
-export interface ILog {
-    info(msg: string): any
+export interface IDocument {
+    isSass(): boolean;
 
-    appendLine(msg: string): any;
+    getFileName(): string
 
-    error(msg: string): any
+    getFileOnly(): string
 
-    clear(): any
+    getProjectRoot(): string
 }
