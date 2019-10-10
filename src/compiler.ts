@@ -28,7 +28,7 @@ function isTooSoon(pauseInterval: number) {
     return (now - lastCompiledTime) < (pauseInterval * 1000);
 }
 
-export function compileCurrentFile(compiler: ISassCompiler,
+export function CompileCurrentFile(compiler: ISassCompiler,
     document: IDocument,
     extensionConfig: CompilerConfig,
     _log: ILog, compileSingleFile: boolean) {
