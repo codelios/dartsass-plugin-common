@@ -7,5 +7,5 @@ export { DartSassCompiler } from './dartsasscompiler';
 export { CompilerConfig } from './config';
 export { ILog } from './log';
 export { IDocument } from './document';
-export { ISassCompiler } from './compiler';
+export { ISassCompiler, CompileCurrentFile } from './compiler';
 export { Prefixer } from './autoprefix';
