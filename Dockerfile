@@ -5,13 +5,13 @@
 ARG NODE_VERSION=10.16.3-alpine
 # Only specifically npm < 5.6 works for vsce.
 # For more details refer to [vscode-vsce/issues/246](https://github.com/Microsoft/vscode-vsce/issues/246#issuecomment-379565583) .
-ARG NPM_VERSION=5.5.1
 FROM node:${NODE_VERSION}
 RUN apk add python make g++
 RUN node --version
 RUN npm --version
-RUN npm install -g npm@${NPM_VERSION}
-
+RUN npm install -g npm
+ENV TYPESCRIPT_VERSION=3.5.3
+RUN npm install -g typescript@${TYPESCRIPT_VERSION}
 ARG DEVEL_USER=develop
 RUN cat /etc/os-release
 RUN adduser -g "" -D  ${DEVEL_USER}
@@ -22,7 +22,7 @@ RUN id ${DEVEL_USER}
 USER ${DEVEL_USER}
 WORKDIR /home/${DEVEL_USER}
 
-RUN npm --version
+RUN npm --version && tsc --version
 
 WORKDIR /tmp
 
