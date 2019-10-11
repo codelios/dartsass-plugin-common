@@ -14,6 +14,10 @@ import { DartSassCompiler } from './dartsasscompiler';
 let sassCompiler: ISassCompiler = new DartSassCompiler();
 
 
+export function getCurrentCompiler(extensionConfig: CompilerConfig, _log: ILog) : ISassCompiler {
+    return sassCompiler;
+}
+
 export function CompileCurrentFile(
     document: IDocument,
     extensionConfig: CompilerConfig,
@@ -24,13 +28,13 @@ export function CompileCurrentFile(
     if (extensionConfig.debug) {
         _log.appendLine(`About to compile ${document.getFileName()}`);
     }
-    sassCompiler.compileDocument(document, extensionConfig, compileSingleFile, _log);
+    getCurrentCompiler(extensionConfig, _log).compileDocument(document, extensionConfig, compileSingleFile, _log);
 }
 
-export function CompileAll(projectRoot: string, _log: ILog): boolean {
-    return sassCompiler.compileAll(projectRoot, _log);
+export function CompileAll(extensionConfig: CompilerConfig, projectRoot: string, _log: ILog): boolean {
+    return getCurrentCompiler(extensionConfig, _log).compileAll(projectRoot, _log);
 }
 
-export function SayVersion(_log: ILog): string {
-    return sassCompiler.sayVersion(_log);
+export function SayVersion(extensionConfig: CompilerConfig, _log: ILog): string {
+    return getCurrentCompiler(extensionConfig, _log).sayVersion(_log);
 }
