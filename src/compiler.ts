@@ -8,9 +8,7 @@
 import { CompilerConfig } from './config';
 import { ILog } from './log';
 import { IDocument } from './document';
-import { validateTargetDirectories} from './target';
-
-let lastCompiledTime = Date.now() - 100 * 1000;
+import { validateDocument } from './validate';
 
 export interface ISassCompiler {
 
@@ -23,51 +21,15 @@ export interface ISassCompiler {
 
 }
 
-
-
-function isTooSoon(pauseInterval: number) {
-    const now = Date.now();
-    return (now - lastCompiledTime) < (pauseInterval * 1000);
-}
-
 export function CompileCurrentFile(compiler: ISassCompiler,
     document: IDocument,
     extensionConfig: CompilerConfig,
     _log: ILog, compileSingleFile: boolean) {
-    if (!document.isSass()) {
-        return;
-    }
-    if (!extensionConfig.enableStartWithUnderscores && doesStartWithUnderscore(document)) {
-        // Ignore the files that start with underscore
-        return;
-    }
-    if (isTooSoon(extensionConfig.pauseInterval)) {
-        if (extensionConfig.debug) {
-            _log.appendLine(`Last Compiled Time: ${lastCompiledTime}. Too soon and ignoring hence`);
-        }
-        return;
-    }
-    const fileonly = document.getFileOnly();
-    if (fileonly.length === 0) {
-        return;
-    }
-    const err = validateTargetDirectories(document, extensionConfig);
-    if (err) {
-        _log.error(err);
+    if (!validateDocument(document, extensionConfig, _log)) {
         return;
     }
     if (extensionConfig.debug) {
         _log.appendLine(`About to compile ${document.getFileName()}`);
     }
     compiler.compileDocument(document, extensionConfig, compileSingleFile, _log);
-    lastCompiledTime = Date.now();
-}
-
-
-export function doesStartWithUnderscore(document: IDocument) {
-    const fileOnly = document.getFileName();
-    if (fileOnly.length === 0) {
-        return true;
-    }
-    return fileOnly.startsWith("_");
 }
