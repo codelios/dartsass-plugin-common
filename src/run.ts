@@ -3,19 +3,23 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 'use strict';
-
+import { ILog } from './log';
 const { spawn } = require('child_process');
 
-export function Run(cmd: string, args: string[]) {
-    var prc = spawn(cmd,  args);
-    prc.stdout.setEncoding('utf8');
-    prc.stdout.on('data', function (data: any) {
-        var str = data.toString()
-        var lines = str.split(/(\r?\n)/g);
-        console.log(lines.join(""));
-    });
-
-    prc.on('close', function (code: any) {
-        console.log('process exit code ' + code);
-    });
+export function Run(cmd: string, args: string[], _log: ILog) : Promise<string> {
+    return new Promise(function(resolve, reject) {
+        var buf = Buffer.from('');
+        var prc = spawn(cmd,  args);
+        prc.stdout.setEncoding('utf8');
+        prc.stdout.on('data', function(data: any) {
+            buf.write(data, data.length);
+        });
+        prc.stderr.setEncoding('utf8');
+        prc.stderr.on('data', function(data: any) {
+            _log.appendLine(data);
+        });
+        prc.on('exit', function(code: any) {
+            resolve(buf.toString());
+        });
+    })
 }

@@ -40,7 +40,7 @@ export function CompileAll(extensionConfig: CompilerConfig, projectRoot: string,
     return getCurrentCompiler(extensionConfig, _log).compileAll(extensionConfig, projectRoot, _log);
 }
 
-export function SayVersion(extensionConfig: CompilerConfig, _log: ILog): string {
+export function SayVersion(extensionConfig: CompilerConfig, _log: ILog): Promise<string> {
     return getCurrentCompiler(extensionConfig, _log).sayVersion(extensionConfig, _log);
 }
 

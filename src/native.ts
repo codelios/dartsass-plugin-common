@@ -29,9 +29,14 @@ export class NativeCompiler {
     }
 
 
-    public sayVersion(config: CompilerConfig, _log: ILog) : string {
-        Run(config.sassBinPath, ['--version'])
-        return 'In Process';
+    public sayVersion(config: CompilerConfig, _log: ILog): Promise<string> {
+        try {
+            return Run(config.sassBinPath, ['--version'], _log);
+        } catch(error) {
+            return new Promise(function(_, reject) {
+                reject(error.toString());
+            });
+        }
     }
 
     public compileDocument(document: IDocument, dartsassConfig: CompilerConfig,

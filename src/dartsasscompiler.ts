@@ -51,10 +51,12 @@ export class DartSassCompiler {
         return `Built-In: ${this.sayVersion(config, _log)}`;
     }
 
-    public sayVersion(config: CompilerConfig, _log: ILog) : string {
+    public sayVersion(config: CompilerConfig, _log: ILog): Promise<string> {
         const info = sass as unknown as Info;
         const version = info.info;
-        return `${version}`;
+        return new Promise(function(resolve, _) {
+            resolve(`${version}`);
+        });
     }
 
     public compileDocument(document: IDocument, dartsassConfig: CompilerConfig,

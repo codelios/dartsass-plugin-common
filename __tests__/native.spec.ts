@@ -10,7 +10,7 @@ import { NativeCompiler } from '../src/native';
 import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
 import { getSassDocument} from './document';
-import { getNullLog } from './log';
+import { getNullLog, getBufLog } from './log';
 
 describe('Native SayVersion' , () => {
 
@@ -18,9 +18,15 @@ describe('Native SayVersion' , () => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
-        const _log = getNullLog();
-        const result = native.sayVersion(config, _log);
-      expect(result).to.equal('/tmp/abc.css');
+        const _log = getBufLog();
+        native.sayVersion(config, _log).then(
+            function(data: any) {
+                expect(data).to.equal('/tmp/abc.css');
+            },
+            function(err: any) {
+
+            }
+        );
     });
 });
 
