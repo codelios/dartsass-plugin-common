@@ -43,3 +43,7 @@ export function CompileAll(extensionConfig: CompilerConfig, projectRoot: string,
 export function SayVersion(extensionConfig: CompilerConfig, _log: ILog): string {
     return getCurrentCompiler(extensionConfig, _log).sayVersion(extensionConfig, _log);
 }
+
+export function Which(extensionConfig: CompilerConfig, _log: ILog): string {
+    return getCurrentCompiler(extensionConfig, _log).which(extensionConfig, _log);
+}

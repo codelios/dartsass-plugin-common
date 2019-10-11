@@ -20,6 +20,11 @@ export class NativeCompiler {
         return false;
     }
 
+    public which(config: CompilerConfig, _log: ILog) : string {
+        return `Source: ${this.sayVersion(config, _log)}`;
+    }
+
+
     public sayVersion(config: CompilerConfig, _log: ILog) : string {
         return `Not yet implemented`;
     }

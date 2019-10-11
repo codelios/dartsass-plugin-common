@@ -47,6 +47,10 @@ export class DartSassCompiler {
         return false;
     }
 
+    public which(config: CompilerConfig, _log: ILog) : string {
+        return `Built-In: ${this.sayVersion(config, _log)}`;
+    }
+
     public sayVersion(config: CompilerConfig, _log: ILog) : string {
         const info = sass as unknown as Info;
         const version = info.info;
