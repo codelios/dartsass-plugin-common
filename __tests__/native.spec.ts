@@ -21,10 +21,11 @@ describe('Native SayVersion' , () => {
         const _log = getBufLog();
         native.sayVersion(config, _log).then(
             function(data: any) {
-                expect(data).to.equal('/tmp/abc.css');
+                // This value comes from the version installed using Dockerfile. Hence hardcoded. YMMV locally.
+                expect(data).to.equal('1.19.0 compiled with dart2js 2.2.0');
             },
             function(err: any) {
-
+                expect(err).to.be.not.null;
             }
         );
     });

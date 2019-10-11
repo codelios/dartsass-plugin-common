@@ -21,7 +21,7 @@ export function getNullLog(): ILog {
 
 export class BufLog  {
 
-    buf = new Buffer(256);
+    buf = Buffer.alloc(256);
 
     info(msg: string): any {
         this.buf.write(msg, msg.length);
@@ -38,7 +38,9 @@ export class BufLog  {
     clear(): any{}
 
     getInfo(): string {
-        return this.buf.toString('utf-8');
+        let raw = this.buf.toString('utf-8');
+        raw = raw.replace(/(\r\n|\n|\r)/gm, "");
+        return raw;
     }
 
 }
