@@ -1,6 +1,6 @@
 {
     "name": "dartsass-plugin-common",
-    "version": "0.1.7",
+    "version": "0.1.9",
     "license": "MIT",
     "description": "Common Library code to compile sass files using Dart/JS compiler",
     "main": "dist/main.js",
@@ -10,6 +10,7 @@
         "url": "git+https://github.com/malvahq/dartsass-plugin-common.git"
     },
     "scripts": {
+        "prepublishOnly": "npm run dev",
         "clean": "rm -fr lib",
         "compile": "npm run clean && tsc",
         "dev": "npm run compile && webpack --mode development",
