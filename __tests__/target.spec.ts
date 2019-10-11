@@ -82,6 +82,12 @@ describe('inferTargetMinifiedCSSDirectory function', () => {
       const result = inferTargetMinifiedCSSDirectory(document, config);
       expect(result).to.equal('/tmp/min');
     });
+    it('inferTargetMinifiedCSSDirectory for empty targetMinifiedDirectory and empty targetDirectory', () => {
+        const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
+        const config = new CompilerConfig();
+      const result = inferTargetMinifiedCSSDirectory(document, config);
+      expect(result).to.equal('/tmp');
+    });
 
 });
 describe('safeMkdir function', () => {
