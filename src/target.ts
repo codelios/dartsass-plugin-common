@@ -8,7 +8,7 @@ import { CompilerConfig } from './config';
 import { xformPath } from './util';
 import { ILog } from './log';
 import { IDocument } from './document';
-var mkdirp = require("mkdirp");
+const mkdirp = require("mkdirp");
 
 export function getOutputCSS(document: IDocument, config : CompilerConfig, _log: ILog): string {
     const fileonly = document.getFileOnly();

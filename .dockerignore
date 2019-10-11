@@ -3,3 +3,4 @@ dist
 .git
 .vscode-test
 lib
+__tests__
