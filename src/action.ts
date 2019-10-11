@@ -30,3 +30,7 @@ export function CompileCurrentFile(
 export function CompileAll(projectRoot: string, _log: ILog): boolean {
     return sassCompiler.compileAll(projectRoot, _log);
 }
+
+export function SayVersion(_log: ILog): string {
+    return sassCompiler.sayVersion(_log);
+}
