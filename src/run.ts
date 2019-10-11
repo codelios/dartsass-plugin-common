@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 'use strict';
 
-var spawn = require('child_process').spawn;
+const { spawn } = require('child_process');
 
 export function Run(cmd: string, args: string[]) {
     var prc = spawn(cmd,  args);

@@ -26,12 +26,24 @@ describe('Native SayVersion' , () => {
 
 describe('Native CompileDocument' , () => {
 
-    it('sayVersion', () => {
+    it('compileDocument', () => {
         const native = new NativeCompiler();
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
         const _log = getNullLog();
         native.compileDocument(document, config, true,_log);
+    });
+});
+
+describe('Native Which' , () => {
+
+    it('which', () => {
+        const native = new NativeCompiler();
+        const config = new CompilerConfig();
+        config.sassBinPath = "/usr/local/bin/sass";
+        const _log = getNullLog();
+        const result = native.which(config, _log);
+        expect(result).to.equal(config.sassBinPath);
     });
 });

@@ -25,8 +25,7 @@ export class NativeCompiler {
     }
 
     public which(config: CompilerConfig, _log: ILog) : string {
-        Run('which', ['sass'])
-        return 'In Process';
+        return config.sassBinPath;
     }
 
 
