@@ -27,4 +27,8 @@ export class CompilerConfig {
 
     autoPrefixBrowsersList: Array<string> = ["last 2 version"];
 
+    targetDirectory: string = "";
+
+    targetMinifiedDirectory: string = "";
+
 }

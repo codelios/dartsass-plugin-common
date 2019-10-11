@@ -187,8 +187,8 @@ export class DartSassCompiler {
         if (fileonly.length === 0) {
             return;
         }
-        const output = getOutputCSS( document.getFileName(), document.getFileOnly(), config);
-        const compressedOutput = getOutputMinifiedCSS(document.getFileName(), document.getFileOnly(), config);
+        const output = getOutputCSS( document.getProjectRoot(), document.getFileName(), document.getFileOnly(), config);
+        const compressedOutput = getOutputMinifiedCSS(document.getProjectRoot(), document.getFileName(), document.getFileOnly(), config);
         const self = this;
         if (config.debug) {
             _log.appendLine("Scss working directory: " + config.sassWorkingDirectory);
@@ -196,6 +196,7 @@ export class DartSassCompiler {
         }
         const prefixer = Prefixer.NewPrefixer(config.autoPrefixBrowsersList);
         const compilerResult:CompilerResult = {
+            // tslint:disable-next-line: no-empty
             onFailure() {
 
             },
@@ -215,7 +216,7 @@ export class DartSassCompiler {
                             if (config.debug) {
                                 _log.appendLine(`Min: ${input} -> ${compressedOutput}`);
                             }
-                        }
+                        },
                     };
                     self.compileToFile(document, true, compressedOutput, config, prefixer, tmpResult, _log);
                 }
