@@ -12,8 +12,8 @@ const mkdirp = require("mkdirp");
 
 export function inferTargetCSSDirectory(document: IDocument, config: CompilerConfig): string {
     let targetDirectory = path.dirname(document.getFileName());
+    const projectRoot = document.getProjectRoot();
     if (config.targetDirectory.length > 0) {
-        const projectRoot = document.getProjectRoot();
         targetDirectory = xformPath(projectRoot, config.targetDirectory);
     }
     return targetDirectory;
@@ -21,12 +21,11 @@ export function inferTargetCSSDirectory(document: IDocument, config: CompilerCon
 
 export function inferTargetMinifiedCSSDirectory(document: IDocument, config: CompilerConfig): string {
     let targetMinifiedDirectory = path.dirname(document.getFileName());
-    if (config.targetMinifiedDirectory.length == 0 && config.targetDirectory.length > 0) {
-        const projectRoot = document.getProjectRoot();
-        targetMinifiedDirectory = xformPath(projectRoot, config.targetDirectory);
-    } else if (config.targetMinifiedDirectory.length > 0) {
-        const projectRoot = document.getProjectRoot();
+    const projectRoot = document.getProjectRoot();
+    if (config.targetMinifiedDirectory.length > 0) {
         targetMinifiedDirectory = xformPath(projectRoot, config.targetMinifiedDirectory);
+    } else if (config.targetMinifiedDirectory.length == 0 && config.targetDirectory.length > 0) {
+        targetMinifiedDirectory = xformPath(projectRoot, config.targetDirectory);
     }
     return targetMinifiedDirectory;
 }

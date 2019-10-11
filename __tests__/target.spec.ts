@@ -74,7 +74,14 @@ describe('inferTargetMinifiedCSSDirectory function', () => {
       const result = inferTargetMinifiedCSSDirectory(document, config);
       expect(result).to.equal('/tmp/out');
     });
-
+    it('inferTargetMinifiedCSSDirectory for non-empty targetMinifiedDirectory and non-empty targetDirectory', () => {
+        const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
+        const config = new CompilerConfig();
+        config.targetDirectory =  "out";
+        config.targetMinifiedDirectory = "min";
+      const result = inferTargetMinifiedCSSDirectory(document, config);
+      expect(result).to.equal('/tmp/min');
+    });
 
 });
 describe('safeMkdir function', () => {
