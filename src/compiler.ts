@@ -8,6 +8,8 @@
 import { CompilerConfig } from './config';
 import { ILog } from './log';
 import { IDocument } from './document';
+import { validateTargetDirectories} from './target';
+
 let lastCompiledTime = Date.now() - 100 * 1000;
 
 export interface ISassCompiler {
@@ -43,6 +45,15 @@ export function CompileCurrentFile(compiler: ISassCompiler,
         if (extensionConfig.debug) {
             _log.appendLine(`Last Compiled Time: ${lastCompiledTime}. Too soon and ignoring hence`);
         }
+        return;
+    }
+    const fileonly = document.getFileOnly();
+    if (fileonly.length === 0) {
+        return;
+    }
+    const err = validateTargetDirectories(document, extensionConfig);
+    if (err) {
+        _log.error(err);
         return;
     }
     if (extensionConfig.debug) {

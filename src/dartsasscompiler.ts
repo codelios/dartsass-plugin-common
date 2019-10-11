@@ -183,10 +183,6 @@ export class DartSassCompiler {
         config : CompilerConfig,
         compileSingleFile: boolean, _log: ILog) {
         const input = document.getFileName();
-        const fileonly = document.getFileOnly();
-        if (fileonly.length === 0) {
-            return;
-        }
         const output = getOutputCSS( document, config, _log);
         const compressedOutput = getOutputMinifiedCSS(document, config, _log);
         const self = this;

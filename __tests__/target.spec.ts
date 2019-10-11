@@ -6,7 +6,7 @@
 'use strict';
 import { expect } from 'chai';
 import 'mocha';
-import { getOutputCSS, getOutputMinifiedCSS } from '../src/target';
+import { getOutputCSS, getOutputMinifiedCSS, safeMkdir } from '../src/target';
 import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
 import { getNullLog } from './log';
@@ -83,4 +83,11 @@ describe('getOutputMinifiedCSS function', () => {
     });
 
 
+});
+describe('safeMkdir function', () => {
+
+    it('safeMkdir for not able to write root', () => {
+        const result = safeMkdir("/newroot");
+        expect(result).to.not.be.null;
+    });
 });
