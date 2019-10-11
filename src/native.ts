@@ -10,6 +10,9 @@ import { IDocument } from './document';
 import { ILog } from './log';
 import { Run } from './run';
 
+/**
+ * NativeCompiler uses the sass executable present in config.sassBinPath and uses the cmd line to compile the same.
+ */
 export class NativeCompiler {
 
 
@@ -22,7 +25,8 @@ export class NativeCompiler {
     }
 
     public which(config: CompilerConfig, _log: ILog) : string {
-        return `Source: ${this.sayVersion(config, _log)}`;
+        Run('which', ['sass'])
+        return 'In Process';
     }
 
 
