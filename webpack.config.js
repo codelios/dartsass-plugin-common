@@ -13,7 +13,7 @@ const config = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
     libraryTarget: 'umd',
-    library: 'dartsass-plugin-common',
+    library: 'DartSassPluginCommon',
     umdNamedDefine: true
   },
   devtool: 'source-map',
