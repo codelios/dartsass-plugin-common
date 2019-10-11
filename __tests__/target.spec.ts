@@ -6,88 +6,107 @@
 'use strict';
 import { expect } from 'chai';
 import 'mocha';
-import { getOutputCSS, getOutputMinifiedCSS, safeMkdir } from '../src/target';
+import { inferTargetCSSDirectory, inferTargetMinifiedCSSDirectory,getOutputCSS, getOutputMinifiedCSS, safeMkdir } from '../src/target';
 import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
-import { getNullLog } from './log';
 import { getSassDocument} from './document';
+import { getNullLog } from './log';
 
-describe('getOutputCSS function', () => {
+describe('inferTargetCSSDirectory function', () => {
 
-    it('getOutputCSS for empty config', () => {
+    it('inferTargetCSSDirectory for empty config', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
         config.targetDirectory =  "";
-        const _log = getNullLog();
-      const result = getOutputCSS(document, config, _log);
-      expect(result).to.equal('/tmp/abc.css');
+        const result = inferTargetCSSDirectory(document, config);
+      expect(result).to.equal('/tmp');
     });
 
-    it('getOutputCSS for relative directory', () => {
+    it('inferTargetCSSDirectory for relative directory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
         config.targetDirectory =  "out";
-        const _log = getNullLog();
-      const result = getOutputCSS(document, config, _log);
-      expect(result).to.equal('/tmp/out/abc.css');
+        const result = inferTargetCSSDirectory(document, config);
+      expect(result).to.equal('/tmp/out');
     });
 
-    it('getOutputCSS for absolute directory', () => {
+    it('inferTargetCSSDirectory for absolute directory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
         config.targetDirectory =  "/tmp/test-absolute";
-        const _log = getNullLog();
-      const result = getOutputCSS(document, config, _log);
-      expect(result).to.equal('/tmp/test-absolute/abc.css');
+        const result = inferTargetCSSDirectory(document, config);
+      expect(result).to.equal('/tmp/test-absolute');
     });
 
 });
 
 
-describe('getOutputMinifiedCSS function', () => {
+describe('inferTargetMinifiedCSSDirectory function', () => {
 
-    it('getOutputMinifiedCSS for empty target directory', () => {
+    it('inferTargetMinifiedCSSDirectory for empty target directory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
         config.targetMinifiedDirectory =  "";
-        const _log = getNullLog();
-      const result = getOutputMinifiedCSS(document, config, _log);
-      expect(result).to.equal('/tmp/abc.min.css');
+        const result = inferTargetMinifiedCSSDirectory(document, config);
+      expect(result).to.equal('/tmp');
     });
 
-    it('getOutputMinifiedCSS for relative directory', () => {
+    it('inferTargetMinifiedCSSDirectory for relative directory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
         config.targetMinifiedDirectory =  "out";
-        const _log = getNullLog();
-      const result = getOutputMinifiedCSS(document, config, _log);
-      expect(result).to.equal('/tmp/out/abc.min.css');
+      const result = inferTargetMinifiedCSSDirectory(document, config);
+      expect(result).to.equal('/tmp/out');
     });
 
-    it('getOutputMinifiedCSS for absolute directory', () => {
+    it('inferTargetMinifiedCSSDirectory for absolute directory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
         config.targetMinifiedDirectory =  "/tmp/test-absolute";
-        const _log = getNullLog();
-      const result = getOutputMinifiedCSS(document, config, _log);
-      expect(result).to.equal('/tmp/test-absolute/abc.min.css');
+      const result = inferTargetMinifiedCSSDirectory(document, config);
+      expect(result).to.equal('/tmp/test-absolute');
     });
 
-    it('getOutputMinifiedCSS for empty targetDirectory and valid targetMinifiedDirectory', () => {
+    it('inferTargetMinifiedCSSDirectory for empty targetDirectory and valid targetMinifiedDirectory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
         config.targetDirectory =  "out";
-        const _log = getNullLog();
-      const result = getOutputMinifiedCSS(document, config, _log);
-      expect(result).to.equal('/tmp/out/abc.min.css');
+      const result = inferTargetMinifiedCSSDirectory(document, config);
+      expect(result).to.equal('/tmp/out');
     });
 
 
 });
 describe('safeMkdir function', () => {
 
-    it('safeMkdir for not able to write root', () => {
+    it('Not Able to write root', () => {
         const result = safeMkdir("/newroot");
         expect(result).to.not.be.null;
+    });
+    it('Create normal directory', () => {
+        const result = safeMkdir("/tmp/abc");
+        expect(result).to.be.null;
+    });
+});
+describe('getOutputCSS function', () => {
+
+    it('default', () => {
+        const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
+        const config = new CompilerConfig();
+        config.targetMinifiedDirectory =  "";
+        const _log = getNullLog();
+        const result = getOutputCSS(document, config, _log);
+      expect(result).to.equal('/tmp/abc.css');
+    });
+});
+describe('getOutputMinifiedCSS function', () => {
+
+    it('default', () => {
+        const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
+        const config = new CompilerConfig();
+        config.targetMinifiedDirectory =  "";
+        const _log = getNullLog();
+        const result = getOutputMinifiedCSS(document, config, _log);
+      expect(result).to.equal('/tmp/abc.min.css');
     });
 });

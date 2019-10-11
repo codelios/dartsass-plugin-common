@@ -10,7 +10,7 @@ import { ILog } from './log';
 import { IDocument } from './document';
 const mkdirp = require("mkdirp");
 
-function inferTargetCSSDirectory(document: IDocument, config: CompilerConfig): string {
+export function inferTargetCSSDirectory(document: IDocument, config: CompilerConfig): string {
     let targetDirectory = path.dirname(document.getFileName());
     if (config.targetDirectory.length > 0) {
         const projectRoot = document.getProjectRoot();
@@ -19,7 +19,7 @@ function inferTargetCSSDirectory(document: IDocument, config: CompilerConfig): s
     return targetDirectory;
 }
 
-function inferTargetMinifiedCSSDirectory(document: IDocument, config: CompilerConfig): string {
+export function inferTargetMinifiedCSSDirectory(document: IDocument, config: CompilerConfig): string {
     let targetMinifiedDirectory = path.dirname(document.getFileName());
     if (config.targetMinifiedDirectory.length == 0 && config.targetDirectory.length > 0) {
         const projectRoot = document.getProjectRoot();
