@@ -42,12 +42,12 @@ export class DartSassCompiler {
     constructor() {
     }
 
-    public compileAll(projectRoot: string, _log: ILog) : boolean {
+    public compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : boolean {
         _log.error('Not yet implemented. To Compile All the sass files inside the given workspace');
         return false;
     }
 
-    public sayVersion(_log: ILog) : string {
+    public sayVersion(config: CompilerConfig, _log: ILog) : string {
         const info = sass as unknown as Info;
         const version = info.info;
         return `${version}`;

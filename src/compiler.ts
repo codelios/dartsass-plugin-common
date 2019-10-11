@@ -11,9 +11,9 @@ import { IDocument } from './document';
 
 export interface ISassCompiler {
 
-    sayVersion(_log: ILog) : string;
+    sayVersion(config: CompilerConfig, _log: ILog) : string;
 
-    compileAll(projectRoot: string, _log: ILog) : boolean;
+    compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : boolean;
 
     compileDocument(document: IDocument, config: CompilerConfig,
         compileSingleFile: boolean, _log: ILog) : void;

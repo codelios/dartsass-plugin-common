@@ -7,6 +7,8 @@
 
 export class CompilerConfig {
 
+    sassBinPath: string = "";
+
     includePath: Array<string> = [];
 
     sassWorkingDirectory: string = "";
