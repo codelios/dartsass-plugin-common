@@ -187,8 +187,8 @@ export class DartSassCompiler {
         if (fileonly.length === 0) {
             return;
         }
-        const output = getOutputCSS( document.getProjectRoot(), document.getFileName(), document.getFileOnly(), config);
-        const compressedOutput = getOutputMinifiedCSS(document.getProjectRoot(), document.getFileName(), document.getFileOnly(), config);
+        const output = getOutputCSS( document, config, _log);
+        const compressedOutput = getOutputMinifiedCSS(document, config, _log);
         const self = this;
         if (config.debug) {
             _log.appendLine("Scss working directory: " + config.sassWorkingDirectory);
