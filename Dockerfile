@@ -10,7 +10,12 @@ RUN apk add python make g++
 RUN node --version
 RUN npm --version
 RUN npm install -g npm
-ENV TYPESCRIPT_VERSION=3.5.3
+
+# The version of 1.19.0 has no significance except that it is not the latest version built-in to this package ( see package.json ).
+# Used primarily for testing purposes only.
+RUN npm install -g sass@1.19.0
+
+ENV TYPESCRIPT_VERSION=3.6.4
 RUN npm install -g typescript@${TYPESCRIPT_VERSION}
 ARG DEVEL_USER=develop
 RUN cat /etc/os-release
@@ -22,7 +27,7 @@ RUN id ${DEVEL_USER}
 USER ${DEVEL_USER}
 WORKDIR /home/${DEVEL_USER}
 
-RUN npm --version && tsc --version
+RUN npm --version && tsc --version && sass --version
 
 WORKDIR /tmp
 
