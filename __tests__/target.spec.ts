@@ -35,10 +35,10 @@ describe('getOutputCSS function', () => {
     it('getOutputCSS for absolute directory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
-        config.targetDirectory =  "/home/akkumar/Desktop/unittest-dartsass";
+        config.targetDirectory =  "/tmp/test-absolute";
         const _log = getNullLog();
       const result = getOutputCSS(document, config, _log);
-      expect(result).to.equal('/home/akkumar/Desktop/unittest-dartsass/abc.css');
+      expect(result).to.equal('/tmp/test-absolute/abc.css');
     });
 
 });
@@ -46,10 +46,10 @@ describe('getOutputCSS function', () => {
 
 describe('getOutputMinifiedCSS function', () => {
 
-    it('getOutputMinifiedCSS for empty config', () => {
+    it('getOutputMinifiedCSS for empty target directory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
-        config.targetDirectory =  "";
+        config.targetMinifiedDirectory =  "";
         const _log = getNullLog();
       const result = getOutputMinifiedCSS(document, config, _log);
       expect(result).to.equal('/tmp/abc.min.css');
@@ -58,7 +58,7 @@ describe('getOutputMinifiedCSS function', () => {
     it('getOutputMinifiedCSS for relative directory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
-        config.targetDirectory =  "out";
+        config.targetMinifiedDirectory =  "out";
         const _log = getNullLog();
       const result = getOutputMinifiedCSS(document, config, _log);
       expect(result).to.equal('/tmp/out/abc.min.css');
@@ -67,10 +67,20 @@ describe('getOutputMinifiedCSS function', () => {
     it('getOutputMinifiedCSS for absolute directory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
-        config.targetDirectory =  "/home/akkumar/Desktop/unittest-dartsass";
+        config.targetMinifiedDirectory =  "/tmp/test-absolute";
         const _log = getNullLog();
       const result = getOutputMinifiedCSS(document, config, _log);
-      expect(result).to.equal('/home/akkumar/Desktop/unittest-dartsass/abc.min.css');
+      expect(result).to.equal('/tmp/test-absolute/abc.min.css');
     });
+
+    it('getOutputMinifiedCSS for empty targetDirectory and valid targetMinifiedDirectory', () => {
+        const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
+        const config = new CompilerConfig();
+        config.targetDirectory =  "out";
+        const _log = getNullLog();
+      const result = getOutputMinifiedCSS(document, config, _log);
+      expect(result).to.equal('/tmp/out/abc.min.css');
+    });
+
 
 });
