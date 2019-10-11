@@ -8,7 +8,6 @@
 import { CompilerConfig } from './config';
 import { ILog } from './log';
 import { IDocument } from './document';
-import { validateDocument } from './validate';
 
 export interface ISassCompiler {
 
@@ -19,17 +18,4 @@ export interface ISassCompiler {
     compileDocument(document: IDocument, config: CompilerConfig,
         compileSingleFile: boolean, _log: ILog) : void;
 
-}
-
-export function CompileCurrentFile(compiler: ISassCompiler,
-    document: IDocument,
-    extensionConfig: CompilerConfig,
-    _log: ILog, compileSingleFile: boolean) {
-    if (!validateDocument(document, extensionConfig, _log)) {
-        return;
-    }
-    if (extensionConfig.debug) {
-        _log.appendLine(`About to compile ${document.getFileName()}`);
-    }
-    compiler.compileDocument(document, extensionConfig, compileSingleFile, _log);
 }
