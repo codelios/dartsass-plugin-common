@@ -8,6 +8,7 @@
 import { CompilerConfig } from './config';
 import { IDocument } from './document';
 import { ILog } from './log';
+import { Run } from './run';
 
 export class NativeCompiler {
 
@@ -26,7 +27,8 @@ export class NativeCompiler {
 
 
     public sayVersion(config: CompilerConfig, _log: ILog) : string {
-        return `Not yet implemented`;
+        Run(config.sassBinPath, ['--version'])
+        return 'In Process';
     }
 
     public compileDocument(document: IDocument, dartsassConfig: CompilerConfig,
