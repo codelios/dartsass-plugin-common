@@ -31,19 +31,18 @@ export function autoPrefixCSS(output: string, data: any,
     if (config.debug) {
         _log.appendLine("disableAutoPrefixer: " + config.disableAutoPrefixer);
     }
-    if (!config.disableAutoPrefixer) {
-        const prefixer = Prefixer.NewPrefixer(config.autoPrefixBrowsersList);
-        return new Promise<string>(function(resolve, reject) {
-            prefixer.process(data).then(
-                (prefixedResult: postcss.Result) => {
-                    writeSassOutput(output, prefixedResult.css,  _log).then(
-                        value => resolve(value),
-                        err => reject(err)
-                    )
-                }
-            )
-        });
-    } else {
+    if (config.disableAutoPrefixer) {
         return writeSassOutput(output, data, _log);
     }
+    const prefixer = Prefixer.NewPrefixer(config.autoPrefixBrowsersList);
+    return new Promise<string>(function(resolve, reject) {
+        prefixer.process(data).then(
+            (prefixedResult: postcss.Result) => {
+                writeSassOutput(output, prefixedResult.css,  _log).then(
+                    value => resolve(value),
+                    err => reject(err)
+                )
+            }
+        )
+    });
 }
