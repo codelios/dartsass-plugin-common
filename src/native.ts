@@ -24,8 +24,10 @@ export class NativeCompiler {
         return false;
     }
 
-    public which(config: CompilerConfig, _log: ILog) : string {
-        return config.sassBinPath;
+    public which(config: CompilerConfig, _log: ILog) : Promise<string> {
+        return new Promise(function(resolve, _) {
+            resolve(config.sassBinPath);
+        });
     }
 
 

@@ -44,6 +44,6 @@ export function SayVersion(extensionConfig: CompilerConfig, _log: ILog): Promise
     return getCurrentCompiler(extensionConfig, _log).sayVersion(extensionConfig, _log);
 }
 
-export function Which(extensionConfig: CompilerConfig, _log: ILog): string {
+export function Which(extensionConfig: CompilerConfig, _log: ILog): Promise<string> {
     return getCurrentCompiler(extensionConfig, _log).which(extensionConfig, _log);
 }

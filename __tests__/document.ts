@@ -5,6 +5,7 @@
 
 'use strict';
 import { IDocument } from '../src/document';
+var path = require('path');
 
 export function getSassDocument(projectRoot: string, filename: string, fileonly: string): IDocument {
     const document : IDocument = {
@@ -23,4 +24,23 @@ export function getSassDocument(projectRoot: string, filename: string, fileonly:
     };
     return document;
 
+}
+
+export function getDocumentForFile(filename: string): IDocument {
+
+    const document : IDocument = {
+        isSass(): boolean {
+            return true;
+        },
+        getFileName(): string {
+            return path.join(__dirname, filename);
+        },
+        getFileOnly(): string {
+            return path.basename(filename, '.scss');
+        },
+        getProjectRoot() {
+            return __dirname;
+        }
+    };
+    return document;
 }

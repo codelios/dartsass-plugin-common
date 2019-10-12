@@ -40,8 +40,15 @@ export class DartSassCompiler {
         return false;
     }
 
-    public which(config: CompilerConfig, _log: ILog) : string {
-        return `Built-In: ${this.sayVersion(config, _log)}`;
+    public which(config: CompilerConfig, _log: ILog) : Promise<string> {
+        const self = this;
+        return new Promise(function(resolve, reject) {
+            self.sayVersion(config, _log).then(
+                data => resolve(data),
+                err => reject(err)
+            )
+        });
+
     }
 
     public sayVersion(config: CompilerConfig, _log: ILog): Promise<string> {

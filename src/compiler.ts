@@ -11,7 +11,7 @@ import { IDocument } from './document';
 
 export interface ISassCompiler {
 
-    which(config: CompilerConfig, _log: ILog) : string;
+    which(config: CompilerConfig, _log: ILog) : Promise<string>;
 
     sayVersion(config: CompilerConfig, _log: ILog): Promise<string>;
 

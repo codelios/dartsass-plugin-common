@@ -57,7 +57,14 @@ describe('Native Which' , () => {
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
         const _log = getNullLog();
-        const result = native.which(config, _log);
-        expect(result).to.equal(config.sassBinPath);
+        native.which(config, _log).then(
+            data => {
+                expect(data).to.equal(config.sassBinPath);
+            },
+            err => {
+                expect(err).to.be.null;
+            }
+        )
+
     });
 });
