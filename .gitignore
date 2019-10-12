@@ -2,3 +2,4 @@ node_modules
 *.vsix
 lib
 dist
+__tests__/out

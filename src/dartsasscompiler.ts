@@ -80,7 +80,7 @@ export class DartSassCompiler {
                     reject(`Error while writing the generated css file ${output}`);
                     return;
                 }
-                resolve('');
+                resolve(`${output}`);
             });
         });
     }
@@ -96,8 +96,11 @@ export class DartSassCompiler {
         if (!config.disableAutoPrefixer) {
             return new Promise<string>(function(resolve, reject) {
                 prefixer.process(data).then(
-                    function(prefixedResult: postcss.Result) {
-                        return self.writeSassOutput(output, prefixedResult.css,  _log);
+                    (prefixedResult: postcss.Result) => {
+                        self.writeSassOutput(output, prefixedResult.css,  _log).then(
+                            value => resolve(value),
+                            err => reject(err)
+                        )
                     }
                 )
             });

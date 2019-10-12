@@ -9,7 +9,8 @@ import 'mocha';
 import { DartSassCompiler } from '../src/dartsasscompiler';
 import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
-import { getSassDocument} from './document';
+import { validateTargetDirectories } from '../src/target';
+import { getDocumentForFile} from './document';
 import { getNullLog, getBufLog } from './log';
 
 describe('DartsassCompiler SayVersion' , () => {
@@ -33,14 +34,16 @@ describe('DartsassCompiler SayVersion' , () => {
 
 describe('DartsassCompiler CompileDocument' , () => {
 
-    it('compileDocument', () => {
+    it('DartsassCompiler::compileDocument', () => {
         const compiler = new DartSassCompiler();
-        const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
+        const document: IDocument = getDocumentForFile('hello.scss');
         const config = new CompilerConfig();
+        config.targetDirectory = 'out';
         const _log = getNullLog();
+        expect(validateTargetDirectories(document, config)).to.be.null;
         compiler.compileDocument(document, config, _log).then(
             result => {
-                expect(result).to.equal('Hello');
+                expect(result).to.equal('/tmp/web/__tests__/out/hello.min.css');
             },
             err => {
                 expect(err).to.be.null;
@@ -51,12 +54,11 @@ describe('DartsassCompiler CompileDocument' , () => {
 
 describe('DartsassCompiler Which' , () => {
 
-    it('which', () => {
+    it('DartsassCompiler:which', () => {
         const compiler = new DartSassCompiler();
         const config = new CompilerConfig();
-        config.sassBinPath = "/usr/local/bin/sass";
         const _log = getNullLog();
         const result = compiler.which(config, _log);
-        expect(result).to.equal(config.sassBinPath);
+        expect(result).to.equal('some path');
     });
 });

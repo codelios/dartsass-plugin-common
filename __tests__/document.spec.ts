@@ -15,6 +15,6 @@ describe('getDocumentForFile function' , () => {
         const document: IDocument = getDocumentForFile("hello.scss");
         expect(document.getFileOnly()).to.equal('hello');
         expect(document.getProjectRoot()).to.equal('/tmp/web/__tests__');
-        expect(document.getFileName()).to.equal('hello.scss');
+        expect(document.getFileName()).to.equal('/tmp/web/__tests__/hello.scss');
     });
 });
