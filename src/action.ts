@@ -26,14 +26,14 @@ export function getCurrentCompiler(extensionConfig: CompilerConfig, _log: ILog) 
 export function CompileCurrentFile(
     document: IDocument,
     extensionConfig: CompilerConfig,
-    _log: ILog, compileSingleFile: boolean) {
+    _log: ILog) {
     if (!validateDocument(document, extensionConfig, _log)) {
         return;
     }
     if (extensionConfig.debug) {
         _log.appendLine(`About to compile ${document.getFileName()}`);
     }
-    getCurrentCompiler(extensionConfig, _log).compileDocument(document, extensionConfig, compileSingleFile, _log);
+    getCurrentCompiler(extensionConfig, _log).compileDocument(document, extensionConfig, _log);
 }
 
 export function CompileAll(extensionConfig: CompilerConfig, projectRoot: string, _log: ILog): boolean {

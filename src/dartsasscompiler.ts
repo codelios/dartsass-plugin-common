@@ -23,13 +23,6 @@ export interface Info {
     info: string;
 }
 
-export interface CompilerResult {
-
-    onSuccess(): void;
-
-    onFailure(): void;
-}
-
 /**
  * Compile a given sass file based on DartSass implementation.
  *
@@ -59,49 +52,50 @@ export class DartSassCompiler {
         });
     }
 
-    public compileDocument(document: IDocument, dartsassConfig: CompilerConfig,
-        compileSingleFile: boolean, _log: ILog) {
-        this.compile(document, dartsassConfig, compileSingleFile, _log);
+    public compileDocument(document: IDocument, dartsassConfig: CompilerConfig,_log: ILog): Promise<string> {
+        return this.compile(document, dartsassConfig, _log);
     }
 
-    handleError(err: sass.SassException, config : CompilerConfig, compilerResult: CompilerResult,
-            _log: ILog) {
-        const fileonly = path.basename(err.file);
-        const formattedMessage = ` ${err.line}:${err.column} ${err.formatted}`;
-        _log.error(`${fileonly}: ${formattedMessage}`);
-        _log.appendLine(`${err.formatted}`);
-        compilerResult.onFailure();
+    handleError(err: sass.SassException, config : CompilerConfig, _log: ILog): Promise<string> {
+        return new Promise( function(resolve, reject){
+            const fileonly = path.basename(err.file);
+            const formattedMessage = ` ${err.line}:${err.column} ${err.formatted}`;
+            _log.appendLine(`${err.formatted}`);
+            reject(`${fileonly}: ${formattedMessage}`);
+        });
     }
 
-    writeSassOutput(output: string, data: any, compilerResult: CompilerResult, _log: ILog) {
-        fs.writeFile(output, data, (err: NodeJS.ErrnoException | null) => {
-            if (err !== null) {
-                _log.error(`Error while writing the generated css file ${output}`);
-                _log.appendLine(`${err} while writing ${output}`);
-                compilerResult.onFailure();
-                return;
-            }
-            compilerResult.onSuccess();
+    writeSassOutput(output: string, data: any, _log: ILog) : Promise<string> {
+        return new Promise( function(resolve, reject){
+            fs.writeFile(output, data, (err: NodeJS.ErrnoException | null) => {
+                if (err !== null) {
+                    _log.appendLine(`${err} while writing ${output}`);
+                    reject(`Error while writing the generated css file ${output}`);
+                    return;
+                }
+                resolve('');
+            });
         });
     }
 
     writeFinalResult(output: string, data: any,
         config : CompilerConfig,
         prefixer: Prefixer,
-        compilerResult: CompilerResult,
-        _log: ILog) {
+        _log: ILog): Promise<string> {
         const self = this;
         if (config.debug) {
             _log.appendLine("disableAutoPrefixer: " + config.disableAutoPrefixer);
         }
         if (!config.disableAutoPrefixer) {
-            prefixer.process(data,
-                function(prefixedResult: postcss.Result) {
-                    self.writeSassOutput(output, prefixedResult.css, compilerResult, _log);
-                }
-                );
+            return new Promise<string>(function(resolve, reject) {
+                prefixer.process(data).then(
+                    function(prefixedResult: postcss.Result) {
+                        return self.writeSassOutput(output, prefixedResult.css,  _log);
+                    }
+                )
+            });
         } else {
-            this.writeSassOutput(output, data, compilerResult, _log);
+            return this.writeSassOutput(output, data, _log);
         }
 
     }
@@ -109,8 +103,7 @@ export class DartSassCompiler {
     compileToFileSync(document: IDocument, compressed: boolean, output: string,
         config : CompilerConfig,
         prefixer: Prefixer,
-        compilerResult: CompilerResult,
-        _log: ILog) {
+        _log: ILog): Promise<string> {
         const sassWorkingDirectory  = xformPath(document.getProjectRoot(), config.sassWorkingDirectory);
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
         const options = this.getOptions(sassWorkingDirectory);
@@ -122,7 +115,11 @@ export class DartSassCompiler {
             outFile: output
         });
         if (result) {
-            this.writeFinalResult(output, result.css, config, prefixer, compilerResult, _log);
+            return this.writeFinalResult(output, result.css, config, prefixer, _log);
+        } else {
+            return new Promise<string>(function(resolve, reject) {
+                reject(`No result`);
+            });
         }
 
     }
@@ -130,39 +127,49 @@ export class DartSassCompiler {
     compileToFileAsync(document: IDocument, compressed: boolean, output: string,
         config : CompilerConfig,
         prefixer: Prefixer,
-        compilerResult: CompilerResult,
-        _log: ILog) {
+        _log: ILog): Promise<string> {
         const sassWorkingDirectory  = xformPath(document.getProjectRoot(), config.sassWorkingDirectory);
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
         const options = this.getOptions(sassWorkingDirectory);
         const self = this;
-        sass.render({
-            file: document.getFileName(),
-            importer: packageImporter(options),
-            includePaths: includePaths,
-            outputStyle: compressed ? 'compressed': 'expanded',
-            outFile: output
-        }, function (err: sass.SassException, result: sass.Result) {
-            if (err) {
-                self.handleError(err, config, compilerResult, _log);
-            } else {
-                self.writeFinalResult(output, result.css, config, prefixer, compilerResult, _log);
-            }
+        return new Promise<string>(function(resolve, reject) {
+            sass.render({
+                file: document.getFileName(),
+                importer: packageImporter(options),
+                includePaths: includePaths,
+                outputStyle: compressed ? 'compressed': 'expanded',
+                outFile: output
+            }, function (err: sass.SassException, result: sass.Result) {
+                if (err) {
+                    self.handleError(err, config, _log).then(
+                        value => {
+                            resolve(value)
+                        },
+                        err => {
+                            reject(err);
+                        }
+                    )
+                } else {
+                    self.writeFinalResult(output, result.css, config, prefixer, _log).then(
+                        value => resolve(value),
+                        err => reject(err)
+                    )
+                }
+            });
         });
     }
 
     compileToFile(document: IDocument, compressed: boolean, output: string,
         config : CompilerConfig,
         prefixer: Prefixer,
-        compilerResult: CompilerResult,
         _log: ILog) {
         if (config.debug) {
             _log.appendLine("Sync compilation: " + config.sync);
         }
         if (config.sync) {
-            this.compileToFileSync(document, compressed, output, config, prefixer, compilerResult, _log);
+            return this.compileToFileSync(document, compressed, output, config, prefixer, _log);
         } else {
-            this.compileToFileAsync(document, compressed, output, config, prefixer, compilerResult, _log);
+            return this.compileToFileAsync(document, compressed, output, config, prefixer, _log);
         }
     }
 
@@ -186,45 +193,30 @@ export class DartSassCompiler {
     }
 
     public compile(document: IDocument,
-        config : CompilerConfig,
-        compileSingleFile: boolean, _log: ILog) {
+        config : CompilerConfig, _log: ILog): Promise<string> {
         const input = document.getFileName();
         const output = getOutputCSS( document, config, _log);
         const compressedOutput = getOutputMinifiedCSS(document, config, _log);
-        const self = this;
         if (config.debug) {
             _log.appendLine("Scss working directory: " + config.sassWorkingDirectory);
             _log.appendLine("include path: " + config.includePath.join(","));
         }
         const prefixer = Prefixer.NewPrefixer(config.autoPrefixBrowsersList);
-        const compilerResult:CompilerResult = {
-            // tslint:disable-next-line: no-empty
-            onFailure() {
-
-            },
-            onSuccess() {
-                if (config.debug) {
-                    _log.appendLine(`${input} -> ${output}`);
-                }
-                if (compileSingleFile) {
-                    _log.info(`Compiled ${input} successfully`);
-                }
-                if (!config.disableMinifiedFileGeneration) {
-                    const tmpResult :CompilerResult = {
-                        onFailure() {
-
-                        },
-                        onSuccess() {
-                            if (config.debug) {
-                                _log.appendLine(`Min: ${input} -> ${compressedOutput}`);
-                            }
-                        },
-                    };
-                    self.compileToFile(document, true, compressedOutput, config, prefixer, tmpResult, _log);
-                }
-            }
-        };
-        this.compileToFile(document, false, output, config, prefixer, compilerResult, _log);
+        _log.appendLine(`${input} -> ${output}`);
+        const self = this;
+        return new Promise<string>(function(resolve, reject) {
+            self.compileToFile(document, false, output, config, prefixer, _log).then(
+                value => {
+                    if (!config.disableMinifiedFileGeneration) {
+                        self.compileToFile(document, true, compressedOutput, config, prefixer,  _log).then(
+                            value => resolve(value),
+                            err => reject(err)
+                        )
+                    }
+                },
+                err => reject(err)
+            )
+        });
     }
 
 }

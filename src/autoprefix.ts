@@ -27,9 +27,16 @@ export class Prefixer {
         // "There is a defaults query, which gives a reasonable configuration for most users:"
         return Prefixer.NewPrefixer("last 2 version");
     }
-    public process(css: postcss.ParserInput | postcss.Result | postcss.LazyResult | postcss.Root, cb: (result: postcss.Result) => any) {
-        if (this.processor !== undefined && this.processor !== null) {
-            return this.processor.process(css, {from:'', to: ''}).then(result => cb(result));
-        }
+
+    public process(css: postcss.ParserInput | postcss.Result | postcss.LazyResult | postcss.Root): Promise<postcss.Result> {
+        const self = this;
+        return new Promise<postcss.Result>(function(resolve, reject) {
+            if (self.processor !== undefined && self.processor !== null) {
+                self.processor.process(css, {from:'', to: ''}).then(
+                    value => resolve(value),
+                    err => reject(err)
+                )
+            }
+        });
     }
 }

@@ -17,7 +17,6 @@ export interface ISassCompiler {
 
     compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : boolean;
 
-    compileDocument(document: IDocument, config: CompilerConfig,
-        compileSingleFile: boolean, _log: ILog) : void;
+    compileDocument(document: IDocument, config: CompilerConfig, _log: ILog) : void;
 
 }

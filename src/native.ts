@@ -40,9 +40,14 @@ export class NativeCompiler {
     }
 
     public compileDocument(document: IDocument, dartsassConfig: CompilerConfig,
-        compileSingleFile: boolean, _log: ILog) {
-            // TODO: Compile using the command line
-            _log.error('Not yet implemented');
+        _log: ILog): Promise<string> {
+            return new Promise<string>(
+                function(resolve, reject) {
+                    // TODO: Compile using the command line
+                    _log.error('Not yet implemented');
+                    reject('Not Yet Implemented');
+                }
+            );
     }
 
 }
