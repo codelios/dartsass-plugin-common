@@ -39,7 +39,14 @@ describe('Native CompileDocument' , () => {
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
         const _log = getNullLog();
-        native.compileDocument(document, config, _log);
+        native.compileDocument(document, config, _log).then(
+            result => {
+                expect(result).to.equal('Hello');
+            },
+            err => {
+                expect(err).to.be.null;
+            }
+        )
     });
 });
 
