@@ -6,7 +6,6 @@
 
 'use strict';
 import * as path from 'path';
-import * as fs from 'fs';
 
 import sass = require("sass");
 import packageImporter = require('node-sass-package-importer');
@@ -15,9 +14,8 @@ import { CompilerConfig } from './config';
 import { xformPath, xformPaths} from './util';
 import { IDocument } from './document';
 import { ILog } from './log';
-import { Prefixer } from './autoprefix';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
-import postcss = require('postcss');
+import { autoPrefixCSS } from './writer';
 
 export interface Info {
     info: string;
@@ -72,47 +70,8 @@ export class DartSassCompiler {
         });
     }
 
-    writeSassOutput(output: string, data: any, _log: ILog) : Promise<string> {
-        return new Promise( function(resolve, reject){
-            fs.writeFile(output, data, (err: NodeJS.ErrnoException | null) => {
-                if (err !== null) {
-                    _log.appendLine(`${err} while writing ${output}`);
-                    reject(`Error while writing the generated css file ${output}`);
-                    return;
-                }
-                resolve(`${output}`);
-            });
-        });
-    }
-
-    writeFinalResult(output: string, data: any,
-        config : CompilerConfig,
-        prefixer: Prefixer,
-        _log: ILog): Promise<string> {
-        const self = this;
-        if (config.debug) {
-            _log.appendLine("disableAutoPrefixer: " + config.disableAutoPrefixer);
-        }
-        if (!config.disableAutoPrefixer) {
-            return new Promise<string>(function(resolve, reject) {
-                prefixer.process(data).then(
-                    (prefixedResult: postcss.Result) => {
-                        self.writeSassOutput(output, prefixedResult.css,  _log).then(
-                            value => resolve(value),
-                            err => reject(err)
-                        )
-                    }
-                )
-            });
-        } else {
-            return this.writeSassOutput(output, data, _log);
-        }
-
-    }
-
     asyncCompile(document: IDocument, compressed: boolean, output: string,
         config : CompilerConfig,
-        prefixer: Prefixer,
         _log: ILog): Promise<string> {
         const sassWorkingDirectory  = xformPath(document.getProjectRoot(), config.sassWorkingDirectory);
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
@@ -136,7 +95,7 @@ export class DartSassCompiler {
                         }
                     )
                 } else {
-                    self.writeFinalResult(output, result.css, config, prefixer, _log).then(
+                    autoPrefixCSS(output, result.css, config,  _log).then(
                         value => resolve(value),
                         err => reject(err)
                     )
@@ -173,14 +132,13 @@ export class DartSassCompiler {
             _log.appendLine("Scss working directory: " + config.sassWorkingDirectory);
             _log.appendLine("include path: " + config.includePath.join(","));
         }
-        const prefixer = Prefixer.NewPrefixer(config.autoPrefixBrowsersList);
         _log.appendLine(`${input} -> ${output}`);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
-            self.asyncCompile(document, false, output, config, prefixer, _log).then(
+            self.asyncCompile(document, false, output, config, _log).then(
                 value => {
                     if (!config.disableMinifiedFileGeneration) {
-                        self.asyncCompile(document, true, compressedOutput, config, prefixer,  _log).then(
+                        self.asyncCompile(document, true, compressedOutput, config,  _log).then(
                             value => resolve(value),
                             err => reject(err)
                         )
