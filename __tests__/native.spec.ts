@@ -9,7 +9,7 @@ import 'mocha';
 import { NativeCompiler } from '../src/native';
 import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
-import { getSassDocument} from './document';
+import { getDocumentForFile} from './document';
 import { getNullLog, getBufLog } from './log';
 
 describe('Native SayVersion' , () => {
@@ -35,8 +35,9 @@ describe('Native CompileDocument' , () => {
 
     it('compileDocument', () => {
         const native = new NativeCompiler();
-        const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
+        const document: IDocument = getDocumentForFile('cmd.scss');
         const config = new CompilerConfig();
+        config.targetDirectory = "out";
         config.sassBinPath = "/usr/local/bin/sass";
         const _log = getNullLog();
         native.compileDocument(document, config, _log).then(
