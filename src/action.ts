@@ -12,8 +12,11 @@ import {ISassCompiler} from './compiler';
 import { DartSassCompiler } from './dartsasscompiler';
 import { NativeCompiler } from './native';
 
-let sassCompiler: ISassCompiler = new DartSassCompiler();
-let nativeCompiler: ISassCompiler = new NativeCompiler();
+const sassCompiler: ISassCompiler = new DartSassCompiler();
+const nativeCompiler: ISassCompiler = new NativeCompiler();
+const emptyPromise: Promise<string> = new Promise<string>(function(resolve, reject) {
+    resolve('');
+});
 
 export function getCurrentCompiler(extensionConfig: CompilerConfig, _log: ILog) : ISassCompiler {
     if (extensionConfig.sassBinPath.length > 0) {
@@ -26,14 +29,14 @@ export function getCurrentCompiler(extensionConfig: CompilerConfig, _log: ILog) 
 export function CompileCurrentFile(
     document: IDocument,
     extensionConfig: CompilerConfig,
-    _log: ILog) {
+    _log: ILog): Promise<string> {
     if (!validateDocument(document, extensionConfig, _log)) {
-        return;
+        return emptyPromise;
     }
     if (extensionConfig.debug) {
         _log.appendLine(`About to compile ${document.getFileName()}`);
     }
-    getCurrentCompiler(extensionConfig, _log).compileDocument(document, extensionConfig, _log);
+    return getCurrentCompiler(extensionConfig, _log).compileDocument(document, extensionConfig, _log);
 }
 
 export function CompileAll(extensionConfig: CompilerConfig, projectRoot: string, _log: ILog): boolean {
