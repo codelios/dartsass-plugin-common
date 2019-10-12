@@ -42,7 +42,7 @@ describe('Native CompileDocument' , () => {
         const _log = getNullLog();
         native.compileDocument(document, config, _log).then(
             result => {
-                expect(result).to.equal('Hello');
+                expect(result).to.equal('');
             },
             err => {
                 expect(err).to.be.null;
