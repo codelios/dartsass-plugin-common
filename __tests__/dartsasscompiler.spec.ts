@@ -58,7 +58,13 @@ describe('DartsassCompiler Which' , () => {
         const compiler = new DartSassCompiler();
         const config = new CompilerConfig();
         const _log = getNullLog();
-        const result = compiler.which(config, _log);
-        expect(result).to.equal('some path');
+        compiler.which(config, _log).then(
+            result => {
+                expect(result).to.equal('dart-sass\t1.23.0\t(Sass Compiler)\t[Dart]\ndart2js\t2.5.1\t(Dart Compiler)\t[Dart]');
+            },
+            err => {
+                expect(err).to.be.null;
+            }
+        )
     });
 });
