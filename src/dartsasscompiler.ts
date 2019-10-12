@@ -110,31 +110,7 @@ export class DartSassCompiler {
 
     }
 
-    compileToFileSync(document: IDocument, compressed: boolean, output: string,
-        config : CompilerConfig,
-        prefixer: Prefixer,
-        _log: ILog): Promise<string> {
-        const sassWorkingDirectory  = xformPath(document.getProjectRoot(), config.sassWorkingDirectory);
-        const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
-        const options = this.getOptions(sassWorkingDirectory);
-        const result = sass.renderSync({
-            file: document.getFileName(),
-            importer: packageImporter(options),
-            includePaths: includePaths,
-            outputStyle: compressed ? 'compressed': 'expanded',
-            outFile: output
-        });
-        if (result) {
-            return this.writeFinalResult(output, result.css, config, prefixer, _log);
-        } else {
-            return new Promise<string>(function(resolve, reject) {
-                reject(`No result`);
-            });
-        }
-
-    }
-
-    compileToFileAsync(document: IDocument, compressed: boolean, output: string,
+    asyncCompile(document: IDocument, compressed: boolean, output: string,
         config : CompilerConfig,
         prefixer: Prefixer,
         _log: ILog): Promise<string> {
@@ -169,20 +145,6 @@ export class DartSassCompiler {
         });
     }
 
-    compileToFile(document: IDocument, compressed: boolean, output: string,
-        config : CompilerConfig,
-        prefixer: Prefixer,
-        _log: ILog) {
-        if (config.debug) {
-            _log.appendLine("Sync compilation: " + config.sync);
-        }
-        if (config.sync) {
-            return this.compileToFileSync(document, compressed, output, config, prefixer, _log);
-        } else {
-            return this.compileToFileAsync(document, compressed, output, config, prefixer, _log);
-        }
-    }
-
     getOptions(cwd: string) : IPackageImporterOptions {
         const options = {
             cwd: cwd,
@@ -215,10 +177,10 @@ export class DartSassCompiler {
         _log.appendLine(`${input} -> ${output}`);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
-            self.compileToFile(document, false, output, config, prefixer, _log).then(
+            self.asyncCompile(document, false, output, config, prefixer, _log).then(
                 value => {
                     if (!config.disableMinifiedFileGeneration) {
-                        self.compileToFile(document, true, compressedOutput, config, prefixer,  _log).then(
+                        self.asyncCompile(document, true, compressedOutput, config, prefixer,  _log).then(
                             value => resolve(value),
                             err => reject(err)
                         )

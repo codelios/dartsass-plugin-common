@@ -17,8 +17,6 @@ export class CompilerConfig {
 
     debug: boolean = false;
 
-    sync: boolean = false;
-
     disableCompileOnSave: boolean = false;
 
     pauseInterval: number = 10;
