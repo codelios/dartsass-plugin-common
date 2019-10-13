@@ -11,6 +11,7 @@ import { validateDocument } from './validate';
 import {ISassCompiler} from './compiler';
 import { DartSassCompiler } from './dartsasscompiler';
 import { NativeCompiler } from './native';
+import { validateTargetDirectories} from './target';
 
 const sassCompiler: ISassCompiler = new DartSassCompiler();
 const nativeCompiler: ISassCompiler = new NativeCompiler();
@@ -33,13 +34,19 @@ export function CompileCurrentFile(
     if (!validateDocument(document, extensionConfig, _log)) {
         return emptyPromise;
     }
+    const err = validateTargetDirectories(document, extensionConfig);
+    if (err) {
+        return new Promise(function(resolve, reject) {
+            reject(`${err}`);
+        });
+    }
     if (extensionConfig.debug) {
         _log.appendLine(`About to compile ${document.getFileName()}`);
     }
     return getCurrentCompiler(extensionConfig, _log).compileDocument(document, extensionConfig, _log);
 }
 
-export function CompileAll(extensionConfig: CompilerConfig, projectRoot: string, _log: ILog): boolean {
+export function CompileAll(extensionConfig: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
     return getCurrentCompiler(extensionConfig, _log).compileAll(extensionConfig, projectRoot, _log);
 }
 
@@ -49,4 +56,8 @@ export function SayVersion(extensionConfig: CompilerConfig, _log: ILog): Promise
 
 export function Which(extensionConfig: CompilerConfig, _log: ILog): Promise<string> {
     return getCurrentCompiler(extensionConfig, _log).which(extensionConfig, _log);
+}
+
+export function Validate(extensionConfig: CompilerConfig, _log: ILog): Promise<string> {
+    return getCurrentCompiler(extensionConfig, _log).validate(extensionConfig);
 }

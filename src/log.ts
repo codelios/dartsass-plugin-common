@@ -9,7 +9,5 @@ export interface ILog {
 
     appendLine(msg: string): any;
 
-    error(msg: string): any
-
     clear(): any
 }

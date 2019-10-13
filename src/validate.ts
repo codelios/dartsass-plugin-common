@@ -7,7 +7,6 @@
 import { CompilerConfig } from './config';
 import { ILog } from './log';
 import { IDocument } from './document';
-import { validateTargetDirectories} from './target';
 
 let lastCompiledTime = Date.now() - 100 * 1000;
 
@@ -32,11 +31,6 @@ export function validateDocument(document: IDocument,
         return false;
     }
     if (!document.isSass()) {
-        return false;
-    }
-    const err = validateTargetDirectories(document, extensionConfig);
-    if (err) {
-        _log.error(err);
         return false;
     }
     if (!extensionConfig.enableStartWithUnderscores && doesStartWithUnderscore(document)) {

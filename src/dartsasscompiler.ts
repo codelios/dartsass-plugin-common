@@ -33,9 +33,16 @@ export class DartSassCompiler {
     constructor() {
     }
 
-    public compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : boolean {
-        _log.error('Not yet implemented. To Compile All the sass files inside the given workspace');
-        return false;
+    public validate(config: CompilerConfig): Promise<string> {
+        return new Promise(function(resolve, reject) {
+            resolve('');
+        });
+    }
+
+    public compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : Promise<string> {
+        return new Promise(function(resolve, reject) {
+            reject('Not yet implemented. To Compile All the sass files inside the given workspace');
+        });
     }
 
     public which(config: CompilerConfig, _log: ILog) : Promise<string> {

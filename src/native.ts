@@ -12,6 +12,7 @@ import { Run } from './run';
 import { xformPaths} from './util';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
 import util from 'util';
+import fs from "fs";
 
 /**
  * NativeCompiler uses the sass executable present in config.sassBinPath and uses the cmd line to compile the same.
@@ -22,9 +23,10 @@ export class NativeCompiler {
     constructor() {
     }
 
-    public compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : boolean {
-        _log.error('Not yet implemented. To Compile All the sass files inside the given workspace');
-        return false;
+    public compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : Promise<string> {
+        return new Promise(function(resolve, reject) {
+            reject('Not yet implemented. To Compile All the sass files inside the given workspace');
+        });
     }
 
     public which(config: CompilerConfig, _log: ILog) : Promise<string> {
@@ -42,6 +44,18 @@ export class NativeCompiler {
                 reject(error.toString());
             });
         }
+    }
+
+    public validate(config: CompilerConfig): Promise<string> {
+        return new Promise(function(resolve, reject) {
+            if (!fs.existsSync(config.sassBinPath)) {
+                reject(`Sass Binary Path ${config.sassBinPath} does not exist`);
+            }
+            if (fs.lstatSync(config.sassBinPath).isDirectory()) {
+                reject(`Sass Binary Path ${config.sassBinPath} is a directory`);
+            }
+            resolve('');
+        });
     }
 
     public compileDocument(document: IDocument, config: CompilerConfig,

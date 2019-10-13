@@ -15,7 +15,9 @@ export interface ISassCompiler {
 
     sayVersion(config: CompilerConfig, _log: ILog): Promise<string>;
 
-    compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : boolean;
+    validate(config: CompilerConfig): Promise<string>;
+
+    compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : Promise<string>;
 
     compileDocument(document: IDocument, config: CompilerConfig, _log: ILog) : Promise<string>;
 

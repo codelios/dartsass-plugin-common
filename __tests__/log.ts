@@ -11,8 +11,6 @@ export function getNullLog(): ILog {
 
         appendLine(msg: string): any {},
 
-        error(msg: string): any {},
-
         clear(): any {},
 
     };
@@ -28,10 +26,6 @@ export class BufLog  {
     }
 
     appendLine(msg: string): any {
-
-    }
-
-    error(msg: string): any {
 
     }
 
