@@ -61,3 +61,7 @@ export function Which(extensionConfig: CompilerConfig, _log: ILog): Promise<stri
 export function Validate(extensionConfig: CompilerConfig, _log: ILog): Promise<string> {
     return getCurrentCompiler(extensionConfig, _log).validate(extensionConfig);
 }
+
+export function Watch(extensionConfig: CompilerConfig, _log: ILog) : Promise<string> {
+    return getCurrentCompiler(extensionConfig, _log).watch(extensionConfig, _log);
+}

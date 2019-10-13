@@ -8,6 +8,7 @@
 
 import { IPackageImporterOptions } from 'node-sass-magic-importer/src/interfaces/IImporterOptions';
 import packageImporter = require('node-sass-package-importer');
+import sass = require("sass");
 
 export function getOptions(cwd: string) : IPackageImporterOptions {
     const options = {
@@ -28,6 +29,6 @@ export function getOptions(cwd: string) : IPackageImporterOptions {
     return options;
 }
 
-export function getImporter(cwd: string) : (url: string) => { contents: string; file?: undefined; } | { file: string; contents?: undefined; } | null {
+export function getImporter(cwd: string) : sass.Importer {
     return packageImporter(getOptions(cwd));
 }

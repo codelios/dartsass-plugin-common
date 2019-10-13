@@ -63,8 +63,35 @@ export class DartSassCompiler {
         });
     }
 
-    public compileDocument(document: IDocument, dartsassConfig: CompilerConfig,_log: ILog): Promise<string> {
-        return this.compile(document, dartsassConfig, _log);
+    public compileDocument(document: IDocument, config: CompilerConfig,_log: ILog): Promise<string> {
+        const input = document.getFileName();
+        const output = getOutputCSS( document, config, _log);
+        const compressedOutput = getOutputMinifiedCSS(document, config, _log);
+        if (config.debug) {
+            _log.appendLine("Scss working directory: " + config.sassWorkingDirectory);
+            _log.appendLine("include path: " + config.includePath.join(","));
+        }
+        _log.appendLine(`${input} -> ${output}`);
+        const self = this;
+        return new Promise<string>(function(resolve, reject) {
+            self.asyncCompile(document, false, output, config, _log).then(
+                value => {
+                    if (!config.disableMinifiedFileGeneration) {
+                        self.asyncCompile(document, true, compressedOutput, config,  _log).then(
+                            value => resolve(value),
+                            err => reject(err)
+                        )
+                    }
+                },
+                err => reject(err)
+            )
+        });
+    }
+
+    public watch(config: CompilerConfig, _log: ILog) : Promise<string> {
+        return new Promise<string>(function(resolve, reject) {
+            reject('Watch not implemented in the built-in library. See Sass Bin Path to implement watch');
+        });
     }
 
     handleError(err: sass.SassException, config : CompilerConfig, _log: ILog): Promise<string> {
@@ -109,31 +136,5 @@ export class DartSassCompiler {
         });
     }
 
-
-    public compile(document: IDocument,
-        config : CompilerConfig, _log: ILog): Promise<string> {
-        const input = document.getFileName();
-        const output = getOutputCSS( document, config, _log);
-        const compressedOutput = getOutputMinifiedCSS(document, config, _log);
-        if (config.debug) {
-            _log.appendLine("Scss working directory: " + config.sassWorkingDirectory);
-            _log.appendLine("include path: " + config.includePath.join(","));
-        }
-        _log.appendLine(`${input} -> ${output}`);
-        const self = this;
-        return new Promise<string>(function(resolve, reject) {
-            self.asyncCompile(document, false, output, config, _log).then(
-                value => {
-                    if (!config.disableMinifiedFileGeneration) {
-                        self.asyncCompile(document, true, compressedOutput, config,  _log).then(
-                            value => resolve(value),
-                            err => reject(err)
-                        )
-                    }
-                },
-                err => reject(err)
-            )
-        });
-    }
 
 }

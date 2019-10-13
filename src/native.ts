@@ -84,6 +84,12 @@ export class NativeCompiler {
             }
     }
 
+    public watch(config: CompilerConfig, _log: ILog) : Promise<string> {
+        return new Promise<string>(function(resolve, reject) {
+            reject('Watch not implemented yet');
+        });
+    }
+
     getArgs(document: IDocument, config: CompilerConfig, _log: ILog, minified: boolean): string[] {
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
         const input = document.getFileName();

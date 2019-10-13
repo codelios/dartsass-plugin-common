@@ -21,4 +21,5 @@ export interface ISassCompiler {
 
     compileDocument(document: IDocument, config: CompilerConfig, _log: ILog) : Promise<string>;
 
+    watch(config: CompilerConfig, _log: ILog): Promise<string>;
 }
