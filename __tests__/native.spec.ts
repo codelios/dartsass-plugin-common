@@ -33,7 +33,7 @@ describe('Native SayVersion' , () => {
 
 describe('Native CompileDocument' , () => {
 
-    it('compileDocument', () => {
+    it('compileDocument correct', () => {
         const native = new NativeCompiler();
         const document: IDocument = getDocumentForFile('cmd.scss');
         const config = new CompilerConfig();
@@ -49,6 +49,23 @@ describe('Native CompileDocument' , () => {
             }
         )
     });
+
+    it('compileDocument incorrect scss should result in error', () => {
+        const native = new NativeCompiler();
+        const document: IDocument = getDocumentForFile('invalid.scss');
+        const config = new CompilerConfig();
+        config.targetDirectory = "out";
+        config.sassBinPath = "/usr/local/bin/sass";
+        const _log = getNullLog();
+        native.compileDocument(document, config, _log).then(
+            result => {
+                expect(result).to.be.null;
+            },
+            err => {
+                expect(err).to.be.not.null;
+            }
+        )
+    });
 });
 
 describe('Native Which' , () => {
@@ -61,6 +78,54 @@ describe('Native Which' , () => {
         native.which(config, _log).then(
             data => {
                 expect(data).to.equal(config.sassBinPath);
+            },
+            err => {
+                expect(err).to.be.null;
+            }
+        )
+
+    });
+});
+
+describe('Native Validate' , () => {
+
+    it('directory for sassBinPath should fail', () => {
+        const native = new NativeCompiler();
+        const config = new CompilerConfig();
+        config.sassBinPath = "/usr/local/bin";
+        native.validate(config).then(
+            data => {
+                expect(false);
+            },
+            err => {
+                expect(err).to.be.not.null;
+            }
+        )
+
+    });
+
+    it('non-existent Path for sassBinPath should fail', () => {
+        const native = new NativeCompiler();
+        const config = new CompilerConfig();
+        config.sassBinPath = "/usr/local/bin/non-existent-binary";
+        native.validate(config).then(
+            data => {
+                expect(false);
+            },
+            err => {
+                expect(err).to.be.not.null;
+            }
+        )
+
+    });
+
+    it('Valid Path for sassBinPath should succeed', () => {
+        const native = new NativeCompiler();
+        const config = new CompilerConfig();
+        config.sassBinPath = "/usr/local/bin/sass";
+        native.validate(config).then(
+            data => {
+                expect(data).to.be.not.null;
             },
             err => {
                 expect(err).to.be.null;

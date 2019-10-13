@@ -8,8 +8,7 @@
 import * as path from 'path';
 
 import sass = require("sass");
-import packageImporter = require('node-sass-package-importer');
-import { IPackageImporterOptions } from 'node-sass-magic-importer/src/interfaces/IImporterOptions';
+import { getImporter } from './importer';
 import { CompilerConfig } from './config';
 import { xformPath, xformPaths} from './util';
 import { IDocument } from './document';
@@ -82,12 +81,11 @@ export class DartSassCompiler {
         _log: ILog): Promise<string> {
         const sassWorkingDirectory  = xformPath(document.getProjectRoot(), config.sassWorkingDirectory);
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
-        const options = this.getOptions(sassWorkingDirectory);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
             sass.render({
                 file: document.getFileName(),
-                importer: packageImporter(options),
+                importer: getImporter(sassWorkingDirectory),
                 includePaths: includePaths,
                 outputStyle: compressed ? 'compressed': 'expanded',
                 outFile: output
@@ -111,24 +109,6 @@ export class DartSassCompiler {
         });
     }
 
-    getOptions(cwd: string) : IPackageImporterOptions {
-        const options = {
-            cwd: cwd,
-            packageKeys: [
-              'sass',
-              'scss',
-              'style',
-              'css',
-              'main.sass',
-              'main.scss',
-              'main.style',
-              'main.css',
-              'main'
-            ],
-            packagePrefix: '~'
-          };
-        return options;
-    }
 
     public compile(document: IDocument,
         config : CompilerConfig, _log: ILog): Promise<string> {
