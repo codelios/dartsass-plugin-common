@@ -9,5 +9,6 @@ export { ILog } from './log';
 export { IDocument } from './document';
 export { ISassCompiler } from './compiler';
 export { CompileCurrentFile, CompileAll, SayVersion,
-    Which, Validate, Watch, ClearWatch, ClearAll } from './action';
+    Which, Validate } from './action';
 export { Prefixer } from './autoprefix';
+export { Watcher } from './watcher';
