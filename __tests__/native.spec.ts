@@ -12,7 +12,7 @@ import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
 import { getDocumentForFile} from './document';
 import { getNullLog, getBufLog } from './log';
-import { ProcessOutput } from '../src/run';
+import { ProcessOutput, killProcess } from '../src/run';
 var path = require('path');
 
 describe('Native SayVersion' , () => {
@@ -181,7 +181,7 @@ describe('Native Validate' , () => {
 
 describe('Native Watch' , () => {
 
-    it('watch correct', () => {
+    it('watch correct', (done) => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.targetDirectory = "out";
@@ -190,14 +190,18 @@ describe('Native Watch' , () => {
         const srcdir = path.join(__dirname, 'input');
         native.watch(srcdir, __dirname, config, _log).then(
             (result: ProcessOutput) => {
+                console.log(`Sass Watch launched: ${result.pid}`);
                 expect(result.code).to.equal(0);
                 expect(result.pid).to.be.above(0);
-                console.log(`Sass Watch launched: ${result.pid}`);
+                if (result.code == 0) {
+                    console.log(`About to kill watch Process: ${result.pid}`);
+                    killProcess(result.pid);
+                }
             },
             err => {
                 expect(err).to.be.null;
             }
-        )
+        ).finally(done);
     });
 
 });
