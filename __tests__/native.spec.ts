@@ -87,7 +87,9 @@ describe('Native CompileDocument' , () => {
                         expect(err).to.be.null;
                         return;
                     }
-                    // TODO: Check if -webkit-gradient is present in 'contents'
+                    expect(contents.indexOf('-webkit-gradient'),
+                      "autoprefixer should have -webkit-gradient in the output").
+                      to.be.above(-1);
                 });
             },
             err => {
