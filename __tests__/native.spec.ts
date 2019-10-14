@@ -12,6 +12,7 @@ import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
 import { getDocumentForFile} from './document';
 import { getNullLog, getBufLog } from './log';
+import { ProcessOutput } from '../src/run';
 var path = require('path');
 
 describe('Native SayVersion' , () => {
@@ -176,4 +177,27 @@ describe('Native Validate' , () => {
         )
 
     });
+});
+
+describe('Native Watch' , () => {
+
+    it('watch correct', () => {
+        const native = new NativeCompiler();
+        const config = new CompilerConfig();
+        config.targetDirectory = "out";
+        config.sassBinPath = "/usr/local/bin/sass";
+        const _log = getNullLog();
+        const srcdir = path.join(__dirname, 'input');
+        native.watch(srcdir, __dirname, config, _log).then(
+            (result: ProcessOutput) => {
+                expect(result.code).to.equal(0);
+                expect(result.pid).to.be.above(0);
+                console.log(`Sass Watch launched: ${result.pid}`);
+            },
+            err => {
+                expect(err).to.be.null;
+            }
+        )
+    });
+
 });

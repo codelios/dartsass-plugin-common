@@ -3,5 +3,5 @@ node_modules
 lib
 dist
 __tests__/out
-__tests__/*.css
-__tests__/*.min.css
+__tests__/**/*.css
+__tests__/**/*.min.css

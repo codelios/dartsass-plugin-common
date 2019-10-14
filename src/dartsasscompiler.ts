@@ -15,10 +15,17 @@ import { IDocument } from './document';
 import { ILog } from './log';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSS } from './writer';
+import { ProcessOutput } from './run';
+
 
 export interface Info {
     info: string;
 }
+
+var NoWatchOutput: ProcessOutput = {
+    pid: -1,
+    code: 1,
+};
 
 /**
  * Compile a given sass file based on DartSass implementation.
@@ -88,9 +95,9 @@ export class DartSassCompiler {
         });
     }
 
-    public watch(config: CompilerConfig, _log: ILog) : Promise<string> {
-        return new Promise<string>(function(resolve, reject) {
-            reject('Watch not implemented in the built-in library. See Sass Bin Path to implement watch');
+    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
+        return new Promise<ProcessOutput>(function(resolve, reject) {
+            reject(NoWatchOutput);
         });
     }
 

@@ -12,6 +12,7 @@ import {ISassCompiler} from './compiler';
 import { DartSassCompiler } from './dartsasscompiler';
 import { NativeCompiler } from './native';
 import { validateTargetDirectories} from './target';
+import { ProcessOutput } from './run';
 
 const sassCompiler: ISassCompiler = new DartSassCompiler();
 const nativeCompiler: ISassCompiler = new NativeCompiler();
@@ -62,6 +63,6 @@ export function Validate(extensionConfig: CompilerConfig, _log: ILog): Promise<s
     return getCurrentCompiler(extensionConfig, _log).validate(extensionConfig);
 }
 
-export function Watch(extensionConfig: CompilerConfig, _log: ILog) : Promise<string> {
-    return getCurrentCompiler(extensionConfig, _log).watch(extensionConfig, _log);
+export function Watch(srcdir: string, projectRoot: string, extensionConfig: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
+    return getCurrentCompiler(extensionConfig, _log).watch(srcdir, projectRoot, extensionConfig, _log);
 }

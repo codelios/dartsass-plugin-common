@@ -8,6 +8,7 @@
 import { CompilerConfig } from './config';
 import { ILog } from './log';
 import { IDocument } from './document';
+import { ProcessOutput } from './run';
 
 export interface ISassCompiler {
 
@@ -21,5 +22,5 @@ export interface ISassCompiler {
 
     compileDocument(document: IDocument, config: CompilerConfig, _log: ILog) : Promise<string>;
 
-    watch(config: CompilerConfig, _log: ILog): Promise<string>;
+    watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<ProcessOutput>;
 }

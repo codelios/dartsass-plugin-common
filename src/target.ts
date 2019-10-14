@@ -8,7 +8,15 @@ import { CompilerConfig } from './config';
 import { xformPath } from './util';
 import { ILog } from './log';
 import { IDocument } from './document';
-const mkdirp = require("mkdirp");
+import mkdirp from "mkdirp";
+
+export function getWatchTargetDirectory(srcdir: string, projectRoot: string, config: CompilerConfig): string {
+    let targetDirectory = srcdir;
+    if (config.targetDirectory.length > 0) {
+        targetDirectory = xformPath(projectRoot, config.targetDirectory);
+    }
+    return targetDirectory;
+}
 
 export function inferTargetCSSDirectory(document: IDocument, config: CompilerConfig): string {
     let targetDirectory = path.dirname(document.getFileName());

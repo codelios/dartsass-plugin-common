@@ -8,10 +8,11 @@
 import { CompilerConfig } from './config';
 import { IDocument } from './document';
 import { ILog } from './log';
-import { Run } from './run';
+import { Run, RunDetached } from './run';
 import { xformPaths} from './util';
-import { getOutputCSS, getOutputMinifiedCSS} from './target';
+import { getWatchTargetDirectory, getOutputCSS, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSSFile } from './writer';
+import { ProcessOutput } from './run';
 import util from 'util';
 import fs from "fs";
 
@@ -100,10 +101,12 @@ export class NativeCompiler {
             }
     }
 
-    public watch(config: CompilerConfig, _log: ILog) : Promise<string> {
-        return new Promise<string>(function(resolve, reject) {
-            reject('Watch not implemented yet');
-        });
+    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
+        const args = new Array<string>();
+        args.push('--watch');
+        const targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
+        args.push(util.format("%s:%s", srcdir, targetDirectory));
+        return RunDetached(config.sassBinPath, args, _log);
     }
 
     getArgs(document: IDocument, config: CompilerConfig, output: string, minified: boolean): string[] {
