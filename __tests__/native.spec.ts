@@ -17,7 +17,7 @@ var path = require('path');
 
 describe('Native SayVersion' , () => {
 
-    it('sayVersion', () => {
+    it('sayVersion', (done) => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
@@ -30,13 +30,13 @@ describe('Native SayVersion' , () => {
             function(err: any) {
                 expect(err).to.be.not.null;
             }
-        );
-    });
+        ).finally(done);
+    })
 });
 
 describe('Native CompileDocument' , () => {
 
-    it('compileDocument correct', () => {
+    it('compileDocument correct', (done) => {
         const native = new NativeCompiler();
         const document: IDocument = getDocumentForFile('cmd.scss');
         const config = new CompilerConfig();
@@ -51,10 +51,10 @@ describe('Native CompileDocument' , () => {
             err => {
                 expect(err).to.be.null;
             }
-        )
+        ).finally(done);
     });
 
-    it('compileDocument incorrect scss should result in error', () => {
+    it('compileDocument incorrect scss should result in error', (done) => {
         const native = new NativeCompiler();
         const document: IDocument = getDocumentForFile('invalid.scss');
         const config = new CompilerConfig();
@@ -68,10 +68,10 @@ describe('Native CompileDocument' , () => {
             err => {
                 expect(err).to.be.not.null;
             }
-        )
+        ).finally(done);
     });
 
-    it('compileDocument autoprefix', () => {
+    it('compileDocument autoprefix', (done) => {
         const native = new NativeCompiler();
         const document: IDocument = getDocumentForFile('autoprefixer_example.scss');
         const config = new CompilerConfig();
@@ -106,7 +106,7 @@ describe('Native CompileDocument' , () => {
             err => {
                 expect(err).to.be.null;
             }
-        )
+        ).finally(done);
     });
 
 
@@ -114,7 +114,7 @@ describe('Native CompileDocument' , () => {
 
 describe('Native Which' , () => {
 
-    it('which', () => {
+    it('which', (done) => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
@@ -126,14 +126,14 @@ describe('Native Which' , () => {
             err => {
                 expect(err).to.be.null;
             }
-        )
+        ).finally(done);
 
     });
 });
 
 describe('Native Validate' , () => {
 
-    it('directory for sassBinPath should fail', () => {
+    it('directory for sassBinPath should fail', (done) => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin";
@@ -144,11 +144,11 @@ describe('Native Validate' , () => {
             err => {
                 expect(err).to.be.not.null;
             }
-        )
+        ).finally(done);
 
     });
 
-    it('non-existent Path for sassBinPath should fail', () => {
+    it('non-existent Path for sassBinPath should fail', (done) => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/non-existent-binary";
@@ -159,11 +159,11 @@ describe('Native Validate' , () => {
             err => {
                 expect(err).to.be.not.null;
             }
-        )
+        ).finally(done);
 
     });
 
-    it('Valid Path for sassBinPath should succeed', () => {
+    it('Valid Path for sassBinPath should succeed', (done) => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
@@ -174,7 +174,7 @@ describe('Native Validate' , () => {
             err => {
                 expect(err).to.be.null;
             }
-        )
+        ).finally(done);
 
     });
 });
