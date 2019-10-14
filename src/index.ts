@@ -8,5 +8,6 @@ export { CompilerConfig } from './config';
 export { ILog } from './log';
 export { IDocument } from './document';
 export { ISassCompiler } from './compiler';
-export { CompileCurrentFile, CompileAll, SayVersion, Which, Validate, Watch, Kill } from './action';
+export { CompileCurrentFile, CompileAll, SayVersion,
+    Which, Validate, Watch, ClearWatch, ClearAll } from './action';
 export { Prefixer } from './autoprefix';

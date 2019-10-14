@@ -69,8 +69,6 @@ export function removeLineBreaks(value: string): string {
     return value.replace(/(\r\n|\n|\r)/gm, "");
 }
 
-export function killProcess(pid: number): Promise<string> {
-    return new Promise(function(resolve, reject) {
-        process.kill(-pid, SIGINT);
-    });
+export function killProcess(pid: number) {
+    process.kill(-pid, SIGINT);
 }

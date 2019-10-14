@@ -12,13 +12,15 @@ import {ISassCompiler} from './compiler';
 import { DartSassCompiler } from './dartsasscompiler';
 import { NativeCompiler } from './native';
 import { validateTargetDirectories} from './target';
-import { ProcessOutput, killProcess } from './run';
+import { Watcher } from './watcher';
+
 
 const sassCompiler: ISassCompiler = new DartSassCompiler();
 const nativeCompiler: ISassCompiler = new NativeCompiler();
 const emptyPromise: Promise<string> = new Promise<string>(function(resolve, reject) {
     resolve('');
 });
+const watcher: Watcher = new Watcher();
 
 export function getCurrentCompiler(extensionConfig: CompilerConfig, _log: ILog) : ISassCompiler {
     if (extensionConfig.sassBinPath.length > 0) {
@@ -63,10 +65,16 @@ export function Validate(extensionConfig: CompilerConfig, _log: ILog): Promise<s
     return getCurrentCompiler(extensionConfig, _log).validate(extensionConfig);
 }
 
-export function Watch(srcdir: string, projectRoot: string, extensionConfig: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
-    return getCurrentCompiler(extensionConfig, _log).watch(srcdir, projectRoot, extensionConfig, _log);
+export function Watch(srcdir: string, projectRoot: string, extensionConfig: CompilerConfig, _log: ILog) : Promise<string> {
+    return watcher.Watch(getCurrentCompiler(extensionConfig, _log), srcdir, projectRoot, extensionConfig, _log);
 }
 
-export function Kill(pid: number): Promise<string> {
-    return killProcess(pid);
+
+export function ClearWatch(srcdir: string, projectRoot: string) {
+    return watcher.ClearWatch(srcdir, projectRoot);
 }
+
+export function ClearAll(projectRoot: string) {
+    return watcher.ClearAll(projectRoot);
+}
+
