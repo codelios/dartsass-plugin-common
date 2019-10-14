@@ -15,7 +15,7 @@ import { getNullLog, getBufLog } from './log';
 
 describe('DartsassCompiler SayVersion' , () => {
 
-    it('sayVersion', () => {
+    it('sayVersion', (done) => {
         const compiler = new DartSassCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
@@ -28,13 +28,13 @@ describe('DartsassCompiler SayVersion' , () => {
             function(err: any) {
                 expect(err).to.be.not.null;
             }
-        );
+        ).finally(done);
     });
 });
 
 describe('DartsassCompiler CompileDocument' , () => {
 
-    it('DartsassCompiler::compileDocument', () => {
+    it('DartsassCompiler::compileDocument', (done) => {
         const compiler = new DartSassCompiler();
         const document: IDocument = getDocumentForFile('hello.scss');
         const config = new CompilerConfig();
@@ -48,13 +48,13 @@ describe('DartsassCompiler CompileDocument' , () => {
             err => {
                 expect(err).to.be.null;
             }
-        )
+        ).finally(done);
     });
 });
 
 describe('DartsassCompiler Which' , () => {
 
-    it('DartsassCompiler:which', () => {
+    it('DartsassCompiler:which', (done) => {
         const compiler = new DartSassCompiler();
         const config = new CompilerConfig();
         const _log = getNullLog();
@@ -65,6 +65,6 @@ describe('DartsassCompiler Which' , () => {
             err => {
                 expect(err).to.be.null;
             }
-        )
+        ).finally(done);
     });
 });
