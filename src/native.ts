@@ -11,6 +11,7 @@ import { ILog } from './log';
 import { Run } from './run';
 import { xformPaths} from './util';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
+import { autoPrefixCSSFile } from './writer';
 import util from 'util';
 import fs from "fs";
 
@@ -62,12 +63,23 @@ export class NativeCompiler {
         _log: ILog): Promise<string> {
             const self = this;
             try {
+                const output = getOutputCSS( document, config, _log);
                 return new Promise(function(resolve, reject) {
-                    Run(config.sassBinPath, self.getArgs(document, config, _log, false), _log).then(
+                    Run(config.sassBinPath, self.getArgs(document, config, output, false), _log).then(
                         value => {
+                            autoPrefixCSSFile(output, output, config,  _log).then(
+                                value => resolve(value),
+                                err => reject(err)
+                            )
                             if (!config.disableMinifiedFileGeneration) {
-                                Run(config.sassBinPath, self.getArgs(document, config, _log, true), _log).then(
-                                    value => resolve(value),
+                                const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
+                                Run(config.sassBinPath, self.getArgs(document, config, minifiedOutput, true), _log).then(
+                                    value => {
+                                        autoPrefixCSSFile(minifiedOutput, minifiedOutput, config,  _log).then(
+                                            value => resolve(value),
+                                            err => reject(err)
+                                        )
+                                    },
                                     err => reject(err)
                                 )
                             } else {
@@ -90,13 +102,11 @@ export class NativeCompiler {
         });
     }
 
-    getArgs(document: IDocument, config: CompilerConfig, _log: ILog, minified: boolean): string[] {
+    getArgs(document: IDocument, config: CompilerConfig, output: string, minified: boolean): string[] {
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
         const input = document.getFileName();
-        let output = getOutputCSS( document, config, _log);
         const result = new Array<string>();
         if (minified) {
-            output = getOutputMinifiedCSS(document, config, _log);
             result.push("--style");
             result.push("compressed");
         }

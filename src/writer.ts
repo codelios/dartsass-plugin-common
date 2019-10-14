@@ -46,3 +46,25 @@ export function autoPrefixCSS(output: string, data: any,
         )
     });
 }
+
+
+export function autoPrefixCSSFile(output: string, inFile: string,
+    config : CompilerConfig,
+    _log: ILog): Promise<string> {
+    return new Promise<string>(function(resolve, reject) {
+        if (config.disableAutoPrefixer) {
+            resolve(inFile);
+        }
+        fs.readFile(inFile, 'utf8', function(err, contents) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            autoPrefixCSS(output, contents, config, _log).then(
+                value => resolve(value),
+                err => reject(err)
+            );
+        });
+    });
+
+}

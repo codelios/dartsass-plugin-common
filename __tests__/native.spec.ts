@@ -6,11 +6,13 @@
 'use strict';
 import { expect } from 'chai';
 import 'mocha';
+import * as fs from 'fs';
 import { NativeCompiler } from '../src/native';
 import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
 import { getDocumentForFile} from './document';
 import { getNullLog, getBufLog } from './log';
+var path = require('path');
 
 describe('Native SayVersion' , () => {
 
@@ -42,7 +44,8 @@ describe('Native CompileDocument' , () => {
         const _log = getNullLog();
         native.compileDocument(document, config, _log).then(
             result => {
-                expect(result).to.equal('');
+                const output = path.join(document.getProjectRoot(), 'out/cmd.css');
+                expect(result).to.equal(output);
             },
             err => {
                 expect(err).to.be.null;
@@ -63,6 +66,32 @@ describe('Native CompileDocument' , () => {
             },
             err => {
                 expect(err).to.be.not.null;
+            }
+        )
+    });
+
+    it('compileDocument autoprefix', () => {
+        const native = new NativeCompiler();
+        const document: IDocument = getDocumentForFile('autoprefixer_example.scss');
+        const config = new CompilerConfig();
+        config.targetDirectory = "out";
+        config.sassBinPath = "/usr/local/bin/sass";
+        config.autoPrefixBrowsersList = ["last 2 version"];
+        const _log = getNullLog();
+        native.compileDocument(document, config, _log).then(
+            result => {
+                const output = path.join(document.getProjectRoot(), 'out/autoprefixer_example.css');
+                expect(result).to.equal(output);
+                fs.readFile(output, 'utf8', function(err, contents) {
+                    if (err) {
+                        expect(err).to.be.null;
+                        return;
+                    }
+                    // TODO: Check if -webkit-gradient is present in 'contents'
+                });
+            },
+            err => {
+                expect(err).to.be.null;
             }
         )
     });
