@@ -5,7 +5,6 @@
 'use strict';
 
 export interface ILog {
-    info(msg: string): any
 
     appendLine(msg: string): any;
 

@@ -7,7 +7,6 @@ import { ILog } from '../src/log';
 
 export function getNullLog(): ILog {
     const _log : ILog = {
-        info(msg: string): any {},
 
         appendLine(msg: string): any {},
 
@@ -20,10 +19,6 @@ export function getNullLog(): ILog {
 export class BufLog  {
 
     buf = Buffer.alloc(256);
-
-    info(msg: string): any {
-        this.buf.write(msg, msg.length);
-    }
 
     appendLine(msg: string): any {
 
