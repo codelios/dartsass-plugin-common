@@ -44,7 +44,7 @@ describe('Native CompileDocument' , () => {
         const _log = getNullLog();
         native.compileDocument(document, config, _log).then(
             result => {
-                const output = path.join(document.getProjectRoot(), 'out/cmd.css');
+                const output = path.join(document.getProjectRoot(), 'out/cmd.min.css');
                 expect(result).to.equal(output);
             },
             err => {
@@ -80,7 +80,8 @@ describe('Native CompileDocument' , () => {
         const _log = getNullLog();
         native.compileDocument(document, config, _log).then(
             result => {
-                const output = path.join(document.getProjectRoot(), 'out/autoprefixer_example.css');
+                const output = path.join(document.getProjectRoot(), 'out/autoprefixer_example.min.css');
+                const normalOuput = path.join(document.getProjectRoot(), 'out/autoprefixer_example.css');
                 expect(result).to.equal(output);
                 fs.readFile(output, 'utf8', function(err, contents) {
                     if (err) {
@@ -88,7 +89,16 @@ describe('Native CompileDocument' , () => {
                         return;
                     }
                     expect(contents.indexOf('-webkit-gradient'),
-                      "autoprefixer should have -webkit-gradient in the output").
+                      "autoprefixer should have -webkit-gradient in the minified output").
+                      to.be.above(-1);
+                });
+                fs.readFile(normalOuput, 'utf8', function(err, contents) {
+                    if (err) {
+                        expect(err).to.be.null;
+                        return;
+                    }
+                    expect(contents.indexOf('-webkit-gradient'),
+                      "autoprefixer should have -webkit-gradient in the normal unminified output").
                       to.be.above(-1);
                 });
             },
@@ -97,6 +107,8 @@ describe('Native CompileDocument' , () => {
             }
         )
     });
+
+
 });
 
 describe('Native Which' , () => {

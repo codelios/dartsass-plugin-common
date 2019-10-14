@@ -68,7 +68,11 @@ export class NativeCompiler {
                     Run(config.sassBinPath, self.getArgs(document, config, output, false), _log).then(
                         value => {
                             autoPrefixCSSFile(output, output, config,  _log).then(
-                                value => resolve(value),
+                                value => {
+                                    if (config.disableMinifiedFileGeneration) {
+                                        resolve(value);
+                                    }
+                                },
                                 err => reject(err)
                             )
                             if (!config.disableMinifiedFileGeneration) {
@@ -76,14 +80,14 @@ export class NativeCompiler {
                                 Run(config.sassBinPath, self.getArgs(document, config, minifiedOutput, true), _log).then(
                                     value => {
                                         autoPrefixCSSFile(minifiedOutput, minifiedOutput, config,  _log).then(
-                                            value => resolve(value),
+                                            value => {
+                                                resolve(value)
+                                            },
                                             err => reject(err)
                                         )
                                     },
                                     err => reject(err)
                                 )
-                            } else {
-                                resolve(value);
                             }
                         },
                         err => reject(err)
