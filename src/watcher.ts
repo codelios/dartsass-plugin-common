@@ -48,11 +48,11 @@ export class Watcher {
         this.watchList.delete(srcdir);
     }
 
-    public ClearAll(projectRoot: string) {
-        const self = this;
+    public ClearAll() {
         this.watchList.forEach((value: number, key: string) => {
-            self.ClearWatch(key, projectRoot);
+            killProcess(value);
         });
+        this.watchList.clear();
     }
 
     doVerifyProcess(pid: number): boolean {
