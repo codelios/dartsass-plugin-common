@@ -10,6 +10,8 @@ import { ILog } from './log';
 import { IDocument } from './document';
 import { ProcessOutput } from './run';
 
+export const CodeNotImplemented = 500;
+
 export interface ISassCompiler {
 
     which(config: CompilerConfig, _log: ILog) : Promise<string>;

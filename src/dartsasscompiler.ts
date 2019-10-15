@@ -16,7 +16,7 @@ import { ILog } from './log';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSS } from './writer';
 import { ProcessOutput } from './run';
-
+import { CodeNotImplemented } from './compiler';
 
 export interface Info {
     info: string;
@@ -24,7 +24,7 @@ export interface Info {
 
 var NoWatchOutput: ProcessOutput = {
     pid: -1,
-    code: 1,
+    code: CodeNotImplemented,
 };
 
 /**
