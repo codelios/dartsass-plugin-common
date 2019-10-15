@@ -13,3 +13,4 @@ export { CompileCurrentFile, CompileAll, SayVersion,
 export { Prefixer } from './autoprefix';
 export { Watcher } from './watcher';
 export { CodeNotImplemented } from './compiler';
+export { ProcessOutput } from './run';
