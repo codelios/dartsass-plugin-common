@@ -12,3 +12,4 @@ export { CompileCurrentFile, CompileAll, SayVersion,
     Which, Validate } from './action';
 export { Prefixer } from './autoprefix';
 export { Watcher } from './watcher';
+export { CodeNotImplemented } from './compiler';
