@@ -24,7 +24,7 @@ export class Watcher {
         return new Promise<string>(function(resolve, reject) {
             const pid = self.watchList.get(srcdir);
             if (pid !== null && pid !== undefined) {
-                reject(`PID ${pid} already exists for watching ${srcdir}`);
+                reject(`${srcdir} already being watched ( pid ${pid} )`);
                 return;
             }
             getCurrentCompiler(config, _log).watch(srcdir, projectRoot, config, _log).then(
