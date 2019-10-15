@@ -10,7 +10,7 @@
         "url": "git+https://github.com/malvahq/dartsass-plugin-common.git"
     },
     "scripts": {
-        "prepublishOnly": "npm run dev",
+        "prepublishOnly": "npm run prod",
         "clean": "rm -fr lib",
         "compile": "npm run clean && tsc",
         "dev": "npm run compile && webpack --mode development",
