@@ -22,6 +22,11 @@ export class Watcher {
         const srcdir = xformPath(projectRoot, _srcdir);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
+            const pid = self.watchList.get(srcdir);
+            if (pid !== null && pid !== undefined) {
+                reject(`PID ${pid} already exists for watching ${srcdir}`);
+                return;
+            }
             getCurrentCompiler(config, _log).watch(srcdir, projectRoot, config, _log).then(
                 (value: ProcessOutput) => {
                     self.watchList.set(srcdir, value.pid);
