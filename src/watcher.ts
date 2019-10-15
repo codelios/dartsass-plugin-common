@@ -39,13 +39,17 @@ export class Watcher {
         });
     }
 
-    public ClearWatch(_srcdir: string, projectRoot: string) {
-        const srcdir = xformPath(projectRoot, _srcdir);
+    public ClearWatchDirectory(srcdir: string) {
         const pid = this.watchList.get(srcdir);
         if (pid !== null && pid !== undefined) {
             killProcess(pid);
         }
         this.watchList.delete(srcdir);
+    }
+
+    public ClearWatch(_srcdir: string, projectRoot: string) {
+        const srcdir = xformPath(projectRoot, _srcdir);
+        return this.ClearWatchDirectory(srcdir);
     }
 
     public ClearAll() {
