@@ -32,7 +32,9 @@ export class Watcher {
                     self.watchList.set(srcdir, value.pid);
                     resolve('Good');
                 },
-                err => reject(err)
+                (err:ProcessOutput) => {
+                    reject(err.msg);
+                }
             );
         });
     }

@@ -11,6 +11,8 @@ export interface ProcessOutput {
     code: number;
 
     pid: number;
+
+    msg: string;
 }
 
 export function Run(cmd: string, args: string[], _log: ILog) : Promise<string> {
@@ -23,7 +25,7 @@ export function Run(cmd: string, args: string[], _log: ILog) : Promise<string> {
         });
         prc.stderr.setEncoding('utf8');
         prc.stderr.on('data', function(data: any) {
-            _log.appendLine(data);
+            _log.appendLine(`Error: ${data}`);
         });
         prc.on('exit', function(code: any) {
             if (code === 0) {
@@ -59,7 +61,8 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
         }
         const processOutput: ProcessOutput = {
             code: 0,
-            pid: prc.pid
+            pid: prc.pid,
+            msg: ''
         }
         resolve(processOutput);
     })
