@@ -11,6 +11,6 @@ export { ISassCompiler } from './compiler';
 export { CompileCurrentFile, CompileAll, SayVersion,
     Which, Validate } from './action';
 export { Prefixer } from './autoprefix';
-export { Watcher } from './watcher';
+export { Watcher, WatchTarget } from './watcher';
 export { CodeNotImplemented } from './compiler';
 export { ProcessOutput } from './run';
