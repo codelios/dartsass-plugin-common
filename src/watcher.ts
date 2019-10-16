@@ -11,33 +11,25 @@ import { ProcessOutput, killProcess } from './run';
 import { xformPath } from './util';
 import { getCurrentCompiler } from './select';
 
-export interface WatchTarget {
-    path: string;
-    compressed: boolean;
-}
-
 export class Watcher {
 
-    watchList: Map<WatchTarget, number>  = new Map<WatchTarget, number>();
+    watchList: Map<string, number>  = new Map<string, number>();
 
     constructor() {
     }
 
     public Watch(_srcdir: string, projectRoot: string, compressed: boolean, config: CompilerConfig, _log: ILog): Promise<string> {
-        const watchTarget =  <WatchTarget>({
-            path: xformPath(projectRoot, _srcdir),
-            compressed: compressed,
-        });
+        const srcdir =  xformPath(projectRoot, _srcdir);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
-            const pid = self.watchList.get(watchTarget);
+            const pid = self.watchList.get(srcdir);
             if (pid !== null && pid !== undefined) {
-                reject(`${watchTarget.path} already being watched ( pid ${pid} )`);
+                reject(`${srcdir} already being watched ( pid ${pid} )`);
                 return;
             }
-            getCurrentCompiler(config, _log).watch(watchTarget.path, projectRoot, compressed, config, _log).then(
+            getCurrentCompiler(config, _log).watch(srcdir, projectRoot, compressed, config, _log).then(
                 (value: ProcessOutput) => {
-                    self.watchList.set(watchTarget, value.pid);
+                    self.watchList.set(srcdir, value.pid);
                     resolve('Good');
                 },
                 (err:ProcessOutput) => {
@@ -47,24 +39,21 @@ export class Watcher {
         });
     }
 
-    public ClearWatchDirectory(watchTarget: WatchTarget) {
-        const pid = this.watchList.get(watchTarget);
+    public ClearWatchDirectory(srcdir: string) {
+        const pid = this.watchList.get(srcdir);
         if (pid !== null && pid !== undefined) {
             killProcess(pid);
         }
-        this.watchList.delete(watchTarget);
+        this.watchList.delete(srcdir);
     }
 
-    public ClearWatch(_srcdir: string, projectRoot: string, compressed: boolean) {
+    public ClearWatch(_srcdir: string, projectRoot: string) {
         const srcdir = xformPath(projectRoot, _srcdir);
-        return this.ClearWatchDirectory(<WatchTarget>{
-            path: srcdir,
-            compressed: compressed
-        });
+        return this.ClearWatchDirectory(srcdir);
     }
 
     public ClearAll() {
-        this.watchList.forEach((value: number, key: WatchTarget) => {
+        this.watchList.forEach((value: number, key: string) => {
             killProcess(value);
         });
         this.watchList.clear();
@@ -83,7 +72,7 @@ export class Watcher {
     public Refresh(): number {
         const self = this;
         let count = 0;
-        this.watchList.forEach((value: number, key: WatchTarget) => {
+        this.watchList.forEach((value: number, key: string) => {
             if (!self.doVerifyProcess(value)) {
                 self.watchList.delete(key);
                 // Since process is not running anymore just delete it from the watch list
@@ -93,7 +82,7 @@ export class Watcher {
         return count;
     }
 
-    public GetWatchList(): Map<WatchTarget, number> {
+    public GetWatchList(): Map<string, number> {
         return this.watchList;
     }
 
