@@ -12,6 +12,8 @@ import { CompilerConfig } from '../src/config';
 import { validateTargetDirectories } from '../src/target';
 import { getDocumentForFile} from './document';
 import { getNullLog, getBufLog } from './log';
+var path = require('path');
+import fs from "fs";
 
 describe('DartsassCompiler SayVersion' , () => {
 
@@ -41,9 +43,13 @@ describe('DartsassCompiler CompileDocument' , () => {
         config.targetDirectory = 'out';
         const _log = getNullLog();
         expect(validateTargetDirectories(document, config)).to.be.null;
+        const outputDirectory = path.join(__dirname, 'out');
         compiler.compileDocument(document, config, _log).then(
             result => {
-                expect(result).to.equal('/tmp/web/__tests__/out/hello.min.css');
+                expect(result).to.equal(path.join(outputDirectory , 'hello.min.css'));
+                fs.stat(path.join(outputDirectory, "hello.css.map"), (exists) => {
+                    expect(exists).to.be.null;
+                });
             },
             err => {
                 expect(err).to.be.null;

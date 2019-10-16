@@ -14,7 +14,7 @@ import { xformPath, xformPaths} from './util';
 import { IDocument } from './document';
 import { ILog } from './log';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
-import { autoPrefixCSS } from './writer';
+import { autoPrefixCSS, writeToFile } from './writer';
 import { ProcessOutput } from './run';
 import { CodeNotImplemented } from './compiler';
 
@@ -140,6 +140,12 @@ export class DartSassCompiler {
                         value => resolve(value),
                         err => reject(err)
                     )
+                    if (!(result.map === null || result.map === undefined)) {
+                        writeToFile(output+'.map', result.map, _log).then(
+                            value => {},
+                            err => reject(err)
+                        );
+                    }
                 }
             });
         });
