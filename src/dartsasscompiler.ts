@@ -96,7 +96,7 @@ export class DartSassCompiler {
         });
     }
 
-    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
+    public watch(srcdir: string, projectRoot: string, compressed: boolean, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
         return new Promise<ProcessOutput>(function(resolve, reject) {
             reject(NoWatchOutput);
         });
@@ -123,7 +123,8 @@ export class DartSassCompiler {
                 importer: getImporter(sassWorkingDirectory),
                 includePaths: includePaths,
                 outputStyle: compressed ? 'compressed': 'expanded',
-                outFile: output
+                outFile: output,
+                sourceMap: true
             }, function (err: sass.SassException, result: sass.Result) {
                 if (err) {
                     self.handleError(err, config, _log).then(

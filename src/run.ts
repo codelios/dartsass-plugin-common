@@ -21,11 +21,13 @@ export function Run(cmd: string, args: string[], _log: ILog) : Promise<string> {
         var prc = child.spawn(cmd,  args);
         prc.stdout.setEncoding('utf8');
         prc.stdout.on('data', function(data: any) {
+            _log.appendLine(`${data}`);
             output = data;
         });
         prc.stderr.setEncoding('utf8');
         prc.stderr.on('data', function(data: any) {
             _log.appendLine(`Error: ${data}`);
+            _log.warning(`${data}`);
         });
         prc.on('exit', function(code: any) {
             if (code === 0) {
@@ -41,7 +43,6 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
     return new Promise(function(resolve, reject) {
         const prc = child.spawn(cmd,  args, {
             detached: true,
-            shell: true,
             stdio: 'ignore'
         });
         // and unref() somehow disentangles the child's event loop from the parent's:
@@ -56,7 +57,7 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
         if (prc.stderr) {
             prc.stderr.setEncoding('utf8');
             prc.stderr.on('data', function(data: any) {
-                _log.appendLine(`Error: ${data}`);
+                _log.warning(`${data}`);
             });
         }
         const processOutput: ProcessOutput = {

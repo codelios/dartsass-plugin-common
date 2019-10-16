@@ -10,7 +10,7 @@ import { IDocument } from './document';
 import { ILog } from './log';
 import { Run, RunDetached } from './run';
 import { xformPaths} from './util';
-import { getWatchTargetDirectory, getOutputCSS, getOutputMinifiedCSS} from './target';
+import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory, getOutputCSS, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSSFile } from './writer';
 import { ProcessOutput } from './run';
 import util from 'util';
@@ -101,11 +101,18 @@ export class NativeCompiler {
             }
     }
 
-    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
+    public watch(srcdir: string, projectRoot: string, compressed: boolean, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
         const args = new Array<string>();
         args.push('--watch');
-        const targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
+        let targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
+        if (compressed) {
+            targetDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
+        }
         args.push(util.format("%s:%s", srcdir, targetDirectory));
+        if (compressed) {
+            args.push('--style');
+            args.push('compressed');
+        }
         return RunDetached(config.sassBinPath, args, _log);
     }
 

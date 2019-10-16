@@ -24,5 +24,5 @@ export interface ISassCompiler {
 
     compileDocument(document: IDocument, config: CompilerConfig, _log: ILog) : Promise<string>;
 
-    watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<ProcessOutput>;
+    watch(srcdir: string, projectRoot: string, compressed: boolean, config: CompilerConfig, _log: ILog): Promise<ProcessOutput>;
 }

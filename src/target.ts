@@ -18,6 +18,17 @@ export function getWatchTargetDirectory(srcdir: string, projectRoot: string, con
     return targetDirectory;
 }
 
+export function getWatchMinifiedTargetDirectory(srcdir: string, projectRoot: string, config: CompilerConfig): string {
+    let targetMinifiedDirectory = srcdir;
+    if (config.targetMinifiedDirectory.length > 0) {
+        targetMinifiedDirectory = xformPath(projectRoot, config.targetMinifiedDirectory);
+    }
+    if (config.targetDirectory.length > 0) {
+        targetMinifiedDirectory = xformPath(projectRoot, config.targetDirectory);
+    }
+    return targetMinifiedDirectory;
+}
+
 export function inferTargetCSSDirectory(document: IDocument, config: CompilerConfig): string {
     let targetDirectory = path.dirname(document.getFileName());
     const projectRoot = document.getProjectRoot();
