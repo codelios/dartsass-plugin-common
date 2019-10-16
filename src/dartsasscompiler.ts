@@ -96,7 +96,7 @@ export class DartSassCompiler {
         });
     }
 
-    public watch(srcdir: string, projectRoot: string, compressed: boolean, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
+    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
         return new Promise<ProcessOutput>(function(resolve, reject) {
             reject(NoWatchOutput);
         });

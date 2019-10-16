@@ -18,7 +18,7 @@ export class Watcher {
     constructor() {
     }
 
-    public Watch(_srcdir: string, projectRoot: string, compressed: boolean, config: CompilerConfig, _log: ILog): Promise<string> {
+    public Watch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
         const srcdir =  xformPath(projectRoot, _srcdir);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
@@ -27,7 +27,7 @@ export class Watcher {
                 reject(`${srcdir} already being watched ( pid ${pid} )`);
                 return;
             }
-            getCurrentCompiler(config, _log).watch(srcdir, projectRoot, compressed, config, _log).then(
+            getCurrentCompiler(config, _log).watch(srcdir, projectRoot, config, _log).then(
                 (value: ProcessOutput) => {
                     self.watchList.set(srcdir, value.pid);
                     resolve('Good');
@@ -39,15 +39,19 @@ export class Watcher {
         });
     }
 
-    public ClearWatchDirectory(srcdir: string) {
+    public ClearWatchDirectory(srcdir: string) : boolean {
         const pid = this.watchList.get(srcdir);
+        let cleared = false;
         if (pid !== null && pid !== undefined) {
             killProcess(pid);
+            cleared = true;
+
         }
         this.watchList.delete(srcdir);
+        return cleared;
     }
 
-    public ClearWatch(_srcdir: string, projectRoot: string) {
+    public ClearWatch(_srcdir: string, projectRoot: string): boolean {
         const srcdir = xformPath(projectRoot, _srcdir);
         return this.ClearWatchDirectory(srcdir);
     }

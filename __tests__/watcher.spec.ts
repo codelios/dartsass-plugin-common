@@ -21,12 +21,13 @@ describe('Watcher' , () => {
         config.sassBinPath = "/usr/local/bin/sass";
         const _log = getNullLog();
         const srcdir = path.join(__dirname, 'input');
-        watcher.Watch(srcdir, __dirname, false, config, _log).then(
+        config.disableMinifiedFileGeneration = true;
+        watcher.Watch(srcdir, __dirname, config, _log).then(
             (result) => {
                 const watchList = watcher.GetWatchList();
                 expect(watchList.size).to.be.equal(1);
                 expect(watcher.Refresh()).to.be.equal(0);
-                watcher.ClearWatch(srcdir, __dirname);
+                expect(watcher.ClearWatch(srcdir, __dirname)).to.be.true;
                 expect(watchList.size).to.be.equal(0);
                 expect(watcher.Refresh()).to.be.equal(0);
             },
@@ -43,12 +44,12 @@ describe('Watcher' , () => {
         config.sassBinPath = "/usr/local/bin/sass";
         const _log = getNullLog();
         const srcdir = path.join(__dirname, 'input');
-        watcher.Watch(srcdir, __dirname, true, config, _log).then(
+        watcher.Watch(srcdir, __dirname, config, _log).then(
             (result) => {
                 const watchList = watcher.GetWatchList();
                 expect(watchList.size).to.be.equal(1);
                 expect(watcher.Refresh()).to.be.equal(0);
-                watcher.ClearWatch(srcdir, __dirname);
+                expect(watcher.ClearWatch(srcdir, __dirname)).to.be.true;
                 expect(watchList.size).to.be.equal(0);
                 expect(watcher.Refresh()).to.be.equal(0);
             },

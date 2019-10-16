@@ -101,10 +101,11 @@ export class NativeCompiler {
             }
     }
 
-    public watch(srcdir: string, projectRoot: string, compressed: boolean, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
+    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
         const args = new Array<string>();
         args.push('--watch');
         let targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
+        const compressed = !config.disableMinifiedFileGeneration;
         if (compressed) {
             targetDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
         }
