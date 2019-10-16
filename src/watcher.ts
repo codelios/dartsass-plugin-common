@@ -94,10 +94,14 @@ export class Watcher {
         this.ClearAll();
         for (const _srcdir of keys) {
             this.Watch(_srcdir, projectRoot, config, _log).then(
-                value => {},
-                err => {}
+                value => {
+                },
+                err => {
+                    _log.appendLine(err);
+                }
             );
         }
+
     }
 
     public GetWatchList(): Map<string, number> {

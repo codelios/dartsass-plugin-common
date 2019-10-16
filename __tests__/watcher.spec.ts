@@ -72,9 +72,6 @@ describe('Watcher' , () => {
                 expect(watchList.size).to.be.equal(1);
                 expect(watcher.Verify()).to.be.equal(0);
                 watcher.Relaunch(__dirname, config, _log);
-                watchList = watcher.GetWatchList();
-                expect(watchList.size).to.be.equal(1);
-                expect(watcher.Verify()).to.be.equal(0);
             },
             err => {
                 expect(err).to.be.null;
