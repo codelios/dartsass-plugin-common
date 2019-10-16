@@ -15,6 +15,8 @@ export class CompilerConfig {
 
     disableMinifiedFileGeneration: boolean = false;
 
+    disableSourceMap: boolean = false;
+
     debug: boolean = false;
 
     disableCompileOnSave: boolean = false;
