@@ -25,19 +25,6 @@ export class NativeCompiler {
     constructor() {
     }
 
-    public compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : Promise<string> {
-        return new Promise(function(resolve, reject) {
-            reject('Not yet implemented. To Compile All the sass files inside the given workspace');
-        });
-    }
-
-    public which(config: CompilerConfig, _log: ILog) : Promise<string> {
-        return new Promise(function(resolve, _) {
-            resolve(config.sassBinPath);
-        });
-    }
-
-
     public sayVersion(config: CompilerConfig, _log: ILog): Promise<string> {
         try {
             return Run(config.sassBinPath, ['--version'], _log);

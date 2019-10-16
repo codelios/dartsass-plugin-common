@@ -8,8 +8,7 @@ export { CompilerConfig } from './config';
 export { ILog } from './log';
 export { IDocument } from './document';
 export { ISassCompiler } from './compiler';
-export { CompileCurrentFile, CompileAll, SayVersion,
-    Which, Validate } from './action';
+export { CompileCurrentFile, SayVersion, Validate } from './action';
 export { Prefixer } from './autoprefix';
 export { Watcher } from './watcher';
 export { CodeNotImplemented } from './compiler';

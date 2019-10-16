@@ -46,23 +46,6 @@ export class DartSassCompiler {
         });
     }
 
-    public compileAll(config: CompilerConfig, projectRoot: string, _log: ILog) : Promise<string> {
-        return new Promise(function(resolve, reject) {
-            reject('Not yet implemented. To Compile All the sass files inside the given workspace');
-        });
-    }
-
-    public which(config: CompilerConfig, _log: ILog) : Promise<string> {
-        const self = this;
-        return new Promise(function(resolve, reject) {
-            self.sayVersion(config, _log).then(
-                data => resolve(data),
-                err => reject(err)
-            )
-        });
-
-    }
-
     public sayVersion(config: CompilerConfig, _log: ILog): Promise<string> {
         const info = sass as unknown as Info;
         const version = info.info;

@@ -111,25 +111,6 @@ describe('Native CompileDocument' , () => {
 
 });
 
-describe('Native Which' , () => {
-
-    it('which', (done) => {
-        const native = new NativeCompiler();
-        const config = new CompilerConfig();
-        config.sassBinPath = "/usr/local/bin/sass";
-        const _log = getNullLog();
-        native.which(config, _log).then(
-            data => {
-                expect(data).to.equal(config.sassBinPath);
-            },
-            err => {
-                expect(err).to.be.null;
-            }
-        ).finally(done);
-
-    });
-});
-
 describe('Native Validate' , () => {
 
     it('directory for sassBinPath should fail', (done) => {
