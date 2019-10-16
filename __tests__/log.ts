@@ -18,6 +18,24 @@ export function getNullLog(): ILog {
     return _log;
 }
 
+export function getConsoleLog(): ILog {
+    const _log : ILog = {
+
+        warning(msg: string): any {
+            console.log(msg);
+        },
+
+        appendLine(msg: string): any {
+            console.log(msg);
+        },
+
+        clear(): any {},
+
+    };
+    return _log;
+
+}
+
 export class BufLog  {
 
     buf = Buffer.alloc(256);

@@ -63,7 +63,7 @@ export class Watcher {
         this.watchList.clear();
     }
 
-    doVerifyProcess(pid: number): boolean {
+    doVerify(pid: number): boolean {
         // TODO: Check if the pid is still running so it can be cleaned up
         return true;
     }
@@ -73,17 +73,31 @@ export class Watcher {
      *
      * Returns the number of processes that do not run anymore.
      */
-    public Refresh(): number {
+    public Verify(): number {
         const self = this;
         let count = 0;
         this.watchList.forEach((value: number, key: string) => {
-            if (!self.doVerifyProcess(value)) {
+            if (!self.doVerify(value)) {
                 self.watchList.delete(key);
                 // Since process is not running anymore just delete it from the watch list
                 count++;
             }
         });
         return count;
+    }
+
+    /**
+     * Relaunch relaunches all the processes running
+     */
+    public Relaunch(projectRoot: string, config: CompilerConfig, _log: ILog) {
+        const keys = Array.from(this.watchList.keys());
+        this.ClearAll();
+        for (const _srcdir of keys) {
+            this.Watch(_srcdir, projectRoot, config, _log).then(
+                value => {},
+                err => {}
+            );
+        }
     }
 
     public GetWatchList(): Map<string, number> {
