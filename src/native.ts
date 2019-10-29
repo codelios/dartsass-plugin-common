@@ -101,6 +101,7 @@ export class NativeCompiler {
             args.push('--style');
             args.push('compressed');
         }
+        _log.appendLine(`Watching ${srcdir}`);
         return RunDetached(config.sassBinPath, args, _log);
     }
 

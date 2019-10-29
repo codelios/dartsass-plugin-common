@@ -39,25 +39,26 @@ export class Watcher {
         });
     }
 
-    public ClearWatchDirectory(srcdir: string) : boolean {
+    public ClearWatchDirectory(srcdir: string, _log: ILog) : boolean {
         const pid = this.watchList.get(srcdir);
         let cleared = false;
         if (pid !== null && pid !== undefined) {
             killProcess(pid);
             cleared = true;
-
+            _log.appendLine(`About to unwatch ${srcdir}`);
         }
         this.watchList.delete(srcdir);
         return cleared;
     }
 
-    public ClearWatch(_srcdir: string, projectRoot: string): boolean {
+    public ClearWatch(_srcdir: string, projectRoot: string, _log: ILog): boolean {
         const srcdir = xformPath(projectRoot, _srcdir);
-        return this.ClearWatchDirectory(srcdir);
+        return this.ClearWatchDirectory(srcdir, _log);
     }
 
-    public ClearAll() {
+    public ClearAll(_log: ILog) {
         this.watchList.forEach((value: number, key: string) => {
+            _log.appendLine(`Unwatching ${key}`);
             killProcess(value);
         });
         this.watchList.clear();
@@ -91,7 +92,7 @@ export class Watcher {
      */
     public Relaunch(projectRoot: string, config: CompilerConfig, _log: ILog) {
         const keys = Array.from(this.watchList.keys());
-        this.ClearAll();
+        this.ClearAll(_log);
         for (const _srcdir of keys) {
             this.Watch(_srcdir, projectRoot, config, _log).then(
                 value => {

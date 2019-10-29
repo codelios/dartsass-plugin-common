@@ -27,7 +27,7 @@ describe('Watcher' , () => {
                 const watchList = watcher.GetWatchList();
                 expect(watchList.size).to.be.equal(1);
                 expect(watcher.Verify()).to.be.equal(0);
-                expect(watcher.ClearWatch(srcdir, __dirname)).to.be.true;
+                expect(watcher.ClearWatch(srcdir, __dirname, _log)).to.be.true;
                 expect(watchList.size).to.be.equal(0);
                 expect(watcher.Verify()).to.be.equal(0);
             },
@@ -49,7 +49,7 @@ describe('Watcher' , () => {
                 const watchList = watcher.GetWatchList();
                 expect(watchList.size).to.be.equal(1);
                 expect(watcher.Verify()).to.be.equal(0);
-                expect(watcher.ClearWatch(srcdir, __dirname)).to.be.true;
+                expect(watcher.ClearWatch(srcdir, __dirname, _log)).to.be.true;
                 expect(watchList.size).to.be.equal(0);
                 expect(watcher.Verify()).to.be.equal(0);
             },
