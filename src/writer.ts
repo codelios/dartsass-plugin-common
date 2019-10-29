@@ -28,9 +28,6 @@ export function writeToFile(output: string, data: any, _log: ILog) : Promise<str
 export function autoPrefixCSS(output: string, data: any,
     config : CompilerConfig,
     _log: ILog): Promise<string> {
-    if (config.debug) {
-        _log.appendLine("disableAutoPrefixer: " + config.disableAutoPrefixer);
-    }
     if (config.disableAutoPrefixer) {
         return writeToFile(output, data, _log);
     }
