@@ -25,7 +25,7 @@ describe('DartsassCompiler SayVersion' , () => {
         compiler.sayVersion(config, _log).then(
             function(data: any) {
                 // This value comes from the version installed using Dockerfile. Hence hardcoded. YMMV locally.
-                expect(data).to.equal('dart-sass\t1.23.0\t(Sass Compiler)\t[Dart]\ndart2js\t2.5.1\t(Dart Compiler)\t[Dart]');
+                expect(data).to.equal('dart-sass\t1.23.1\t(Sass Compiler)\t[Dart]\ndart2js\t2.5.2\t(Dart Compiler)\t[Dart]');
             },
             function(err: any) {
                 expect(err).to.be.not.null;
