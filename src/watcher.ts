@@ -45,7 +45,7 @@ export class Watcher {
         if (pid !== null && pid !== undefined) {
             killProcess(pid);
             cleared = true;
-            _log.appendLine(`About to unwatch ${srcdir}`);
+            _log.appendLine(`About to unwatch ${srcdir} with pid ${pid}`);
         }
         this.watchList.delete(srcdir);
         return cleared;
