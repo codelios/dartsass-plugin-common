@@ -27,7 +27,7 @@ export class CompilerConfig {
 
     disableAutoPrefixer: boolean = false;
 
-    autoPrefixBrowsersList: Array<string> = ["last 2 version"];
+    autoPrefixBrowsersList: Array<string> = ["> 1%", "last 2 versions"];
 
     targetDirectory: string = "";
 
