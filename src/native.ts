@@ -98,6 +98,11 @@ export class NativeCompiler {
     public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
         const args = new Array<string>();
         args.push('--watch');
+        const includePaths = xformPaths(projectRoot, config.includePath);
+        for (const path of includePaths) {
+            args.push("-I");
+            args.push(path);
+        }
         let targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
         const compressed = !config.disableMinifiedFileGeneration;
         if (compressed) {
