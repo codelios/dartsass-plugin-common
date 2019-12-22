@@ -107,7 +107,7 @@ export class DartSassCompiler {
                 includePaths: includePaths,
                 outputStyle: compressed ? 'compressed': 'expanded',
                 outFile: output,
-                sourceMap: true
+                sourceMap: !config.disableSourceMap
             }, function (err: sass.SassException, result: sass.Result) {
                 if (err) {
                     self.handleError(err, config, _log).then(

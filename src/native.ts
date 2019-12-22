@@ -113,6 +113,9 @@ export class NativeCompiler {
             result.push("--style");
             result.push("compressed");
         }
+        if (config.disableSourceMap) {
+            result.push("--no-source-map")
+        }
         for (const path of includePaths) {
             result.push("-I");
             result.push(path);
