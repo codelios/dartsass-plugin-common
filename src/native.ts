@@ -44,10 +44,10 @@ export class NativeCompiler {
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
         return new Promise(function(resolve, reject) {
             if (!fs.existsSync(sassBinPath)) {
-                reject(`Sass Binary Path ${sassBinPath} does not exist`);
+                reject(`ProjectRoot: ${projectRoot}. Sass Binary Path ${sassBinPath} does not exist`);
             }
             if (fs.lstatSync(sassBinPath).isDirectory()) {
-                reject(`Sass Binary Path ${sassBinPath} is a directory`);
+                reject(`ProjectRoot: ${projectRoot}. Sass Binary Path ${sassBinPath} is a directory`);
             }
             resolve('');
         });
