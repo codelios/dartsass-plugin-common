@@ -103,12 +103,7 @@ export class NativeCompiler {
             args.push("-I");
             args.push(path);
         }
-        let targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
         const compressed = !config.disableMinifiedFileGeneration;
-        if (compressed) {
-            targetDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
-        }
-        args.push(util.format("%s:%s", srcdir, targetDirectory));
         if (compressed) {
             args.push('--style');
             args.push('compressed');
@@ -116,6 +111,11 @@ export class NativeCompiler {
         if (config.disableSourceMap) {
             args.push("--no-source-map");
         }
+        let targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
+        if (compressed) {
+            targetDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
+        }
+        args.push(util.format("%s:%s", srcdir, targetDirectory));
         _log.appendLine(`Watching ${srcdir}`);
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
         return RunDetached(sassBinPath, args, _log);
