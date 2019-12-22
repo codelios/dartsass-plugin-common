@@ -95,35 +95,8 @@ export class NativeCompiler {
             }
     }
 
-    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
-        const args = new Array<string>();
-        args.push('--watch');
+    doGetArgs(projectRoot: string, config: CompilerConfig, minified: boolean) : Array<string> {
         const includePaths = xformPaths(projectRoot, config.includePath);
-        for (const path of includePaths) {
-            args.push("-I");
-            args.push(path);
-        }
-        const compressed = !config.disableMinifiedFileGeneration;
-        if (compressed) {
-            args.push('--style');
-            args.push('compressed');
-        }
-        if (config.disableSourceMap) {
-            args.push("--no-source-map");
-        }
-        let targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
-        if (compressed) {
-            targetDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
-        }
-        args.push(util.format("%s:%s", srcdir, targetDirectory));
-        _log.appendLine(`Watching ${srcdir}`);
-        const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
-        return RunDetached(sassBinPath, args, _log);
-    }
-
-    getArgs(document: IDocument, config: CompilerConfig, output: string, minified: boolean): string[] {
-        const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
-        const input = document.getFileName();
         const result = new Array<string>();
         if (minified) {
             result.push("--style");
@@ -136,6 +109,26 @@ export class NativeCompiler {
             result.push("-I");
             result.push(path);
         }
+        return result;
+    }
+
+    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
+        const compressed = !config.disableMinifiedFileGeneration;
+        const args = this.doGetArgs(projectRoot, config, compressed);
+        args.push('--watch');
+        let targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
+        if (compressed) {
+            targetDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
+        }
+        args.push(util.format("%s:%s", srcdir, targetDirectory));
+        _log.appendLine(`Watching ${srcdir}`);
+        const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
+        return RunDetached(sassBinPath, args, _log);
+    }
+
+    getArgs(document: IDocument, config: CompilerConfig, output: string, minified: boolean): string[] {
+        const result = this.doGetArgs(document.getProjectRoot(), config, minified);
+        const input = document.getFileName();
         result.push(util.format("%s:%s", input, output));
         return result;
     }
