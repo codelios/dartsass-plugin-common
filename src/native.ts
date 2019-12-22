@@ -9,7 +9,7 @@ import { CompilerConfig } from './config';
 import { IDocument } from './document';
 import { ILog } from './log';
 import { Run, RunDetached } from './run';
-import { xformPaths} from './util';
+import { xformPath, xformPaths} from './util';
 import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory, getOutputCSS, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSSFile } from './writer';
 import { ProcessOutput } from './run';
@@ -25,9 +25,14 @@ export class NativeCompiler {
     constructor() {
     }
 
-    public sayVersion(config: CompilerConfig, _log: ILog): Promise<string> {
+    getSassBinPath(projectRoot: string, sassBinPath: string): string {
+        return xformPath(projectRoot, sassBinPath)
+    }
+
+    public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
+        const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
         try {
-            return Run(config.sassBinPath, ['--version'], _log);
+            return Run(sassBinPath, ['--version'], _log);
         } catch(error) {
             return new Promise(function(_, reject) {
                 reject(error.toString());
@@ -35,13 +40,14 @@ export class NativeCompiler {
         }
     }
 
-    public validate(config: CompilerConfig): Promise<string> {
+    public validate(config: CompilerConfig, projectRoot: string): Promise<string> {
+        const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
         return new Promise(function(resolve, reject) {
-            if (!fs.existsSync(config.sassBinPath)) {
-                reject(`Sass Binary Path ${config.sassBinPath} does not exist`);
+            if (!fs.existsSync(sassBinPath)) {
+                reject(`Sass Binary Path ${sassBinPath} does not exist`);
             }
-            if (fs.lstatSync(config.sassBinPath).isDirectory()) {
-                reject(`Sass Binary Path ${config.sassBinPath} is a directory`);
+            if (fs.lstatSync(sassBinPath).isDirectory()) {
+                reject(`Sass Binary Path ${sassBinPath} is a directory`);
             }
             resolve('');
         });
@@ -52,8 +58,9 @@ export class NativeCompiler {
             const self = this;
             try {
                 const output = getOutputCSS( document, config, _log);
+                const sassBinPath  = this.getSassBinPath(document.getProjectRoot(), config.sassBinPath)
                 return new Promise(function(resolve, reject) {
-                    Run(config.sassBinPath, self.getArgs(document, config, output, false), _log).then(
+                    Run(sassBinPath, self.getArgs(document, config, output, false), _log).then(
                         value => {
                             autoPrefixCSSFile(output, output, config,  _log).then(
                                 value => {
@@ -65,7 +72,7 @@ export class NativeCompiler {
                             )
                             if (!config.disableMinifiedFileGeneration) {
                                 const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
-                                Run(config.sassBinPath, self.getArgs(document, config, minifiedOutput, true), _log).then(
+                                Run(sassBinPath, self.getArgs(document, config, minifiedOutput, true), _log).then(
                                     value => {
                                         autoPrefixCSSFile(minifiedOutput, minifiedOutput, config,  _log).then(
                                             value => {
@@ -101,8 +108,12 @@ export class NativeCompiler {
             args.push('--style');
             args.push('compressed');
         }
+        if (config.disableSourceMap) {
+            args.push("--no-source-map");
+        }
         _log.appendLine(`Watching ${srcdir}`);
-        return RunDetached(config.sassBinPath, args, _log);
+        const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
+        return RunDetached(sassBinPath, args, _log);
     }
 
     getArgs(document: IDocument, config: CompilerConfig, output: string, minified: boolean): string[] {
@@ -114,7 +125,7 @@ export class NativeCompiler {
             result.push("compressed");
         }
         if (config.disableSourceMap) {
-            result.push("--no-source-map")
+            result.push("--no-source-map");
         }
         for (const path of includePaths) {
             result.push("-I");

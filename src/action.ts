@@ -35,10 +35,10 @@ export function CompileCurrentFile(
     return getCurrentCompiler(extensionConfig, _log).compileDocument(document, extensionConfig, _log);
 }
 
-export function SayVersion(extensionConfig: CompilerConfig, _log: ILog): Promise<string> {
-    return getCurrentCompiler(extensionConfig, _log).sayVersion(extensionConfig, _log);
+export function SayVersion(extensionConfig: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
+    return getCurrentCompiler(extensionConfig, _log).sayVersion(extensionConfig, projectRoot, _log);
 }
 
-export function Validate(extensionConfig: CompilerConfig, _log: ILog): Promise<string> {
-    return getCurrentCompiler(extensionConfig, _log).validate(extensionConfig);
+export function Validate(extensionConfig: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
+    return getCurrentCompiler(extensionConfig, _log).validate(extensionConfig, projectRoot);
 }

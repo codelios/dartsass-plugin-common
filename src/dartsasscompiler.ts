@@ -40,13 +40,13 @@ export class DartSassCompiler {
     constructor() {
     }
 
-    public validate(config: CompilerConfig): Promise<string> {
+    public validate(config: CompilerConfig, projectRoot: string): Promise<string> {
         return new Promise(function(resolve, reject) {
             resolve('');
         });
     }
 
-    public sayVersion(config: CompilerConfig, _log: ILog): Promise<string> {
+    public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
         const info = sass as unknown as Info;
         const version = info.info;
         return new Promise(function(resolve, _) {

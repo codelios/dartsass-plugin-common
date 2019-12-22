@@ -21,7 +21,7 @@ describe('Native SayVersion' , () => {
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
         const _log = getBufLog();
-        native.sayVersion(config, _log).then(
+        native.sayVersion(config, "", _log).then(
             function(data: any) {
                 // This value comes from the version installed using Dockerfile. Hence hardcoded. YMMV locally.
                 expect(data).to.equal('1.19.0 compiled with dart2js 2.2.0');
@@ -117,7 +117,7 @@ describe('Native Validate' , () => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin";
-        native.validate(config).then(
+        native.validate(config, "").then(
             data => {
                 expect(false);
             },
@@ -132,7 +132,7 @@ describe('Native Validate' , () => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/non-existent-binary";
-        native.validate(config).then(
+        native.validate(config, "").then(
             data => {
                 expect(false);
             },
@@ -147,7 +147,7 @@ describe('Native Validate' , () => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin/sass";
-        native.validate(config).then(
+        native.validate(config, "").then(
             data => {
                 expect(data).to.be.not.null;
             },

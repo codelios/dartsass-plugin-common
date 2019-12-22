@@ -14,9 +14,9 @@ export const CodeNotImplemented = 500;
 
 export interface ISassCompiler {
 
-    sayVersion(config: CompilerConfig, _log: ILog): Promise<string>;
+    sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string>;
 
-    validate(config: CompilerConfig): Promise<string>;
+    validate(config: CompilerConfig, projectRoot: string): Promise<string>;
 
     compileDocument(document: IDocument, config: CompilerConfig, _log: ILog) : Promise<string>;
 
