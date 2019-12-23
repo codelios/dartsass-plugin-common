@@ -121,8 +121,9 @@ export class NativeCompiler {
             targetDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
         }
         args.push(util.format("%s:%s", srcdir, targetDirectory));
-        _log.appendLine(`Watching ${srcdir}`);
+
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
+        _log.appendLine(`Watching ${srcdir}. Exec ${sassBinPath} ${args.join('  ')}`);
         return RunDetached(sassBinPath, args, _log);
     }
 
