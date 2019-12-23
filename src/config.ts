@@ -11,8 +11,6 @@ export class CompilerConfig {
 
     includePath: Array<string> = [];
 
-    sassWorkingDirectory: string = "";
-
     disableMinifiedFileGeneration: boolean = false;
 
     disableSourceMap: boolean = false;

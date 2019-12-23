@@ -8,9 +8,8 @@
 import * as path from 'path';
 
 import sass = require("sass");
-import { getImporter } from './importer';
 import { CompilerConfig } from './config';
-import { xformPath, xformPaths} from './util';
+import { xformPaths} from './util';
 import { IDocument } from './document';
 import { ILog } from './log';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
@@ -59,7 +58,6 @@ export class DartSassCompiler {
         const output = getOutputCSS( document, config, _log);
         const compressedOutput = getOutputMinifiedCSS(document, config, _log);
         if (config.debug) {
-            _log.appendLine("Scss working directory: " + config.sassWorkingDirectory);
             _log.appendLine("include path: " + config.includePath.join(","));
         }
         _log.appendLine(`${input} -> ${output}`);
@@ -97,13 +95,11 @@ export class DartSassCompiler {
     asyncCompile(document: IDocument, compressed: boolean, output: string,
         config : CompilerConfig,
         _log: ILog): Promise<string> {
-        const sassWorkingDirectory  = xformPath(document.getProjectRoot(), config.sassWorkingDirectory);
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
             sass.render({
                 file: document.getFileName(),
-                importer: getImporter(sassWorkingDirectory),
                 includePaths: includePaths,
                 outputStyle: compressed ? 'compressed': 'expanded',
                 outFile: output,
