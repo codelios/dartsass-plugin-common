@@ -74,17 +74,19 @@ export class Watcher {
      *
      * Returns the number of processes that do not run anymore.
      */
-    public Verify(): number {
+    public Refresh(): number {
         const self = this;
-        let count = 0;
+        const toDelete = new Array<string>();
         this.watchList.forEach((value: number, key: string) => {
             if (!self.doVerify(value)) {
-                self.watchList.delete(key);
+                toDelete.push(key);
                 // Since process is not running anymore just delete it from the watch list
-                count++;
             }
         });
-        return count;
+        toDelete.forEach(value => {
+            self.watchList.delete(value);
+        })
+        return toDelete.length;
     }
 
     /**
