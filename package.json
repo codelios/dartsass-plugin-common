@@ -18,14 +18,14 @@
         "test": "npm run dev && mocha --timeout 5000 -r ts-node/register __tests__/**/*.spec.ts"
     },
     "dependencies": {
-        "sass": "1.24.0",
+        "sass": "1.24.1",
         "@types/sass": "1.16.0",
         "fibers": "4.0.2",
         "@types/fibers": "3.1.0",
         "autoprefixer": "9.7.3",
         "@types/autoprefixer": "9.6.1",
-        "postcss": "7.0.25",
-        "browserslist": "4.8.2",
+        "postcss": "7.0.26",
+        "browserslist": "4.8.3",
         "@types/mkdirp": "0.5.2",
         "mkdirp": "0.5.1",
         "typescript": "3.7.4"
@@ -37,7 +37,7 @@
         "@types/mocha": "5.2.7",
         "chai": "4.2.0",
         "@types/chai": "4.2.7",
-        "webpack": "4.41.4",
+        "webpack": "4.41.5",
         "webpack-cli": "3.3.10",
         "ts-loader": "6.2.1"
     }
