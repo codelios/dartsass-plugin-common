@@ -38,10 +38,10 @@ export function getConsoleLog(): ILog {
 
 export class BufLog  {
 
-    buf = Buffer.alloc(256);
+    buf = Buffer.alloc(20);
 
     appendLine(msg: string): any {
-
+        
     }
 
     warning(msg: string): any {

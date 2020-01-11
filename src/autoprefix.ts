@@ -6,7 +6,7 @@
 
 import postcss = require('postcss');
 import autoprefixer = require('autoprefixer');
-import browserslist = require('browserslist');
+import browserslist from 'browserslist';
 
 import { ILog } from './log';
 import { Info } from './version';
