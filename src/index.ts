@@ -9,7 +9,7 @@ export { ILog } from './log';
 export { IDocument } from './document';
 export { ISassCompiler } from './compiler';
 export { CompileCurrentFile, SayVersion, Validate } from './action';
-export { Prefixer, libVersions } from './autoprefix';
+export { Prefixer, getVersions } from './autoprefix';
 export { Watcher, watchDirectory, unwatchDirectory } from './watcher';
 export { CodeNotImplemented } from './compiler';
 export { ProcessOutput } from './run';

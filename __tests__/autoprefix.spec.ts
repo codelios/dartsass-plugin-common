@@ -5,16 +5,15 @@
 
 'use strict';
 import 'mocha';
-import { libVersions } from '../src/autoprefix';
+import { getVersions } from '../src/autoprefix';
 import { getBufLog } from './log';
 import { expect } from 'chai';
 
-describe('libVersions' , () => {
+describe('autoprefix' , () => {
 
-    it('libVersions', () => {
-        const _log = getBufLog();
-        libVersions(_log);
-        const output = _log.getInfo();
+    it('getVersions', () => {
+        const versions = getVersions();
+        const output = versions.join(",")
         expect(output).to.equal('PostCSS');
     });
 });

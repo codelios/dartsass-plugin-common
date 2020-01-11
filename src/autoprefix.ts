@@ -8,9 +8,6 @@ import postcss = require('postcss');
 import autoprefixer = require('autoprefixer');
 import browserslist from 'browserslist';
 
-import { ILog } from './log';
-import { Info } from './version';
-
 export class Prefixer {
 
     processor: postcss.Processor | undefined;
@@ -46,15 +43,21 @@ export class Prefixer {
 
 
 
-export function libVersions(_log: ILog) {
-    const postcssInfo = postcss as unknown as Info;
-    _log.appendLine(`PostCSS: ${postcssInfo.info}`);
+export interface Version {
+    version: string;
+}
 
-    const autoprefixerInfo = autoprefixer as unknown as Info;
-    _log.appendLine(`autoprefixer: ${autoprefixerInfo.info}`);    
-
-    const browserslistInfo = browserslist as unknown as Info;
-    _log.appendLine(`browserslist: ${browserslistInfo.info}`);    
-
+export function getVersions(): Array<string> {
+    const result = new Array<string>();
     
+    const postcssInfo = postcss as unknown as Version;
+    result.push(`PostCSS: ${postcssInfo.version}`);
+
+    const autoprefixerInfo = autoprefixer as unknown as Version;
+    result.push(`autoprefixer: ${autoprefixerInfo.version}`);    
+
+    const browserslistInfo = browserslist as unknown as Version;
+    result.push(`browserslist: ${browserslistInfo.version}`);    
+
+    return result;
 }
