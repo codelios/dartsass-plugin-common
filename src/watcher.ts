@@ -67,17 +67,13 @@ export class Watcher {
     /**
      * Relaunch relaunches all the watch processes for the watch directories
      */
-    public Relaunch(projectRoot: string, config: CompilerConfig, _log: ILog) {
+    public Relaunch(projectRoot: string, config: CompilerConfig, _log: ILog) : Array<Promise<string>> {
         this.ClearAll(_log);
+        const promises = new Array<Promise<string>>();
         for (const _srcdir of config.watchDirectories) {
-            this.doLaunch(_srcdir, projectRoot, config, _log).then(
-                value => {
-                },
-                err => {
-                    _log.appendLine(err);
-                }
-            );
+            promises.push(this.doLaunch(_srcdir, projectRoot, config, _log));
         }
+        return promises;
     }
 
     public GetWatchList(): Map<string, number> {

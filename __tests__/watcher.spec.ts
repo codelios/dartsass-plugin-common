@@ -55,7 +55,7 @@ describe('doLaunch' , () => {
         ).finally(done);
     });
 
-    it('relaunch', () => {
+    it('relaunch', (done) => {
         const watcher = new Watcher();
         const config = new CompilerConfig();
         config.targetDirectory = "out";
@@ -63,8 +63,17 @@ describe('doLaunch' , () => {
         const _log = getConsoleLog();
         const srcdir = path.join(__dirname, 'input');
         config.watchDirectories.push(srcdir);
-        watcher.Relaunch(__dirname, config, _log);
-        expect(watcher.ClearWatchDirectory(srcdir, _log)).to.be.equal(true);
+        const promises = watcher.Relaunch(__dirname, config, _log);
+        for (const promise of promises) {
+            promise.then(
+                result => {
+                    expect(watcher.ClearWatchDirectory(srcdir, _log)).to.be.equal(true);
+                },
+                err => {
+                    expect(err).to.be.null;
+                }
+            ).finally(done);
+        }
     });
 
 });
