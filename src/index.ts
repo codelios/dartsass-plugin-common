@@ -13,3 +13,4 @@ export { Prefixer } from './autoprefix';
 export { Watcher, watchDirectory, unwatchDirectory } from './watcher';
 export { CodeNotImplemented } from './compiler';
 export { ProcessOutput } from './run';
+export { xformPath } from './util';
