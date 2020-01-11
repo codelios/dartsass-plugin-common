@@ -6,7 +6,6 @@
 'use strict';
 import 'mocha';
 import { getVersions } from '../src/autoprefix';
-import { getBufLog } from './log';
 import { expect } from 'chai';
 
 describe('autoprefix' , () => {

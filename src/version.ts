@@ -7,3 +7,7 @@
 export interface Info {
     info: string;
 }
+
+export interface Version {
+    version: string;
+}
