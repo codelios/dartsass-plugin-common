@@ -4,9 +4,12 @@
 // https://opensource.org/licenses/MIT
 'use strict';
 
-
 import postcss = require('postcss');
 import autoprefixer = require('autoprefixer');
+import browserslist = require('browserslist');
+
+import { ILog } from './log';
+import { Info } from './version';
 
 export class Prefixer {
 
@@ -39,4 +42,19 @@ export class Prefixer {
             }
         });
     }
+}
+
+
+
+export function libVersions(_log: ILog) {
+    const postcssInfo = postcss as unknown as Info;
+    _log.appendLine(`PostCSS: ${postcssInfo.info}`);
+
+    const autoprefixerInfo = autoprefixer as unknown as Info;
+    _log.appendLine(`autoprefixer: ${autoprefixerInfo.info}`);    
+
+    const browserslistInfo = browserslist as unknown as Info;
+    _log.appendLine(`browserslist: ${browserslistInfo.info}`);    
+
+    
 }

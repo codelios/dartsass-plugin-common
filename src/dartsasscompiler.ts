@@ -16,10 +16,7 @@ import { getOutputCSS, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSS, writeToFile } from './writer';
 import { ProcessOutput } from './run';
 import { CodeNotImplemented } from './compiler';
-
-export interface Info {
-    info: string;
-}
+import { Info } from './version';
 
 var NoWatchOutput: ProcessOutput = {
     pid: -1,
