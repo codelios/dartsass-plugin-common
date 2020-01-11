@@ -8,7 +8,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { CompilerConfig } from '../src/config';
 import { getNullLog, getConsoleLog } from './log';
-import { Watcher } from '../src/watcher';
+import { Watcher, watchDirectory, unwatchDirectory } from '../src/watcher';
 
 var path = require('path');
 
@@ -76,4 +76,12 @@ describe('doLaunch' , () => {
         }
     });
 
+    it('watchDirectoryCycle', () => {
+        const config = new CompilerConfig();
+        const srcdir = path.join(__dirname, 'input');
+        watchDirectory(srcdir, config);
+        expect(config.watchDirectories.length).to.be.equal(1);
+        unwatchDirectory(srcdir, config);
+        expect(config.watchDirectories.length).to.be.equal(0);
+    });
 });
