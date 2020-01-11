@@ -12,9 +12,9 @@ import { Watcher } from '../src/watcher';
 
 var path = require('path');
 
-describe('Watcher' , () => {
+describe('doLaunch' , () => {
 
-    it('watch compressed = false', (done) => {
+    it('doLaunch compressed = false', (done) => {
         const watcher = new Watcher();
         const config = new CompilerConfig();
         config.targetDirectory = "out";
@@ -22,14 +22,12 @@ describe('Watcher' , () => {
         const _log = getNullLog();
         const srcdir = path.join(__dirname, 'input');
         config.disableMinifiedFileGeneration = true;
-        watcher.Watch(srcdir, __dirname, config, _log).then(
+        watcher.doLaunch(srcdir, __dirname, config, _log).then(
             (result) => {
                 const watchList = watcher.GetWatchList();
                 expect(watchList.size).to.be.equal(1);
-                expect(watcher.Verify()).to.be.equal(0);
                 expect(watcher.ClearWatch(srcdir, __dirname, _log)).to.be.true;
                 expect(watchList.size).to.be.equal(0);
-                expect(watcher.Verify()).to.be.equal(0);
             },
             err => {
                 expect(err).to.be.null;
@@ -37,21 +35,19 @@ describe('Watcher' , () => {
         ).finally(done);
     });
 
-    it('watch compressed = true', (done) => {
+    it('doLaunch compressed = true', (done) => {
         const watcher = new Watcher();
         const config = new CompilerConfig();
         config.targetDirectory = "out";
         config.sassBinPath = "/usr/local/bin/sass";
         const _log = getNullLog();
         const srcdir = path.join(__dirname, 'input');
-        watcher.Watch(srcdir, __dirname, config, _log).then(
+        watcher.doLaunch(srcdir, __dirname, config, _log).then(
             (result) => {
                 const watchList = watcher.GetWatchList();
                 expect(watchList.size).to.be.equal(1);
-                expect(watcher.Verify()).to.be.equal(0);
                 expect(watcher.ClearWatch(srcdir, __dirname, _log)).to.be.true;
                 expect(watchList.size).to.be.equal(0);
-                expect(watcher.Verify()).to.be.equal(0);
             },
             err => {
                 expect(err).to.be.null;
@@ -59,25 +55,16 @@ describe('Watcher' , () => {
         ).finally(done);
     });
 
-    it('relaunch', (done) => {
+    it('relaunch', () => {
         const watcher = new Watcher();
         const config = new CompilerConfig();
         config.targetDirectory = "out";
         config.sassBinPath = "/usr/local/bin/sass";
         const _log = getConsoleLog();
         const srcdir = path.join(__dirname, 'input');
-        watcher.Watch(srcdir, __dirname, config, _log).then(
-            (result) => {
-                let watchList = watcher.GetWatchList();
-                expect(watchList.size).to.be.equal(1);
-                expect(watcher.Verify()).to.be.equal(0);
-                watcher.Relaunch(__dirname, config, _log);
-            },
-            err => {
-                expect(err).to.be.null;
-            }
-        ).finally(done);
+        config.watchDirectories.push(srcdir);
+        watcher.Relaunch(__dirname, config, _log);
+        expect(watcher.ClearWatchDirectory(srcdir, _log)).to.be.equal(true);
     });
-
 
 });

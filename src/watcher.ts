@@ -18,7 +18,7 @@ export class Watcher {
     constructor() {
     }
 
-    public Watch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
+    public doLaunch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
         const srcdir =  xformPath(projectRoot, _srcdir);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
@@ -64,39 +64,13 @@ export class Watcher {
         this.watchList.clear();
     }
 
-    doVerify(pid: number): boolean {
-        // TODO: Check if the pid is still running so it can be cleaned up
-        return true;
-    }
-
     /**
-     * Refresh verifies if the processes represented by the PID are still running.
-     *
-     * Returns the number of processes that do not run anymore.
-     */
-    public Refresh(): number {
-        const self = this;
-        const toDelete = new Array<string>();
-        this.watchList.forEach((value: number, key: string) => {
-            if (!self.doVerify(value)) {
-                toDelete.push(key);
-                // Since process is not running anymore just delete it from the watch list
-            }
-        });
-        toDelete.forEach(value => {
-            self.watchList.delete(value);
-        })
-        return toDelete.length;
-    }
-
-    /**
-     * Relaunch relaunches all the processes running
+     * Relaunch relaunches all the watch processes for the watch directories
      */
     public Relaunch(projectRoot: string, config: CompilerConfig, _log: ILog) {
-        const keys = Array.from(this.watchList.keys());
         this.ClearAll(_log);
-        for (const _srcdir of keys) {
-            this.Watch(_srcdir, projectRoot, config, _log).then(
+        for (const _srcdir of config.watchDirectories) {
+            this.doLaunch(_srcdir, projectRoot, config, _log).then(
                 value => {
                 },
                 err => {
@@ -104,11 +78,36 @@ export class Watcher {
                 }
             );
         }
-
     }
 
     public GetWatchList(): Map<string, number> {
         return this.watchList;
     }
 
+}
+
+export function watchDirectory(srcdir: string, config: CompilerConfig) : Promise<string> {
+    return  new Promise<string>(function(resolve, reject) {
+        for(const watchDir of config.watchDirectories) {
+            if (watchDir === srcdir) {
+                reject(`${watchDir} already being watched`);
+                return;
+            }
+        }
+        config.watchDirectories.push(srcdir);
+        resolve(`${srcdir} added successfully`);
+    });
+}
+
+export function unwatchDirectory(srcdir: string, config: CompilerConfig) : Promise<string> {
+    return  new Promise<string>(function(resolve, reject) {
+        for(var i = 0; i < config.watchDirectories.length; ++i) {
+            if (config.watchDirectories[i] === srcdir) {
+                config.watchDirectories.splice(i, 1);
+                resolve(`${srcdir} unwatched successfully`);
+                return;
+            }
+        }
+        reject(`${srcdir} not being watched before`);
+    });
 }
