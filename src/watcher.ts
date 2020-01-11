@@ -58,7 +58,7 @@ export class Watcher {
 
     public ClearAll(_log: ILog) {
         this.watchList.forEach((value: number, key: string) => {
-            _log.appendLine(`Unwatching ${key}`);
+            _log.appendLine(`Unwatching ${key} with pid ${value}`);
             killProcess(value);
         });
         this.watchList.clear();
