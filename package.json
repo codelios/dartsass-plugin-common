@@ -18,21 +18,21 @@
         "test": "npm run dev && mocha --timeout 5000 -r ts-node/register __tests__/**/*.spec.ts"
     },
     "dependencies": {
-        "sass": "1.24.4",
+        "sass": "1.24.5",
         "@types/sass": "1.16.0",
         "fibers": "4.0.2",
         "@types/fibers": "3.1.0",
-        "autoprefixer": "9.7.3",
+        "autoprefixer": "9.7.4",
         "@types/autoprefixer": "9.6.1",
         "postcss": "7.0.26",
         "browserslist": "4.8.3",
         "@types/mkdirp": "0.5.2",
         "mkdirp": "0.5.1",
-        "typescript": "3.7.4"
+        "typescript": "3.7.5"
     },
     "devDependencies": {
-        "@types/node": "12.12.21",
-        "ts-node": "8.6.1",
+        "@types/node": "13.1.7",
+        "ts-node": "8.6.2",
         "mocha": "7.0.0",
         "@types/mocha": "5.2.7",
         "chai": "4.2.0",
