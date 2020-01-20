@@ -17,10 +17,10 @@ RUN npm install -g sass@1.19.0
 ENV TYPESCRIPT_VERSION=3.7.5
 RUN npm install -g typescript@${TYPESCRIPT_VERSION}
 ARG DEVEL_USER=develop
-RUN cat /etc/os-release
-RUN adduser -g "" -D  ${DEVEL_USER} &&  \
-    adduser ${DEVEL_USER} node
-RUN id ${DEVEL_USER}
+RUN cat /etc/os-release && \
+    adduser -g "" -D  ${DEVEL_USER} &&  \
+    adduser ${DEVEL_USER} node && \
+    id ${DEVEL_USER}
 
 USER ${DEVEL_USER}
 WORKDIR /home/${DEVEL_USER}
