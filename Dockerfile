@@ -1,11 +1,10 @@
-# docker build -t dartsass-plugin-common:10.18.0-alpine .
+# docker build -t dartsass-plugin-common:12.14.1-alpine3.11 .
 
 # https://hub.docker.com/_/node?tab=tags
-ARG NODE_VERSION=10.18.0-alpine
+ARG NODE_VERSION=12.14.1-alpine3.11
 FROM node:${NODE_VERSION}
 RUN apk add python make g++
-RUN node --version
-RUN npm --version
+RUN node --version && npm --version
 RUN npm install -g npm
 
 # The version of 1.19.0 has no significance except that it is not the
@@ -18,9 +17,8 @@ ENV TYPESCRIPT_VERSION=3.7.5
 RUN npm install -g typescript@${TYPESCRIPT_VERSION}
 ARG DEVEL_USER=develop
 RUN cat /etc/os-release
-RUN adduser -g "" -D  ${DEVEL_USER}
-
-RUN adduser ${DEVEL_USER} node
+RUN adduser -g "" -D  ${DEVEL_USER} &&  \
+    adduser ${DEVEL_USER} node
 RUN id ${DEVEL_USER}
 
 USER ${DEVEL_USER}

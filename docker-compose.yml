@@ -2,6 +2,6 @@ version: '3'
 services:
   web:
     restart: "always"
-    image: "dartsass-plugin-common:10.18.0-alpine"
+    image: "dartsass-plugin-common:12.14.1-alpine3.11"
     volumes:
       - /opt/code/src/github.com/malvahq/dartsass-plugin-common:/tmp/web
