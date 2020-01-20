@@ -10,7 +10,8 @@ RUN npm install -g npm
 # The version of 1.19.0 has no significance except that it is not the
 # latest version of sass
 # ( see package.json to confirm the latest version of sass ).
-# Used primarily for testing purposes only.
+# This binary inside the container image is used
+# primarily for testing purposes only.
 RUN npm install -g sass@1.19.0
 
 ENV TYPESCRIPT_VERSION=3.7.5
