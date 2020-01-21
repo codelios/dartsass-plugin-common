@@ -9,13 +9,15 @@ RUN echo "Updated on Jan 21 2020" && \
     node --version && npm --version && \
     npm install -g npm
     
+ARG DEVEL_USER=develop
+ARG TYPESCRIPT_VERSION=3.7.5
+
 # The version of sass 1.19.0 has no significance except that it is not the
 # latest version of sass
 # ( see package.json to confirm the latest version of sass ).
 # This binary inside the container image is used
 # primarily for testing purposes only.
-ARG DEVEL_USER=develop
-ENV TYPESCRIPT_VERSION=3.7.5
+ARG SASS_VERSION=1.19.0
 RUN npm install -g sass@1.19.0 && \
     npm install -g typescript@${TYPESCRIPT_VERSION} && \
     cat /etc/os-release && \
