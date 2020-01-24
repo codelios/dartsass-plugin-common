@@ -82,6 +82,11 @@ export function getOutputCSS(document: IDocument, config : CompilerConfig, _log:
 
 export function getOutputMinifiedCSS(document: IDocument, config: CompilerConfig, _log: ILog): string {
     const targetMinifiedDirectory = inferTargetMinifiedCSSDirectory(document, config);
+    const targetDirectory = inferTargetCSSDirectory(document, config);
+    let extension = '.min.css';
+    if (targetDirectory !== targetMinifiedDirectory) {
+        extension = '.css';
+    }
     const fileonly = document.getFileOnly();
-    return path.join(targetMinifiedDirectory, fileonly + '.min.css');
+    return path.join(targetMinifiedDirectory, fileonly + extension);
 }

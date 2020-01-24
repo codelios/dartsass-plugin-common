@@ -122,4 +122,23 @@ describe('getOutputMinifiedCSS function', () => {
         const result = getOutputMinifiedCSS(document, config, _log);
       expect(result).to.equal('/tmp/abc.min.css');
     });
+
+    it('targetDirectory != targetMinifiedDirectory', () => {
+      const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
+      const config = new CompilerConfig();
+      config.targetMinifiedDirectory =  "dist";
+      config.targetDirectory = "out";
+      const _log = getNullLog();
+      const result = getOutputMinifiedCSS(document, config, _log);
+      expect(result).to.equal('/tmp/dist/abc.css');
+    });    
+    it('targetDirectory == targetMinifiedDirectory', () => {
+      const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
+      const config = new CompilerConfig();
+      config.targetDirectory = "out";
+      const _log = getNullLog();
+      const result = getOutputMinifiedCSS(document, config, _log);
+      expect(result).to.equal('/tmp/out/abc.min.css');
+    });    
+
 });
