@@ -35,7 +35,7 @@ export class Watcher {
                 return self.doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log);
             } else {
                 _log.appendLine(`Failed to launch watcher for minified files since targetMinifiedDirectory \
-                    ${targetMinifiedDirectory} same as targetDirectory ${targetDirectory}`);
+                    ${targetMinifiedDirectory} same as targetDirectory ${targetDirectory}. Check if property targetMinifiedDirectory is set and not same as targetDirectory property. `);
                 return new Promise<ProcessOutput>(function(resolve, reject) {
                     const processOutput: ProcessOutput = {
                         code: 0,
