@@ -67,7 +67,7 @@ describe('inferTargetMinifiedCSSDirectory function', () => {
       expect(result).to.equal('/tmp/test-absolute');
     });
 
-    it('inferTargetMinifiedCSSDirectory for empty targetDirectory and valid targetMinifiedDirectory', () => {
+    it('inferTargetMinifiedCSSDirectory for empty targetMinifiedDirectory and valid targetDirectory', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
         config.targetDirectory =  "out";
