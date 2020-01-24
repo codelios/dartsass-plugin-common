@@ -23,7 +23,7 @@ export function getWatchMinifiedTargetDirectory(srcdir: string, projectRoot: str
     if (config.targetMinifiedDirectory.length > 0) {
         targetMinifiedDirectory = xformPath(projectRoot, config.targetMinifiedDirectory);
     }
-    if (targetMinifiedDirectory.length == 0 && config.targetDirectory.length > 0) {
+    if (config.targetMinifiedDirectory.length === 0 && config.targetDirectory.length > 0) {
         targetMinifiedDirectory = xformPath(projectRoot, config.targetDirectory);
     }
     return targetMinifiedDirectory;
@@ -44,7 +44,7 @@ export function inferTargetMinifiedCSSDirectory(document: IDocument, config: Com
     if (config.targetMinifiedDirectory.length > 0) {
         targetMinifiedDirectory = xformPath(projectRoot, config.targetMinifiedDirectory);
     } 
-    if (config.targetMinifiedDirectory.length == 0 && config.targetDirectory.length > 0) {
+    if (config.targetMinifiedDirectory.length === 0 && config.targetDirectory.length > 0) {
         targetMinifiedDirectory = xformPath(projectRoot, config.targetDirectory);
     }
     return targetMinifiedDirectory;
