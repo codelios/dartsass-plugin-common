@@ -11,6 +11,7 @@ import { ProcessOutput, killProcess } from './run';
 import { xformPath } from './util';
 import { getCurrentCompiler } from './select';
 import { ISassCompiler } from './compiler';
+import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory } from './target';
 
 export class Watcher {
 
@@ -19,12 +20,44 @@ export class Watcher {
     constructor() {
     }
 
-    public doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
+    doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
         config: CompilerConfig, minified: boolean, _log: ILog): Promise<ProcessOutput> {
         return compiler.watch(srcdir, projectRoot, config, minified, _log);
     }
 
-    public doLaunch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
+    doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
+        config: CompilerConfig, _log: ILog): Promise<ProcessOutput> {
+        const self = this;
+        if (!config.disableMinifiedFileGeneration) {
+            const targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
+            const targetMinifiedDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
+            if (targetDirectory !== targetMinifiedDirectory) {
+                return self.doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log);
+            } else {
+                _log.appendLine(`Failed to launch watcher for minified files since targetMinifiedDirectory \
+                    ${targetMinifiedDirectory} same as targetDirectory ${targetDirectory}`);
+                return new Promise<ProcessOutput>(function(resolve, reject) {
+                    const processOutput: ProcessOutput = {
+                        code: 0,
+                        pid: 0,
+                        msg: 'Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory'
+                    }
+                    resolve(processOutput);
+                });            
+            }
+        } else {
+            return new Promise<ProcessOutput>(function(resolve, reject) {
+                const processOutput: ProcessOutput = {
+                    code: 0,
+                    pid: 0,
+                    msg: 'disableMinifiedFileGeneration is set to true'
+                }
+                resolve(processOutput);
+            });
+        }
+    }
+
+    doLaunch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
         const srcdir =  xformPath(projectRoot, _srcdir);
         const compiler = getCurrentCompiler(config, _log);
         const self = this;
@@ -38,21 +71,19 @@ export class Watcher {
                 (value: ProcessOutput) => {
                     const pid1 = value.pid;
                     self.watchList.set(srcdir, [pid1]);
-                    if (!config.disableMinifiedFileGeneration) {
-                        self.doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log).then(
+                    self.doMinifiedLaunch(compiler, srcdir, projectRoot, config, _log).then(
                             (value2: ProcessOutput) => {
-                                self.watchList.set(srcdir, [pid1, value2.pid]);
-                                resolve('Good');
+                                if (value2.pid > 0) {
+                                    self.watchList.set(srcdir, [pid1, value2.pid]);
+                                }
+                                resolve(`Good`);
                             },
                             (err:ProcessOutput) => {
                                 killProcess(pid1);
                                 self.watchList.delete(srcdir);
                                 reject(err.msg);
                             }
-                        );
-                    } else {
-                        resolve('Good');
-                    }
+                    );
                 },
                 (err:ProcessOutput) => {
                     reject(err.msg);
