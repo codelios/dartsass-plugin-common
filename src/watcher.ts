@@ -10,27 +10,47 @@ import { ILog } from './log';
 import { ProcessOutput, killProcess } from './run';
 import { xformPath } from './util';
 import { getCurrentCompiler } from './select';
+import { ISassCompiler } from './compiler';
 
 export class Watcher {
 
-    watchList: Map<string, number>  = new Map<string, number>();
+    watchList: Map<string, Array<number>>  = new Map<string, Array<number>>();
 
     constructor() {
     }
 
+    public doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
+        config: CompilerConfig, minified: boolean, _log: ILog): Promise<ProcessOutput> {
+        return compiler.watch(srcdir, projectRoot, config, minified, _log);
+    }
+
     public doLaunch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
         const srcdir =  xformPath(projectRoot, _srcdir);
+        const compiler = getCurrentCompiler(config, _log);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
-            const pid = self.watchList.get(srcdir);
-            if (pid !== null && pid !== undefined) {
-                reject(`${srcdir} already being watched ( pid ${pid} )`);
+            const pids = self.watchList.get(srcdir);
+            if (pids !== null && pids !== undefined) {
+                reject(`${srcdir} already being watched ( pids ${pids} )`);
                 return;
             }
-            getCurrentCompiler(config, _log).watch(srcdir, projectRoot, config, _log).then(
+            self.doSingleLaunch(compiler, srcdir, projectRoot, config, false, _log).then(
                 (value: ProcessOutput) => {
-                    self.watchList.set(srcdir, value.pid);
-                    resolve('Good');
+                    const pid1 = value.pid;
+                    self.watchList.set(srcdir, [pid1]);
+                    if (!config.disableMinifiedFileGeneration) {
+                        self.doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log).then(
+                            (value2: ProcessOutput) => {
+                                self.watchList.set(srcdir, [pid1, value2.pid]);
+                                resolve('Good');
+                            },
+                            (err:ProcessOutput) => {
+                                reject(err.msg);
+                            }
+                        );
+                    } else {
+                        resolve('Good');
+                    }
                 },
                 (err:ProcessOutput) => {
                     reject(err.msg);
@@ -40,12 +60,14 @@ export class Watcher {
     }
 
     public ClearWatchDirectory(srcdir: string, _log: ILog) : boolean {
-        const pid = this.watchList.get(srcdir);
+        const pids = this.watchList.get(srcdir);
         let cleared = false;
-        if (pid !== null && pid !== undefined) {
-            killProcess(pid);
-            cleared = true;
-            _log.appendLine(`About to unwatch ${srcdir} with pid ${pid}`);
+        if (pids !== null && pids !== undefined) {
+            pids.forEach(function(value: number) {
+                killProcess(value);
+                cleared = true;
+                _log.appendLine(`About to unwatch ${srcdir} with pid ${value}`);
+            });
         }
         this.watchList.delete(srcdir);
         return cleared;
@@ -57,9 +79,11 @@ export class Watcher {
     }
 
     public ClearAll(_log: ILog) {
-        this.watchList.forEach((value: number, key: string) => {
-            _log.appendLine(`Unwatching ${key} with pid ${value}`);
-            killProcess(value);
+        this.watchList.forEach((pids: Array<number>, key: string) => {
+            pids.forEach(function(value: number) {
+                _log.appendLine(`Unwatching ${key} with pid ${value}`);
+                killProcess(value);
+            });
         });
         this.watchList.clear();
     }
@@ -76,7 +100,7 @@ export class Watcher {
         return promises;
     }
 
-    public GetWatchList(): Map<string, number> {
+    public GetWatchList(): Map<string, Array<number>> {
         return this.watchList;
     }
 

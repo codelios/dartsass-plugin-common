@@ -112,16 +112,14 @@ export class NativeCompiler {
         return result;
     }
 
-    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
-        const compressed = !config.disableMinifiedFileGeneration;
-        const args = this.doGetArgs(projectRoot, config, compressed);
+    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, minified: boolean, _log: ILog) : Promise<ProcessOutput> {
+        const args = this.doGetArgs(projectRoot, config, minified);
         args.push('--watch');
         let targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
-        if (compressed) {
+        if (minified) {
             targetDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
         }
         args.push(util.format("%s:%s", srcdir, targetDirectory));
-
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
         _log.appendLine(`Watching ${srcdir}. Exec ${sassBinPath} ${args.join('  ')}`);
         return RunDetached(sassBinPath, args, _log);
