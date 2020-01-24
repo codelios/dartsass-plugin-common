@@ -45,6 +45,8 @@ export class Watcher {
                                 resolve('Good');
                             },
                             (err:ProcessOutput) => {
+                                killProcess(pid1);
+                                self.watchList.delete(srcdir);
                                 reject(err.msg);
                             }
                         );
