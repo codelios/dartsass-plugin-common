@@ -100,6 +100,14 @@ describe('safeMkdir function', () => {
         const result = safeMkdir("/tmp/abc");
         expect(result).to.be.null;
     });
+    it('Create normal directory - existing', () => {
+      const repeatPath = "/tmp/abcrepeat";
+      let result = safeMkdir(repeatPath);
+      expect(result).to.be.null;
+      result = safeMkdir(repeatPath);
+      expect(result).to.be.null;
+    });
+
 });
 describe('getOutputCSS function', () => {
 
