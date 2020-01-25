@@ -58,6 +58,9 @@ export function safeMkdir(directory: string): any {
         fs.mkdirSync(directory, { recursive: true })
         return null;
     } catch (err) {
+        if (err.code === 'EEXIST') {
+            return null;
+        }
         return err;
     }
 }
