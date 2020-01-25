@@ -8,7 +8,7 @@ import { CompilerConfig } from './config';
 import { xformPath } from './util';
 import { ILog } from './log';
 import { IDocument } from './document';
-import mkdirp from "mkdirp";
+import * as fs from 'fs';
 
 export function getWatchTargetDirectory(srcdir: string, projectRoot: string, config: CompilerConfig): string {
     let targetDirectory = srcdir;
@@ -53,7 +53,9 @@ export function inferTargetMinifiedCSSDirectory(document: IDocument, config: Com
 
 export function safeMkdir(directory: string): any {
     try {
-        mkdirp.sync(directory);
+        // https://stackoverflow.com/questions/31645738/how-to-create-full-path-with-nodes-fs-mkdirsync
+        // Since nodejs 10.12.0
+        fs.mkdirSync(directory, { recursive: true })
         return null;
     } catch (err) {
         return err;
