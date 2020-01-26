@@ -51,7 +51,7 @@ export function inferTargetMinifiedCSSDirectory(document: IDocument, config: Com
 }
 
 
-export function safeMkdir(directory: string): any {
+function safeMkdir(directory: string): any {
     try {
         // https://stackoverflow.com/questions/31645738/how-to-create-full-path-with-nodes-fs-mkdirsync
         // Since nodejs 10.12.0
