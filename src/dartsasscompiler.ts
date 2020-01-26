@@ -116,7 +116,7 @@ export class DartSassCompiler {
                         value => resolve(value),
                         err => reject(err)
                     )
-                    if (!(result.map === null || result.map === undefined)) {
+                    if (!(result.map === null || result.map === undefined) && !config.disableSourceMap) {
                         writeToFile(output+'.map', result.map, _log).then(
                             value => {},
                             err => reject(err)
