@@ -30,7 +30,7 @@
         "typescript": "3.7.5"
     },
     "devDependencies": {
-        "@types/node": "13.5.2",
+        "@types/node": "13.7.0",
         "ts-node": "8.6.2",
         "mocha": "7.0.1",
         "@types/mocha": "7.0.1",
