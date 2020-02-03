@@ -5,7 +5,7 @@ ARG NODE_VERSION=12.14.1-alpine3.11
 FROM node:${NODE_VERSION}
 RUN apk add python make g++
     
-RUN echo "Updated on Jan 21 2020" && \
+RUN echo "Updated on Feb 3 2020" && \
     node --version && npm --version && \
     npm install -g npm
     
