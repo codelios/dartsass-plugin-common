@@ -4,4 +4,4 @@ services:
     restart: "always"
     image: "dartsass-plugin-common:12.14.1-alpine3.11"
     volumes:
-      - /opt/code/src/github.com/malvahq/dartsass-plugin-common:/tmp/web
+      - /opt/code/src/github.com/heronci/dartsass-plugin-common:/tmp/web

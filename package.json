@@ -7,7 +7,7 @@
     "types": "lib/index.d.ts",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/malvahq/dartsass-plugin-common.git"
+        "url": "git+https://github.com/heronci/dartsass-plugin-common.git"
     },
     "scripts": {
         "sass": "sass",
