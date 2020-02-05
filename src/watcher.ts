@@ -65,6 +65,7 @@ export class Watcher {
                     const pid1 = value.pid;
                     self.watchList.set(srcdir, [pid1]);
                     if (config.disableMinifiedFileGeneration) {
+                        resolve(`Done`);
                         return;
                     }
                     doMinifiedLaunch(compiler, srcdir, projectRoot, config, _log).then(
