@@ -78,15 +78,15 @@ export class Watcher {
                                     resolve(value2.msg);
                                 }
                             },
-                            (err:ProcessOutput) => {
+                            err => {
                                 killProcess(pid1);
                                 self.watchList.delete(srcdir);
-                                reject(err.msg);
+                                reject(err);
                             }
                     );
                 },
-                (err:ProcessOutput) => {
-                    reject(err.msg);
+                err => {
+                    reject(err);
                 }
             );
         });

@@ -47,6 +47,10 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
         });
         // and unref() somehow disentangles the child's event loop from the parent's:
         prc.unref();
+        if (prc.killed) {
+            reject(`Detached Process ${cmd} killed`);
+            return;
+        }
         _log.appendLine(`Detached process ${cmd} launched with pid ${prc.pid}`);
         if (prc.stdout) {
             prc.stdout.setEncoding('utf8');
