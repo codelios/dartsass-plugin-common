@@ -75,8 +75,8 @@ export class NativeCompiler {
                                 Run(sassBinPath, self.getArgs(document, config, minifiedOutput, true), _log).then(
                                     value => {
                                         autoPrefixCSSFile(minifiedOutput, minifiedOutput, config,  _log).then(
-                                            value => {
-                                                resolve(value)
+                                            newValue => {
+                                                resolve(value + newValue)
                                             },
                                             err => reject(err)
                                         )
