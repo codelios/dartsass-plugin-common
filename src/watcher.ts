@@ -31,7 +31,6 @@ function doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: 
             const processOutput: ProcessOutput = {
                 code: 0,
                 pid: 0,
-                msg: 'Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory',
                 killed: false
             }
             resolve(processOutput);
@@ -86,7 +85,7 @@ export class Watcher {
                                     self.watchList.set(srcdir, [pid1, value2.pid]);
                                     resolve(`Good`);
                                 } else {
-                                    resolve(value2.msg);
+                                    resolve('Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory');
                                 }
                             },
                             err => {

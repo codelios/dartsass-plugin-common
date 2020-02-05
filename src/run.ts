@@ -9,10 +9,8 @@ import { SIGINT } from 'constants';
 
 export interface ProcessOutput {
     code: number;
-
+    
     pid: number;
-
-    msg: string;
 
     killed: boolean;
 }
@@ -68,7 +66,6 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
         const processOutput: ProcessOutput = {
             code: 0,
             pid: prc.pid,
-            msg: '',
             killed: prc.killed
         }
         resolve(processOutput);

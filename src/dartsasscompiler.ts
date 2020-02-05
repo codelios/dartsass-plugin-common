@@ -21,7 +21,6 @@ import { Info } from './version';
 var NoWatchOutput: ProcessOutput = {
     pid: -1,
     code: CodeNotImplemented,
-    msg: 'Watch Not implemented in built-in sass package. Check if sassbinPath is set.',
     killed: false
 };
 
