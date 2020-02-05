@@ -48,6 +48,7 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
         // and unref() somehow disentangles the child's event loop from the parent's:
         prc.unref();
         if (prc.killed) {
+            _log.warning(`Detached Process ${cmd} killed`);
             reject(`Detached Process ${cmd} killed`);
             return;
         }
