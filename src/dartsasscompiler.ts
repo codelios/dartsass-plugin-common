@@ -15,14 +15,7 @@ import { ILog } from './log';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSS, writeToFile } from './writer';
 import { ProcessOutput } from './run';
-import { CodeNotImplemented } from './compiler';
 import { Info } from './version';
-
-var NoWatchOutput: ProcessOutput = {
-    pid: -1,
-    code: CodeNotImplemented,
-    killed: false
-};
 
 /**
  * Compile a given sass file based on DartSass implementation.
@@ -76,7 +69,7 @@ export class DartSassCompiler {
 
     public watch(srcdir: string, projectRoot: string, config: CompilerConfig, minified: boolean, _log: ILog) : Promise<ProcessOutput> {
         return new Promise<ProcessOutput>(function(resolve, reject) {
-            reject(NoWatchOutput);
+            reject(`Please install sass binary in your machine. And set "dartsass.sassBinPath" to the same for watcher to work`);
         });
     }
 

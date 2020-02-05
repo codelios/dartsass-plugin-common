@@ -10,8 +10,6 @@ import { ILog } from './log';
 import { IDocument } from './document';
 import { ProcessOutput } from './run';
 
-export const CodeNotImplemented = 500;
-
 export interface ISassCompiler {
 
     sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string>;

@@ -7,7 +7,7 @@ export { DartSassCompiler } from './dartsasscompiler';
 export { CompilerConfig } from './config';
 export { ILog } from './log';
 export { IDocument } from './document';
-export { ISassCompiler, CodeNotImplemented } from './compiler';
+export { ISassCompiler } from './compiler';
 export { CompileCurrentFile, SayVersion, Validate } from './action';
 export { Prefixer, getVersions } from './autoprefix';
 export { Watcher, watchDirectory, unwatchDirectory } from './watcher';
