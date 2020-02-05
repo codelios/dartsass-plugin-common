@@ -53,7 +53,7 @@ export class NativeCompiler {
         });
     }
 
-    public doCompileDocument(sassBinPath: string, output: string,
+    doCompileDocument(sassBinPath: string, output: string,
         config: CompilerConfig, _log: ILog, args: string[]): Promise<string> {
         return new Promise(function(resolve, reject) {
             Run(sassBinPath, args, _log).then(
