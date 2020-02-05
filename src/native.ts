@@ -53,39 +53,51 @@ export class NativeCompiler {
         });
     }
 
+    public doCompileDocument(sassBinPath: string, output: string,
+        config: CompilerConfig, _log: ILog, args: string[]): Promise<string> {
+        return new Promise(function(resolve, reject) {
+            Run(sassBinPath, args, _log).then(
+                originalValue => {
+                    autoPrefixCSSFile(output, output, config,  _log).then(
+                        autoPrefixvalue => {
+                            resolve(originalValue + autoPrefixvalue);
+                        },
+                        err => reject(err)
+                    )
+               },
+               err => reject(err)
+            );
+        });
+    }
+
     public compileDocument(document: IDocument, config: CompilerConfig,
         _log: ILog): Promise<string> {
             const self = this;
             try {
-                const output = getOutputCSS( document, config, _log);
                 const sassBinPath  = this.getSassBinPath(document.getProjectRoot(), config.sassBinPath)
                 return new Promise(function(resolve, reject) {
-                    Run(sassBinPath, self.getArgs(document, config, output, false), _log).then(
+                    const output = getOutputCSS(document, config, _log);
+                    const args = self.getArgs(document, config, output, false);
+                    self.doCompileDocument(sassBinPath, output, config, _log, args).then(
                         value => {
-                            autoPrefixCSSFile(output, output, config,  _log).then(
-                                value => {
-                                    if (config.disableMinifiedFileGeneration) {
-                                        resolve(value);
-                                    }
-                                },
-                                err => reject(err)
-                            )
                             if (!config.disableMinifiedFileGeneration) {
                                 const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
-                                Run(sassBinPath, self.getArgs(document, config, minifiedOutput, true), _log).then(
-                                    value => {
-                                        autoPrefixCSSFile(minifiedOutput, minifiedOutput, config,  _log).then(
-                                            newValue => {
-                                                resolve(value + newValue)
-                                            },
-                                            err => reject(err)
-                                        )
+                                const minifiedArgs = self.getArgs(document, config, minifiedOutput, true);
+                                self.doCompileDocument(sassBinPath, minifiedOutput, config, _log, minifiedArgs).then(
+                                    minifiedValue => {
+                                        resolve(minifiedValue);
                                     },
-                                    err => reject(err)
-                                )
+                                    err => {
+                                        reject(err);
+                                    }
+                                );
+                            } else {
+                                resolve(value);
                             }
                         },
-                        err => reject(err)
+                        err => {
+                            reject(err);
+                        }
                     )
                 });
             } catch(error) {
