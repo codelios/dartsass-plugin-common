@@ -13,6 +13,8 @@ export interface ProcessOutput {
     pid: number;
 
     msg: string;
+
+    killed: boolean;
 }
 
 export function Run(cmd: string, args: string[], _log: ILog) : Promise<string> {
@@ -45,14 +47,12 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
             detached: true,
             stdio: 'ignore'
         });
-        // and unref() somehow disentangles the child's event loop from the parent's:
         prc.unref();
         if (prc.killed) {
             _log.warning(`Detached Process ${cmd} killed`);
-            reject(`Detached Process ${cmd} killed`);
-            return;
+        } else {
+            _log.appendLine(`Detached process ${cmd} launched with pid ${prc.pid}`);
         }
-        _log.appendLine(`Detached process ${cmd} launched with pid ${prc.pid}`);
         if (prc.stdout) {
             prc.stdout.setEncoding('utf8');
             prc.stdout.on('data', function(data: any) {
@@ -68,7 +68,8 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
         const processOutput: ProcessOutput = {
             code: 0,
             pid: prc.pid,
-            msg: ''
+            msg: '',
+            killed: prc.killed
         }
         resolve(processOutput);
     })

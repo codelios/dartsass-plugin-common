@@ -31,7 +31,8 @@ function doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: 
             const processOutput: ProcessOutput = {
                 code: 0,
                 pid: 0,
-                msg: 'Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory'
+                msg: 'Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory',
+                killed: false
             }
             resolve(processOutput);
         });            
@@ -58,6 +59,10 @@ export class Watcher {
             }
             doSingleLaunch(compiler, srcdir, projectRoot, config, false, _log).then(
                 (value: ProcessOutput) => {
+                    if (value.killed) {
+                        reject(`Unable to launch sass watcher for ${srcdir}. process killed. Please check sassBinPath property.`);
+                        return;
+                    }
                     if (value.pid === undefined || value.pid === null || value.pid <= 0) {
                         self.watchList.delete(srcdir);
                         reject(`Unable to launch sass watcher for ${srcdir}. pid is undefined. Please check sassBinPath property.`);
@@ -71,6 +76,12 @@ export class Watcher {
                     }
                     doMinifiedLaunch(compiler, srcdir, projectRoot, config, _log).then(
                             (value2: ProcessOutput) => {
+                                if (value2.killed) {
+                                    killProcess(pid1);
+                                    self.watchList.delete(srcdir);
+                                    reject(`Unable to launch minified sass watcher for ${srcdir}. process killed. `);
+                                    return;
+                                }
                                 if (value2.pid !== undefined && value2.pid > 0) {
                                     self.watchList.set(srcdir, [pid1, value2.pid]);
                                     resolve(`Good`);
