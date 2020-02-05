@@ -13,6 +13,42 @@ import { getCurrentCompiler } from './select';
 import { ISassCompiler } from './compiler';
 import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory } from './target';
 
+function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
+    config: CompilerConfig, minified: boolean, _log: ILog): Promise<ProcessOutput> {
+    return compiler.watch(srcdir, projectRoot, config, minified, _log);
+}
+
+function doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
+    config: CompilerConfig, _log: ILog): Promise<ProcessOutput> {
+    if (!config.disableMinifiedFileGeneration) {
+        const targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
+        const targetMinifiedDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
+        if (targetDirectory !== targetMinifiedDirectory) {
+            return doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log);
+        } else {
+            _log.appendLine(`Failed to launch watcher for minified files since targetMinifiedDirectory \
+                ${targetMinifiedDirectory} same as targetDirectory ${targetDirectory}. Check if property targetMinifiedDirectory is set and not same as targetDirectory property. `);
+            return new Promise<ProcessOutput>(function(resolve, reject) {
+                const processOutput: ProcessOutput = {
+                    code: 0,
+                    pid: 0,
+                    msg: 'Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory'
+                }
+                resolve(processOutput);
+            });            
+        }
+    } else {
+        return new Promise<ProcessOutput>(function(resolve, reject) {
+            const processOutput: ProcessOutput = {
+                code: 0,
+                pid: 0,
+                msg: 'disableMinifiedFileGeneration is set to true'
+            }
+            resolve(processOutput);
+        });
+    }
+}
+
 export class Watcher {
 
     watchList: Map<string, Array<number>>  = new Map<string, Array<number>>();
@@ -20,42 +56,6 @@ export class Watcher {
     constructor() {
     }
 
-    doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
-        config: CompilerConfig, minified: boolean, _log: ILog): Promise<ProcessOutput> {
-        return compiler.watch(srcdir, projectRoot, config, minified, _log);
-    }
-
-    doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
-        config: CompilerConfig, _log: ILog): Promise<ProcessOutput> {
-        const self = this;
-        if (!config.disableMinifiedFileGeneration) {
-            const targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
-            const targetMinifiedDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
-            if (targetDirectory !== targetMinifiedDirectory) {
-                return self.doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log);
-            } else {
-                _log.appendLine(`Failed to launch watcher for minified files since targetMinifiedDirectory \
-                    ${targetMinifiedDirectory} same as targetDirectory ${targetDirectory}. Check if property targetMinifiedDirectory is set and not same as targetDirectory property. `);
-                return new Promise<ProcessOutput>(function(resolve, reject) {
-                    const processOutput: ProcessOutput = {
-                        code: 0,
-                        pid: 0,
-                        msg: 'Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory'
-                    }
-                    resolve(processOutput);
-                });            
-            }
-        } else {
-            return new Promise<ProcessOutput>(function(resolve, reject) {
-                const processOutput: ProcessOutput = {
-                    code: 0,
-                    pid: 0,
-                    msg: 'disableMinifiedFileGeneration is set to true'
-                }
-                resolve(processOutput);
-            });
-        }
-    }
 
     doLaunch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
         const srcdir =  xformPath(projectRoot, _srcdir);
@@ -67,11 +67,11 @@ export class Watcher {
                 reject(`${srcdir} already being watched ( pids ${pids} )`);
                 return;
             }
-            self.doSingleLaunch(compiler, srcdir, projectRoot, config, false, _log).then(
+            doSingleLaunch(compiler, srcdir, projectRoot, config, false, _log).then(
                 (value: ProcessOutput) => {
                     const pid1 = value.pid;
                     self.watchList.set(srcdir, [pid1]);
-                    self.doMinifiedLaunch(compiler, srcdir, projectRoot, config, _log).then(
+                    doMinifiedLaunch(compiler, srcdir, projectRoot, config, _log).then(
                             (value2: ProcessOutput) => {
                                 if (value2.pid > 0) {
                                     self.watchList.set(srcdir, [pid1, value2.pid]);
