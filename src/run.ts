@@ -43,7 +43,8 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
     return new Promise(function(resolve, reject) {
         const prc = child.spawn(cmd,  args, {
             detached: true,
-            stdio: 'ignore'
+            stdio: 'ignore',
+            windowsHide: true,
         });
         prc.unref();
         if (prc.killed) {
