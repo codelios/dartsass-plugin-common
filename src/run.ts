@@ -47,7 +47,7 @@ export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<P
             shell: false,
             windowsHide: true,
         });
-        prc.unref();
+        prc.unref(); // Parent should not be waiting for the child process at all
         if (prc.killed) {
             _log.warning(`Detached Process ${cmd} killed`);
         } else {
