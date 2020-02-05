@@ -58,8 +58,9 @@ export class Watcher {
             }
             doSingleLaunch(compiler, srcdir, projectRoot, config, false, _log).then(
                 (value: ProcessOutput) => {
-                    if (value.pid === undefined || value.pid <= 0) {
-                        reject(`Unable to launch sass watcher. pid is undefined. Please check sassBinPath property.`);
+                    if (value.pid === undefined || value.pid === null || value.pid <= 0) {
+                        self.watchList.delete(srcdir);
+                        reject(`Unable to launch sass watcher for ${srcdir}. pid is undefined. Please check sassBinPath property.`);
                         return;
                     }
                     const pid1 = value.pid;
