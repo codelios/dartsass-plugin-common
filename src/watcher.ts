@@ -20,32 +20,21 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 
 function doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
     config: CompilerConfig, _log: ILog): Promise<ProcessOutput> {
-    if (!config.disableMinifiedFileGeneration) {
-        const targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
-        const targetMinifiedDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
-        if (targetDirectory !== targetMinifiedDirectory) {
-            return doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log);
-        } else {
-            _log.appendLine(`Failed to launch watcher for minified files since targetMinifiedDirectory \
-                ${targetMinifiedDirectory} same as targetDirectory ${targetDirectory}. Check if property targetMinifiedDirectory is set and not same as targetDirectory property. `);
-            return new Promise<ProcessOutput>(function(resolve, reject) {
-                const processOutput: ProcessOutput = {
-                    code: 0,
-                    pid: 0,
-                    msg: 'Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory'
-                }
-                resolve(processOutput);
-            });            
-        }
+    const targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
+    const targetMinifiedDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
+    if (targetDirectory !== targetMinifiedDirectory) {
+        return doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log);
     } else {
+        _log.appendLine(`Failed to launch watcher for minified files since targetMinifiedDirectory \
+            ${targetMinifiedDirectory} same as targetDirectory ${targetDirectory}. Check if property targetMinifiedDirectory is set and not same as targetDirectory property. `);
         return new Promise<ProcessOutput>(function(resolve, reject) {
             const processOutput: ProcessOutput = {
                 code: 0,
                 pid: 0,
-                msg: 'disableMinifiedFileGeneration is set to true'
+                msg: 'Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory'
             }
             resolve(processOutput);
-        });
+        });            
     }
 }
 
@@ -75,6 +64,9 @@ export class Watcher {
                     }
                     const pid1 = value.pid;
                     self.watchList.set(srcdir, [pid1]);
+                    if (config.disableMinifiedFileGeneration) {
+                        return;
+                    }
                     doMinifiedLaunch(compiler, srcdir, projectRoot, config, _log).then(
                             (value2: ProcessOutput) => {
                                 if (value2.pid !== undefined && value2.pid > 0) {
