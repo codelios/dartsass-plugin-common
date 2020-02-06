@@ -8,8 +8,7 @@ import * as child from 'child_process';
 import { SIGINT } from 'constants';
 
 export interface ProcessOutput {
-    code: number;
-    
+   
     pid: number;
 
     killed: boolean;
@@ -67,7 +66,6 @@ export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog
             });
         }
         const processOutput: ProcessOutput = {
-            code: 0,
             pid: prc.pid,
             killed: prc.killed
         }

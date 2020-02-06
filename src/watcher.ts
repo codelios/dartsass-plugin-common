@@ -29,7 +29,6 @@ function doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: 
             ${targetMinifiedDirectory} same as targetDirectory ${targetDirectory}. Check if property targetMinifiedDirectory is set and not same as targetDirectory property. `);
         return new Promise<ProcessOutput>(function(resolve, reject) {
             const processOutput: ProcessOutput = {
-                code: 0,
                 pid: 0,
                 killed: false
             }
