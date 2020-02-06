@@ -131,15 +131,15 @@ export class NativeCompiler {
         if (minified) {
             targetDirectory = getWatchMinifiedTargetDirectory(srcdir, config);
         }
-        const relativeSrcDir = getRelativeDirectory(projectRoot, srcdir);
-        args.push(util.format("%s:%s", relativeSrcDir, targetDirectory));
+        args.push(util.format("%s:%s", srcdir, targetDirectory));
         return args
     }
 
     public watch(srcdir: string, projectRoot: string, config: CompilerConfig, minified: boolean, _log: ILog) : Promise<ProcessOutput> {
-        const args = this.doGetWatchArgs(srcdir, projectRoot, config, minified);
+        const relativeSrcDir = getRelativeDirectory(projectRoot, srcdir);
+        const args = this.doGetWatchArgs(relativeSrcDir, projectRoot, config, minified);
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
-        _log.appendLine(`Cwd: ${projectRoot}. Watching ${srcdir}. Exec: ${sassBinPath} ${args.join('  ')}`);
+        _log.appendLine(`Cwd: ${projectRoot}. Watching ${relativeSrcDir} ( ${srcdir} ). Exec: ${sassBinPath} ${args.join('  ')}`);
         return RunDetached(sassBinPath, projectRoot, args, _log);
     }
 
