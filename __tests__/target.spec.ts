@@ -6,7 +6,7 @@
 'use strict';
 import { expect } from 'chai';
 import 'mocha';
-import { inferTargetCSSDirectory, inferTargetMinifiedCSSDirectory,getOutputCSS, getOutputMinifiedCSS, safeMkdir } from '../src/target';
+import { inferTargetCSSDirectory, inferTargetMinifiedCSSDirectory,getOutputCSS, getOutputMinifiedCSS, getRelativeDirectory, safeMkdir } from '../src/target';
 import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
 import { getSassDocument} from './document';
@@ -148,5 +148,14 @@ describe('getOutputMinifiedCSS function', () => {
       const result = getOutputMinifiedCSS(document, config, _log);
       expect(result).to.equal('/tmp/out/abc.min.css');
     });    
+
+});
+
+describe('getRelativeDirectory function', () => {
+
+  it('linux', () => {
+      const result = getRelativeDirectory("/opt/code/src/github.com/heronci/sass-watcher/src/sass", "/opt/code/src/github.com/heronci/sass-watcher/")
+      expect(result).to.equal('src/sass');
+  });
 
 });
