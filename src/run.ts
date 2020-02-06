@@ -14,10 +14,12 @@ export interface ProcessOutput {
     killed: boolean;
 }
 
-export function Run(cmd: string, args: string[], _log: ILog) : Promise<string> {
+export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Promise<string> {
     return new Promise(function(resolve, reject) {
         var output = '';
-        var prc = child.spawn(cmd,  args);
+        var prc = child.spawn(cmd,  args, {
+            cwd: cwd
+        });
         prc.stdout.setEncoding('utf8');
         prc.stdout.on('data', function(data: any) {
             _log.appendLine(`${data}`);

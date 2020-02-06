@@ -32,7 +32,7 @@ export class NativeCompiler {
     public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
         try {
-            return Run(sassBinPath, ['--version'], _log);
+            return Run(sassBinPath, ['--version'], projectRoot, _log);
         } catch(error) {
             return new Promise(function(_, reject) {
                 reject(error.toString());
@@ -54,9 +54,9 @@ export class NativeCompiler {
     }
 
     doCompileDocument(sassBinPath: string, output: string,
-        config: CompilerConfig, _log: ILog, args: string[]): Promise<string> {
+        config: CompilerConfig, cwd: string, _log: ILog, args: string[]): Promise<string> {
         return new Promise(function(resolve, reject) {
-            Run(sassBinPath, args, _log).then(
+            Run(sassBinPath, args, cwd, _log).then(
                 originalValue => {
                     autoPrefixCSSFile(output, output, config,  _log).then(
                         autoPrefixvalue => {
@@ -78,12 +78,12 @@ export class NativeCompiler {
                 return new Promise(function(resolve, reject) {
                     const output = getOutputCSS(document, config, _log);
                     const args = self.getArgs(document, config, output, false);
-                    self.doCompileDocument(sassBinPath, output, config, _log, args).then(
+                    self.doCompileDocument(sassBinPath, output, config, document.getProjectRoot(), _log, args).then(
                         value => {
                             if (!config.disableMinifiedFileGeneration) {
                                 const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
                                 const minifiedArgs = self.getArgs(document, config, minifiedOutput, true);
-                                self.doCompileDocument(sassBinPath, minifiedOutput, config, _log, minifiedArgs).then(
+                                self.doCompileDocument(sassBinPath, minifiedOutput, config, document.getProjectRoot(), _log, minifiedArgs).then(
                                     minifiedValue => {
                                         resolve(minifiedValue);
                                     },
@@ -119,7 +119,7 @@ export class NativeCompiler {
         }
         for (const path of includePaths) {
             result.push("-I");
-            result.push(path);
+            result.push(util.format("\"%s\"", path));
         }
         return result;
     }
@@ -146,7 +146,8 @@ export class NativeCompiler {
     getArgs(document: IDocument, config: CompilerConfig, output: string, minified: boolean): string[] {
         const result = this.doGetArgs(document.getProjectRoot(), config, minified);
         const input = document.getFileName();
-        result.push(util.format("%s:%s", input, output));
+        const base = document.getProjectRoot();
+        result.push(util.format("%s:%s", getRelativeDirectory(base, input), getRelativeDirectory(base,output)));
         return result;
     }
 
