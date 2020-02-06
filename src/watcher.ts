@@ -54,18 +54,18 @@ export class Watcher {
         return new Promise<string>(function(resolve, reject) {
             const pids = self.watchList.get(srcdir);
             if (pids !== null && pids !== undefined) {
-                reject(`${srcdir} already being watched ( pids ${pids} )`);
+                reject(`${relativeSrcDir} ( ${srcdir} ) already being watched ( pids ${pids} )`);
                 return;
             }
             doSingleLaunch(compiler, relativeSrcDir, projectRoot, config, false, _log).then(
                 (value: ProcessOutput) => {
                     if (value.killed) {
-                        reject(`Unable to launch sass watcher for ${srcdir}. process killed. Please check sassBinPath property.`);
+                        reject(`Unable to launch sass watcher for ${relativeSrcDir} ( ${srcdir} ). process killed. Please check sassBinPath property.`);
                         return;
                     }
                     if (value.pid === undefined || value.pid === null || value.pid <= 0) {
                         self.watchList.delete(srcdir);
-                        reject(`Unable to launch sass watcher for ${srcdir}. pid is undefined. Please check sassBinPath property.`);
+                        reject(`Unable to launch sass watcher for ${relativeSrcDir} ( ${srcdir} ). pid is undefined. Please check sassBinPath property.`);
                         return;
                     }
                     const pid1 = value.pid;
@@ -79,14 +79,14 @@ export class Watcher {
                                 if (value2.killed) {
                                     killProcess(pid1);
                                     self.watchList.delete(srcdir);
-                                    reject(`Unable to launch minified sass watcher for ${srcdir}. process killed. `);
+                                    reject(`Unable to launch minified sass watcher for ${relativeSrcDir} ( ${srcdir} ). process killed. `);
                                     return;
                                 }
                                 if (value2.pid !== undefined && value2.pid > 0) {
                                     self.watchList.set(srcdir, [pid1, value2.pid]);
                                     resolve(`Good`);
                                 } else {
-                                    resolve('Failed to launch watcher for minified files since targetMinifiedDirectory same as targetDirectory');
+                                    resolve(`Failed to launch watcher for minified files since targetMinifiedDirectory is the same as targetDirectory for ${relativeSrcDir} ( ${srcdir} )`);
                                 }
                             },
                             err => {
