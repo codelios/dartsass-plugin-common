@@ -13,6 +13,7 @@ describe('autoprefix' , () => {
     it('getVersions', () => {
         const versions = getVersions();
         const output = versions.join(",")
+        console.log(output);
         // expect(output).to.equal('PostCSS');
     });
 });
