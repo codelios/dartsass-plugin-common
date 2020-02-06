@@ -154,8 +154,13 @@ describe('getOutputMinifiedCSS function', () => {
 describe('getRelativeDirectory function', () => {
 
   it('linux', () => {
-      const result = getRelativeDirectory("/opt/code/src/github.com/heronci/sass-watcher/src/sass", "/opt/code/src/github.com/heronci/sass-watcher/")
+      const result = getRelativeDirectory("/opt/code/src/github.com/heronci/sass-watcher/", "/opt/code/src/github.com/heronci/sass-watcher/src/sass")
       expect(result).to.equal('src/sass');
   });
+
+  it('linux-relative', () => {
+    const result = getRelativeDirectory("/opt/code/src/github.com/heronci/sass-watcher/", "src/sass")
+    expect(result).to.equal('src/sass');
+});
 
 });

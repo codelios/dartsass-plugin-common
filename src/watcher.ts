@@ -48,7 +48,7 @@ export class Watcher {
 
     doLaunch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
         const srcdir =  xformPath(projectRoot, _srcdir);
-        const relativeSrcDir = getRelativeDirectory(_srcdir, projectRoot);
+        const relativeSrcDir = getRelativeDirectory(projectRoot, srcdir);
         const compiler = getCurrentCompiler(config, _log);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
