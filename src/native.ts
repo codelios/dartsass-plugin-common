@@ -138,7 +138,7 @@ export class NativeCompiler {
     public watch(srcdir: string, projectRoot: string, config: CompilerConfig, minified: boolean, _log: ILog) : Promise<ProcessOutput> {
         const args = this.doGetWatchArgs(srcdir, projectRoot, config, minified);
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
-        _log.appendLine(`Watching ${srcdir}. Cwd: ${projectRoot}. Exec: ${sassBinPath} ${args.join('  ')}`);
+        _log.appendLine(`Cwd: ${projectRoot}. Watching ${srcdir}. Exec: ${sassBinPath} ${args.join('  ')}`);
         return RunDetached(sassBinPath, projectRoot, args, _log);
     }
 

@@ -11,7 +11,7 @@ import { ProcessOutput, killProcess } from './run';
 import { xformPath } from './util';
 import { getCurrentCompiler } from './select';
 import { ISassCompiler } from './compiler';
-import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory } from './target';
+import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory, getRelativeDirectory } from './target';
 
 function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
     config: CompilerConfig, minified: boolean, _log: ILog): Promise<ProcessOutput> {
@@ -48,6 +48,7 @@ export class Watcher {
 
     doLaunch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
         const srcdir =  xformPath(projectRoot, _srcdir);
+        const relativeSrcDir = getRelativeDirectory(_srcdir, projectRoot);
         const compiler = getCurrentCompiler(config, _log);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
@@ -56,7 +57,7 @@ export class Watcher {
                 reject(`${srcdir} already being watched ( pids ${pids} )`);
                 return;
             }
-            doSingleLaunch(compiler, srcdir, projectRoot, config, false, _log).then(
+            doSingleLaunch(compiler, relativeSrcDir, projectRoot, config, false, _log).then(
                 (value: ProcessOutput) => {
                     if (value.killed) {
                         reject(`Unable to launch sass watcher for ${srcdir}. process killed. Please check sassBinPath property.`);
@@ -73,7 +74,7 @@ export class Watcher {
                         resolve(`Done`);
                         return;
                     }
-                    doMinifiedLaunch(compiler, srcdir, projectRoot, config, _log).then(
+                    doMinifiedLaunch(compiler, relativeSrcDir, projectRoot, config, _log).then(
                             (value2: ProcessOutput) => {
                                 if (value2.killed) {
                                     killProcess(pid1);

@@ -29,6 +29,10 @@ export function getWatchMinifiedTargetDirectory(srcdir: string, config: Compiler
     return targetMinifiedDirectory;
 }
 
+export function getRelativeDirectory(srcdir: string, projectRoot: string) : string {
+    return srcdir
+}
+
 export function inferTargetCSSDirectory(document: IDocument, config: CompilerConfig): string {
     let targetDirectory = path.dirname(document.getFileName());
     const projectRoot = document.getProjectRoot();
