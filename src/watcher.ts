@@ -80,7 +80,7 @@ export class Watcher {
                                     reject(`Unable to launch minified sass watcher for ${srcdir}. process killed. `);
                                     return;
                                 }
-                                if (value2.pid !== undefined && value2.pid > 0) {
+                                if (value2.pid !== undefined && value.pid !== null && value2.pid > 0) {
                                     self.watchList.set(srcdir, [pid1, value2.pid]);
                                     resolve(`Good`);
                                 } else {
