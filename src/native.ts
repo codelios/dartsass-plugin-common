@@ -10,7 +10,7 @@ import { IDocument } from './document';
 import { ILog } from './log';
 import { Run, RunDetached } from './run';
 import { xformPath, xformPaths} from './util';
-import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory, getOutputCSS, getOutputMinifiedCSS} from './target';
+import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory, getOutputCSS, getRelativeDirectory, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSSFile } from './writer';
 import { ProcessOutput } from './run';
 import util from 'util';
@@ -131,7 +131,8 @@ export class NativeCompiler {
         if (minified) {
             targetDirectory = getWatchMinifiedTargetDirectory(srcdir, config);
         }
-        args.push(util.format("%s:%s", srcdir, targetDirectory));
+        const relativeSrcDir = getRelativeDirectory(projectRoot, srcdir);
+        args.push(util.format("%s:%s", relativeSrcDir, targetDirectory));
         return args
     }
 
