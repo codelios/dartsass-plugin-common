@@ -26,7 +26,7 @@ export class NativeCompiler {
     }
 
     getSassBinPath(projectRoot: string, sassBinPath: string): string {
-        return xformPath(projectRoot, sassBinPath)
+        return util.format("\"%s\"", xformPath(projectRoot, sassBinPath))
     }
 
     public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
