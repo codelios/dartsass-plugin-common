@@ -20,8 +20,8 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 
 function doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
     config: CompilerConfig, _log: ILog): Promise<ProcessOutput> {
-    const targetDirectory = getWatchTargetDirectory(srcdir, projectRoot, config);
-    const targetMinifiedDirectory = getWatchMinifiedTargetDirectory(srcdir, projectRoot, config);
+    const targetDirectory = getWatchTargetDirectory(srcdir, config);
+    const targetMinifiedDirectory = getWatchMinifiedTargetDirectory(srcdir, config);
     if (targetDirectory !== targetMinifiedDirectory) {
         return doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log);
     } else {

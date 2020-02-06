@@ -39,9 +39,10 @@ export function Run(cmd: string, args: string[], _log: ILog) : Promise<string> {
     })
 }
 
-export function RunDetached(cmd: string, args: string[], _log: ILog) : Promise<ProcessOutput> {
+export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog) : Promise<ProcessOutput> {
     return new Promise(function(resolve, reject) {
         const prc = child.spawn(cmd,  args, {
+            cwd: cwd,
             detached: true,
             stdio: 'ignore',
             shell: false,

@@ -10,21 +10,21 @@ import { ILog } from './log';
 import { IDocument } from './document';
 import * as fs from 'fs';
 
-export function getWatchTargetDirectory(srcdir: string, projectRoot: string, config: CompilerConfig): string {
+export function getWatchTargetDirectory(srcdir: string,  config: CompilerConfig): string {
     let targetDirectory = srcdir;
     if (config.targetDirectory.length > 0) {
-        targetDirectory = xformPath(projectRoot, config.targetDirectory);
+        targetDirectory = config.targetDirectory;
     }
     return targetDirectory;
 }
 
-export function getWatchMinifiedTargetDirectory(srcdir: string, projectRoot: string, config: CompilerConfig): string {
+export function getWatchMinifiedTargetDirectory(srcdir: string, config: CompilerConfig): string {
     let targetMinifiedDirectory = srcdir;
     if (config.targetMinifiedDirectory.length > 0) {
-        targetMinifiedDirectory = xformPath(projectRoot, config.targetMinifiedDirectory);
+        targetMinifiedDirectory = config.targetMinifiedDirectory;
     }
     if (config.targetMinifiedDirectory.length === 0 && config.targetDirectory.length > 0) {
-        targetMinifiedDirectory = xformPath(projectRoot, config.targetDirectory);
+        targetMinifiedDirectory = config.targetDirectory;
     }
     return targetMinifiedDirectory;
 }
