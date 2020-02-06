@@ -74,13 +74,13 @@ export class Watcher {
                     }
                     doMinifiedLaunch(compiler, srcdir, projectRoot, config, _log).then(
                             (value2: ProcessOutput) => {
-                                if (value2.killed) {
+                                if (value2.killed || value2.pid === undefined || value.pid === null) {
                                     killProcess(pid1);
                                     self.watchList.delete(srcdir);
-                                    reject(`Unable to launch minified sass watcher for ${srcdir}. process killed. `);
+                                    reject(`Unable to launch minified sass watcher for ${srcdir}. process killed - ${value2.killed} / pid (${value2.pid} is null/undefined. `);
                                     return;
                                 }
-                                if (value2.pid !== undefined && value.pid !== null && value2.pid > 0) {
+                                if (value2.pid > 0) {
                                     self.watchList.set(srcdir, [pid1, value2.pid]);
                                     resolve(`Good`);
                                 } else {
