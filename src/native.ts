@@ -119,7 +119,8 @@ export class NativeCompiler {
         }
         for (const path of includePaths) {
             result.push("-I");
-            result.push(util.format("\"%s\"", path));
+            const relativePath = getRelativeDirectory(projectRoot, path);
+            result.push(util.format("\"%s\"", relativePath));
         }
         return result;
     }
@@ -140,7 +141,7 @@ export class NativeCompiler {
         const args = this.doGetWatchArgs(projectRoot, config, srcdir, minified);
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
         const relativeSassBinPath = getRelativeDirectory(projectRoot, sassBinPath);
-        _log.appendLine(`Cwd: ${projectRoot}. Watching ${srcdir} by ${sassBinPath}. Exec: ${relativeSassBinPath} ${args.join('  ')}`);
+        _log.appendLine(`Watching ${srcdir} by ${sassBinPath}. Cwd: ${projectRoot}. Exec: ${relativeSassBinPath} ${args.join('  ')}`);
         return RunDetached(relativeSassBinPath, projectRoot, args, _log);
     }
 
