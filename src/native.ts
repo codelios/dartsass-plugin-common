@@ -32,7 +32,7 @@ export class NativeCompiler {
     public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
         try {
-            return Run(sassBinPath, ['--version'], projectRoot, _log);
+            return Run(sassBinPath, ['--version'], projectRoot, _log, config.debug);
         } catch(error) {
             return new Promise(function(_, reject) {
                 reject(error.toString());
@@ -56,7 +56,7 @@ export class NativeCompiler {
     doCompileDocument(sassBinPath: string, output: string,
         config: CompilerConfig, cwd: string, _log: ILog, args: string[]): Promise<string> {
         return new Promise(function(resolve, reject) {
-            Run(sassBinPath, args, cwd, _log).then(
+            Run(sassBinPath, args, cwd, _log, config.debug).then(
                 originalValue => {
                     autoPrefixCSSFile(output, output, config,  _log).then(
                         autoPrefixvalue => {
@@ -140,9 +140,8 @@ export class NativeCompiler {
     public watch(srcdir: string, projectRoot: string, config: CompilerConfig, minified: boolean, _log: ILog) : Promise<ProcessOutput> {
         const args = this.doGetWatchArgs(projectRoot, config, srcdir, minified);
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
-        const relativeSassBinPath = getRelativeDirectory(projectRoot, sassBinPath);
-        _log.appendLine(`Watching ${srcdir} by ${sassBinPath}. Cwd: ${projectRoot}. Exec: ${relativeSassBinPath} ${args.join('  ')}`);
-        return RunDetached(relativeSassBinPath, projectRoot, args, _log);
+        _log.appendLine(`Watching ${srcdir} by ${sassBinPath}.`);
+        return RunDetached(sassBinPath, projectRoot, args, _log);
     }
 
     getArgs(document: IDocument, config: CompilerConfig, output: string, minified: boolean): string[] {

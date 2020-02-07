@@ -6,6 +6,7 @@
 import { ILog } from './log';
 import * as child from 'child_process';
 import { SIGINT } from 'constants';
+import { getRelativeDirectory } from './target';
 
 export interface ProcessOutput {
    
@@ -14,10 +15,14 @@ export interface ProcessOutput {
     killed: boolean;
 }
 
-export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Promise<string> {
+export function Run(cmd: string, args: string[], cwd: string, _log: ILog, debug: boolean) : Promise<string> {
     return new Promise(function(resolve, reject) {
+        const relativeCmd = getRelativeDirectory(cwd, cmd);
         var output = '';
-        var prc = child.spawn(cmd,  args, {
+        if (debug) {
+            _log.appendLine(`Run: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`);
+        }
+        var prc = child.spawn(relativeCmd,  args, {
             cwd: cwd
         });
         prc.stdout.setEncoding('utf8');
@@ -41,7 +46,9 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Prom
 
 export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog) : Promise<ProcessOutput> {
     return new Promise(function(resolve, reject) {
-        const prc = child.spawn(cmd,  args, {
+        const relativeCmd = getRelativeDirectory(cwd, cmd);
+        _log.appendLine(`RunDetached: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`);
+        const prc = child.spawn(relativeCmd,  args, {
             cwd: cwd,
             detached: true,
             stdio: 'ignore',
