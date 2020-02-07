@@ -112,6 +112,7 @@ export class Watcher {
             });
         } else {
             _log.appendLine(`About to unwatch ${srcdir}. But no watcher launched earlier`);
+            cleared = false;
         }
         this.watchList.delete(srcdir);
         return cleared;
