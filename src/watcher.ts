@@ -152,7 +152,6 @@ export function watchDirectory(srcdir: string, config: CompilerConfig) : Promise
     return  new Promise<string>(function(resolve, reject) {
         for(const watchDir of config.watchDirectories) {
             if (watchDir === srcdir) {
-                // reject(`${watchDir} already being watched`);
                 return;
             }
         }
