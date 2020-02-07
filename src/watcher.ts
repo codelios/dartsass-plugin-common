@@ -110,6 +110,8 @@ export class Watcher {
                 cleared = true;
                 _log.appendLine(`About to unwatch ${srcdir} with pid ${value}`);
             });
+        } else {
+            _log.appendLine(`About to unwatch ${srcdir}. But no watcher launched earlier`);
         }
         this.watchList.delete(srcdir);
         return cleared;
@@ -152,6 +154,7 @@ export function watchDirectory(srcdir: string, config: CompilerConfig) : Promise
     return  new Promise<string>(function(resolve, reject) {
         for(const watchDir of config.watchDirectories) {
             if (watchDir === srcdir) {
+                resolve(`${srcdir} already being watched`);
                 return;
             }
         }
