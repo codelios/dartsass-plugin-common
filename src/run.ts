@@ -27,8 +27,7 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Prom
         });
         prc.stderr.setEncoding('utf8');
         prc.stderr.on('data', function(data: any) {
-            _log.appendLine(`Error: ${data}`);
-            _log.warning(`${data}`);
+            _log.appendLine(`stderr: ${data}`);
         });
         prc.on('exit', function(code: any) {
             if (code === 0) {
@@ -51,7 +50,9 @@ export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog
         });
         prc.unref(); // Parent should not be waiting for the child process at all
         if (prc.killed) {
-            _log.warning(`Detached Process ${cmd} killed`);
+            _log.warning(`Detached Process ${cmd} killed. pid - ${prc.pid}`);
+        } else if (prc.pid === null || prc.pid === undefined) {
+            _log.warning(`Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`);
         } else {
             _log.appendLine(`Detached process ${cmd} launched with pid ${prc.pid}`);
         }
@@ -64,7 +65,7 @@ export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog
         if (prc.stderr) {
             prc.stderr.setEncoding('utf8');
             prc.stderr.on('data', function(data: any) {
-                _log.warning(`${data}`);
+                _log.appendLine(`stderr: ${data}`);
             });
         }
         const processOutput: ProcessOutput = {
