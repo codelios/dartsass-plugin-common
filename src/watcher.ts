@@ -90,12 +90,12 @@ export class Watcher {
                             err => {
                                 killProcess(pid1);
                                 self.watchList.delete(srcdir);
-                                reject(err);
+                                reject(`${srcdir} - ${err}`);
                             }
                     );
                 },
                 err => {
-                    reject(err);
+                    reject(`${srcdir} - ${err}`);
                 }
             );
         });
@@ -112,7 +112,7 @@ export class Watcher {
             });
         } else {
             _log.appendLine(`About to unwatch ${srcdir}. But no watcher launched earlier`);
-            cleared = false;
+            cleared = true;
         }
         this.watchList.delete(srcdir);
         return cleared;
