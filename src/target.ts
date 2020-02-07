@@ -102,3 +102,8 @@ export function getOutputMinifiedCSS(document: IDocument, config: CompilerConfig
     const fileonly = document.getFileOnly();
     return path.join(targetMinifiedDirectory, fileonly + extension);
 }
+
+
+export function doesContainSpaces(value: string): boolean {
+    return value.indexOf(' ') !== -1;
+}

@@ -6,7 +6,7 @@
 'use strict';
 import { expect } from 'chai';
 import 'mocha';
-import { inferTargetCSSDirectory, inferTargetMinifiedCSSDirectory,getOutputCSS, getOutputMinifiedCSS, getRelativeDirectory, safeMkdir } from '../src/target';
+import { inferTargetCSSDirectory, inferTargetMinifiedCSSDirectory,getOutputCSS, getOutputMinifiedCSS, getRelativeDirectory, doesContainSpaces, safeMkdir } from '../src/target';
 import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
 import { getSassDocument} from './document';
@@ -154,13 +154,27 @@ describe('getOutputMinifiedCSS function', () => {
 describe('getRelativeDirectory function', () => {
 
   it('linux', () => {
-      const result = getRelativeDirectory("/opt/code/src/github.com/heronci/sass-watcher/", "/opt/code/src/github.com/heronci/sass-watcher/src/sass")
+      const result = getRelativeDirectory("/opt/code/src/github.com/heronci/sass-watcher/", "/opt/code/src/github.com/heronci/sass-watcher/src/sass");
       expect(result).to.equal('src/sass');
   });
 
   it('linux-relative', () => {
-    const result = getRelativeDirectory("/opt/code/src/github.com/heronci/sass-watcher/", "src/sass")
+    const result = getRelativeDirectory("/opt/code/src/github.com/heronci/sass-watcher/", "src/sass");
     expect(result).to.equal('src/sass');
+  });
+
 });
+
+describe('doesContainSpaces function', () => {
+
+  it('no spaces', () => {
+      const result = doesContainSpaces("/opt/code/src/github.com/heronci/sass-watcher/");
+      expect(result).to.equal(false);
+  });
+
+  it('spaces', () => {
+    const result = doesContainSpaces("/opt/code/src/github.com/heronci/sass watcher");
+    expect(result).to.equal(true);
+  });
 
 });
