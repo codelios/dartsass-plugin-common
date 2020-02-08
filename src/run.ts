@@ -35,7 +35,9 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog, debug:
             reject(`${NoWindowsSpaceInPath}: ${relativeCmd}`);
         }
         var prc = child.spawn(relativeCmd,  args, {
-            cwd: cwd
+            cwd: cwd,
+            shell: false,
+            windowsHide: true,
         });
         if (prc.killed) {
             _log.warning(`Run: Process ${cmd} killed. pid - ${prc.pid}`);
