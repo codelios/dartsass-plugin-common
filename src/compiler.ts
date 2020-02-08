@@ -26,7 +26,7 @@ export interface ISassCompiler {
 
 export function isBeingWatched(document: IDocument, config: CompilerConfig, _log: ILog) : boolean {
     const projectRoot = document.getProjectRoot();
-    const docPath = document.getFileOnly();
+    const docPath = document.getFileName();
     let watched = false;
     for (const watchDirectory of config.watchDirectories) {
         const fqWatchDirectory = xformPath(projectRoot, watchDirectory);
