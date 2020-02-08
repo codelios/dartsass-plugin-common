@@ -10,7 +10,9 @@ import { SIGINT } from 'constants';
 import { getRelativeDirectory, doesContainSpaces } from './target';
 
 const NoWindowsSpaceInPath = `
-    Given Operating System is windows and the cmd path contains a space. Please use a cmd with no space in it.
+    Given Operating System is windows and the cmd path contains a space. 
+    
+    Please use a cmd with no space in its path.
 `;
 
 export interface ProcessOutput {
