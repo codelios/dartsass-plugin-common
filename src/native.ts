@@ -71,6 +71,14 @@ export class NativeCompiler {
         });
     }
 
+    getArgs(document: IDocument, config: CompilerConfig, output: string, minified: boolean): string[] {
+        const result = this.doGetArgs(document.getProjectRoot(), config, minified);
+        const input = document.getFileName();
+        const base = document.getProjectRoot();
+        result.push(util.format("%s:%s", getRelativeDirectory(base, input), getRelativeDirectory(base,output)));
+        return result;
+    }    
+    
     _internalCompileDocument(document: IDocument, config: CompilerConfig, _log: ILog): Promise<string> {
         const self = this;
         try {
@@ -108,7 +116,7 @@ export class NativeCompiler {
     }
     public compileDocument(document: IDocument, config: CompilerConfig,
         _log: ILog): Promise<string> {
-        if (!isBeingWatched(document.getProjectRoot(), config.watchDirectories, document.getFileName(), _log)) {
+        if (!isBeingWatched(document, config, _log)) {
             return this._internalCompileDocument(document, config, _log);
         } else {
             return new Promise(function(resolve, _) {
@@ -152,14 +160,6 @@ export class NativeCompiler {
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
         _log.appendLine(`Watching ${srcdir} by ${sassBinPath}.`);
         return RunDetached(sassBinPath, projectRoot, args, _log);
-    }
-
-    getArgs(document: IDocument, config: CompilerConfig, output: string, minified: boolean): string[] {
-        const result = this.doGetArgs(document.getProjectRoot(), config, minified);
-        const input = document.getFileName();
-        const base = document.getProjectRoot();
-        result.push(util.format("%s:%s", getRelativeDirectory(base, input), getRelativeDirectory(base,output)));
-        return result;
     }
 
 }
