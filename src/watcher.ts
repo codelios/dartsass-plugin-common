@@ -176,3 +176,4 @@ export function unwatchDirectory(srcdir: string, config: CompilerConfig) : Promi
         reject(`${srcdir} not being watched before`);
     });
 }
+

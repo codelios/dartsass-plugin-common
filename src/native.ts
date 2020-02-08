@@ -12,6 +12,7 @@ import { Run, RunDetached } from './run';
 import { xformPath, xformPaths} from './util';
 import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory, getOutputCSS, getRelativeDirectory, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSSFile } from './writer';
+import { isBeingWatched } from './compiler';
 import { ProcessOutput } from './run';
 import util from 'util';
 import fs from "fs";
@@ -70,41 +71,51 @@ export class NativeCompiler {
         });
     }
 
+    _internalCompileDocument(document: IDocument, config: CompilerConfig, _log: ILog): Promise<string> {
+        const self = this;
+        try {
+            const sassBinPath  = this.getSassBinPath(document.getProjectRoot(), config.sassBinPath)
+            return new Promise(function(resolve, reject) {
+                const output = getOutputCSS(document, config, _log);
+                const args = self.getArgs(document, config, output, false);
+                self.doCompileDocument(sassBinPath, output, config, document.getProjectRoot(), _log, args).then(
+                    value => {
+                        if (!config.disableMinifiedFileGeneration) {
+                            const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
+                            const minifiedArgs = self.getArgs(document, config, minifiedOutput, true);
+                            self.doCompileDocument(sassBinPath, minifiedOutput, config, document.getProjectRoot(), _log, minifiedArgs).then(
+                                minifiedValue => {
+                                    resolve(minifiedValue);
+                                },
+                                err => {
+                                    reject(err);
+                                }
+                            );
+                        } else {
+                            resolve(value);
+                        }
+                    },
+                    err => {
+                        reject(err);
+                    }
+                )
+            });
+        } catch(err) {
+            return new Promise(function(_, reject) {
+                reject(err);
+            });
+        }
+    }
     public compileDocument(document: IDocument, config: CompilerConfig,
         _log: ILog): Promise<string> {
-            const self = this;
-            try {
-                const sassBinPath  = this.getSassBinPath(document.getProjectRoot(), config.sassBinPath)
-                return new Promise(function(resolve, reject) {
-                    const output = getOutputCSS(document, config, _log);
-                    const args = self.getArgs(document, config, output, false);
-                    self.doCompileDocument(sassBinPath, output, config, document.getProjectRoot(), _log, args).then(
-                        value => {
-                            if (!config.disableMinifiedFileGeneration) {
-                                const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
-                                const minifiedArgs = self.getArgs(document, config, minifiedOutput, true);
-                                self.doCompileDocument(sassBinPath, minifiedOutput, config, document.getProjectRoot(), _log, minifiedArgs).then(
-                                    minifiedValue => {
-                                        resolve(minifiedValue);
-                                    },
-                                    err => {
-                                        reject(err);
-                                    }
-                                );
-                            } else {
-                                resolve(value);
-                            }
-                        },
-                        err => {
-                            reject(err);
-                        }
-                    )
-                });
-            } catch(error) {
-                return new Promise(function(_, reject) {
-                    reject(error.toString());
-                });
-            }
+        if (!isBeingWatched(document.getProjectRoot(), config.watchDirectories, document.getFileName())) {
+            return this._internalCompileDocument(document, config, _log);
+        } else {
+            return new Promise(function(resolve, _) {
+                _log.appendLine(`Warning: Failed to compile ${document.getFileName()} as the directory is already being watched`);
+                resolve(`Document already being watched`);
+            });
+        }
     }
 
     doGetArgs(projectRoot: string, config: CompilerConfig, minified: boolean) : Array<string> {
