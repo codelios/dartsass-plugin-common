@@ -10,6 +10,7 @@ import { ILog } from './log';
 import { IDocument } from './document';
 import { ProcessOutput } from './run';
 import { getRelativeDirectory } from './target';
+import { xformPath } from './util';
 
 export interface ISassCompiler {
 
@@ -23,12 +24,14 @@ export interface ISassCompiler {
 }
 
 
-export function isBeingWatched(projectRoot: string, watchDirectories: Array<string>, docPath: string) : boolean {
+export function isBeingWatched(projectRoot: string, watchDirectories: Array<string>, docPath: string, _log: ILog) : boolean {
     let watched = false;
     for (const watchDirectory of watchDirectories) {
-        const relativeDocPath = getRelativeDirectory(watchDirectory, docPath);
+        const fqWatchDirectory = xformPath(projectRoot, watchDirectory);
+        const relativeDocPath = getRelativeDirectory(fqWatchDirectory, docPath);
         if (relativeDocPath !== docPath) {
             // Indeed it is a subdirectory of watchDirectory so being watched
+            _log.appendLine(`Warning: Failed to compile ${docPath} as the directory ( ${watchDirectory} ) is already being watched `);
             watched = true;
             break;
         }
