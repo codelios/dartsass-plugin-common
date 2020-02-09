@@ -22,7 +22,7 @@ export interface ProcessOutput {
     killed: boolean;
 }
 
-export function isWindows(): boolean {
+function isWindows(): boolean {
     return (os.platform() === 'win32'); 
 }
 
@@ -116,5 +116,12 @@ export function removeLineBreaks(value: string): string {
 }
 
 export function killProcess(pid: number) {
-    process.kill(-pid, SIGINT);
+    if (!isWindows()) {
+        process.kill(-pid, SIGINT);
+    } else { // windows does not kill processes apparently.
+        const taskkill = require('taskkill');
+        (async () => {
+            await taskkill([pid]);
+        })();
+    }
 }
