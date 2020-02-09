@@ -36,7 +36,9 @@ export function isBeingWatched(document: IDocument, config: CompilerConfig, _log
         }
         if (!relativeDocPath.startsWith("..") && relativeDocPath !== docPath) {
             // Indeed it is a subdirectory of watchDirectory so being watched
-            _log.appendLine(`Warning: Failed to compile ${docPath} as the directory ( ${watchDirectory} ) is already being watched `);
+            if (config.debug) {
+                _log.appendLine(`Warning: Failed to compile ${docPath} as the directory ( ${watchDirectory} ) is already being watched `);
+            }
             watched = true;
             break;
         }
