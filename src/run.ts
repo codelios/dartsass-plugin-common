@@ -30,34 +30,36 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog, debug:
     return new Promise(function(resolve, reject) {
         const relativeCmd = getRelativeDirectory(cwd, cmd);
         var output = '';
-        if (debug) {
-            _log.appendLine(`Run: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`);
-        }
         if (isWindows() && doesContainSpaces(relativeCmd)) {
             reject(`${NoWindowsSpaceInPath}: ${relativeCmd}`);
         }
+        const prefix = `Run: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`;
         var prc = child.spawn(relativeCmd,  args, {
             cwd: cwd,
             shell: false,
             windowsHide: true,
         });
         if (prc.killed) {
-            _log.warning(`Run: Process ${cmd} killed. pid - ${prc.pid}`);
-            reject(`Run: Process ${cmd} killed. pid - ${prc.pid}`);
+            _log.appendLine(`Warning: ${prefix} killed. pid - ${prc.pid}`);
+            reject(`Run: ${prefix} killed. pid - ${prc.pid}`);
         } else if (prc.pid === null || prc.pid === undefined) {
-            _log.warning(`Run: process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`);
-            reject(`Run: process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`);
-        }        
+            _log.appendLine(`Warning: ${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
+            reject(`Run: ${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
+        } else {
+            if (debug) {
+                _log.appendLine(`${prefix} launched with pid ${prc.pid}`);
+            }
+        }
         prc.stdout.setEncoding('utf8');
-        prc.stdout.on('data', function(data: any) {
+        prc.stdout.on('data', (data: any) => {
             _log.appendLine(`${data}`);
             output = data;
         });
         prc.stderr.setEncoding('utf8');
-        prc.stderr.on('data', function(data: any) {
+        prc.stderr.on('data', (data: any) => {
             _log.appendLine(`stderr: ${data}`);
         });
-        prc.on('exit', function(code: any) {
+        prc.on('exit', (code: any) => {
             if (code === 0) {
                 resolve(removeLineBreaks(output));
             } else {
