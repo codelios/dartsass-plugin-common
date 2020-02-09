@@ -93,13 +93,13 @@ export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog
         }
         if (prc.stdout) {
             prc.stdout.setEncoding('utf8');
-            prc.stdout.on('data', function(data: any) {
+            prc.stdout.on('data', (data: any) => {
                 _log.appendLine(`Output: ${data}`);
             });
         }
         if (prc.stderr) {
             prc.stderr.setEncoding('utf8');
-            prc.stderr.on('data', function(data: any) {
+            prc.stderr.on('data', (data: any) => {
                 _log.appendLine(`stderr: ${data}`);
             });
         }
@@ -120,7 +120,9 @@ export function killProcess(pid: number) {
         process.kill(-pid, SIGINT);
     } else { // windows does not kill processes apparently.
         const spawn = require('child_process').spawn;    
-        const prc = spawn("taskkill", ["/pid", pid, '/f', '/t']);
-        prc.undef();
+        const cmd = spawn("taskkill", ["/pid", pid, '/f', '/t']);
+        cmd.on('exit',(data: any)=>{
+            console.log(data);
+          });        
     }
 }
