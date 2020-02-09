@@ -41,10 +41,10 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog, debug:
         });
         if (prc.killed) {
             _log.appendLine(`Warning: ${prefix} killed. pid - ${prc.pid}`);
-            reject(`Run: ${prefix} killed. pid - ${prc.pid}`);
+            reject(`${prefix} killed. pid - ${prc.pid}`);
         } else if (prc.pid === null || prc.pid === undefined) {
             _log.appendLine(`Warning: ${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
-            reject(`Run: ${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
+            reject(`${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
         } else {
             if (debug) {
                 _log.appendLine(`${prefix} launched with pid ${prc.pid}`);
