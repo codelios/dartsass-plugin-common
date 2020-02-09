@@ -119,9 +119,8 @@ export function killProcess(pid: number) {
     if (!isWindows()) {
         process.kill(-pid, SIGINT);
     } else { // windows does not kill processes apparently.
-        const taskkill = require('taskkill');
-        (async () => {
-            await taskkill([pid]);
-        })();
+        const spawn = require('child_process').spawn;    
+        const prc = spawn("taskkill", ["/pid", pid, '/f', '/t']);
+        prc.undef();
     }
 }

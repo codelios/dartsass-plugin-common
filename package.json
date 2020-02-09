@@ -1,6 +1,6 @@
 {
     "name": "dartsass-plugin-common",
-    "version": "0.7.23",
+    "version": "0.7.24",
     "license": "MIT",
     "description": "Common Library code to compile sass files using Dart/JS compiler",
     "main": "dist/main.js",
@@ -27,8 +27,7 @@
         "@types/autoprefixer": "9.6.1",
         "postcss": "7.0.26",
         "browserslist": "4.8.6",
-        "typescript": "3.7.5",
-        "taskkill": "3.1.0"
+        "typescript": "3.7.5"
     },
     "devDependencies": {
         "@types/node": "13.7.0",
