@@ -115,14 +115,14 @@ export function removeLineBreaks(value: string): string {
     return value.replace(/(\r\n|\n|\r)/gm, "");
 }
 
-export function killProcess(pid: number) {
+export function killProcess(pid: number, _log: ILog) {
     if (!isWindows()) {
         process.kill(-pid, SIGINT);
     } else { // windows does not kill processes apparently.
         const spawn = require('child_process').spawn;    
         const cmd = spawn("taskkill", ["/pid", pid, '/f', '/t']);
         cmd.on('exit',(data: any)=>{
-            console.log(data);
-          });        
+            _log.appendLine(`${data}`);
+        });        
     }
 }
