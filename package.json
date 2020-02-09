@@ -9,6 +9,20 @@
         "type": "git",
         "url": "git+https://github.com/heronci/dartsass-plugin-common.git"
     },
+    "keywords": [
+        "scss compiler plugin",
+        "sass compiler plugin",
+        "sass watcher",
+        "scss watcher",
+        "dartsass plugin",
+        "sass",
+        "scss",
+        "css",
+        "vsce",
+        "vsce plugin",
+        "vsce sass plugin",
+        "vsce scss plugin"
+    ],
     "scripts": {
         "sass": "sass",
         "prepublishOnly": "npm run prod",
