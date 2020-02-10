@@ -77,8 +77,8 @@ export class NativeCompiler {
         const base = document.getProjectRoot();
         result.push(util.format("%s:%s", getRelativeDirectory(base, input), getRelativeDirectory(base,output)));
         return result;
-    }    
-    
+    }
+
     _internalCompileDocument(document: IDocument, config: CompilerConfig, _log: ILog): Promise<string> {
         const self = this;
         try {
@@ -138,7 +138,12 @@ export class NativeCompiler {
         for (const path of includePaths) {
             result.push("-I");
             const relativePath = getRelativeDirectory(projectRoot, path);
-            result.push(util.format("\"%s\"", relativePath));
+            let includePath = relativePath;
+            if (relativePath.indexOf(' ') !== -1) {
+                // has spaces in it so encode it better
+                includePath = util.format("\"%s\"", relativePath);
+            }
+            result.push(includePath);
         }
         return result;
     }
