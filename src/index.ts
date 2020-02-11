@@ -10,6 +10,6 @@ export { IDocument } from './document';
 export { ISassCompiler } from './compiler';
 export { CompileCurrentFile, SayVersion, Validate } from './action';
 export { Prefixer, getVersions } from './autoprefix';
-export { Watcher, watchDirectory, unwatchDirectory } from './watcher';
+export { Watcher, watchDirectory, unwatchDirectory, WatchInfo } from './watcher';
 export { ProcessOutput } from './run';
 export { xformPath } from './util';
