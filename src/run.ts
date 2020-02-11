@@ -9,29 +9,49 @@ import * as os from 'os';
 import { SIGINT } from 'constants';
 import { getRelativeDirectory, doesContainSpaces } from './target';
 
-const NoWindowsSpaceInPath = `
-    Given Operating System is windows and the cmd path contains a space. 
-    
-    Please use a cmd with no space in its path.
+const NoSpaceInPath = `
+    The cmd path / include path / watch directory contains a space.
+
+    Please use a cmd / include path / watch directory with no space in it.
 `;
 
 export interface ProcessOutput {
-   
+
     pid: number;
 
     killed: boolean;
 }
 
 function isWindows(): boolean {
-    return (os.platform() === 'win32'); 
+    return (os.platform() === 'win32');
+}
+
+function validate(relativeCmd: string, args: string[], _log: ILog) : boolean {
+    let validated = true;
+    if (isWindows()) {
+        if (doesContainSpaces(relativeCmd)) {
+            _log.appendLine(`Warning: ${NoSpaceInPath}: ${relativeCmd}`);
+            validated = false;
+        }
+    }
+    if (validated) {
+        for (const arg of args) {
+            if (doesContainSpaces(arg)) {
+                _log.appendLine(`Warning: ${NoSpaceInPath}: ${arg}`);
+                validated = false;
+                break;
+            }
+        }
+    }
+    return validated;
 }
 
 export function Run(cmd: string, args: string[], cwd: string, _log: ILog, debug: boolean) : Promise<string> {
     return new Promise(function(resolve, reject) {
         const relativeCmd = getRelativeDirectory(cwd, cmd);
         var output = '';
-        if (isWindows() && doesContainSpaces(relativeCmd)) {
-            reject(`${NoWindowsSpaceInPath}: ${relativeCmd}`);
+        if (!validate(relativeCmd, args, _log)) {
+            reject(`${NoSpaceInPath}`);
         }
         const prefix = `Run: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`;
         var prc = child.spawn(relativeCmd,  args, {
@@ -73,8 +93,8 @@ export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog
     return new Promise(function(resolve, reject) {
         const relativeCmd = getRelativeDirectory(cwd, cmd);
         _log.appendLine(`RunDetached: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`);
-        if (isWindows() && doesContainSpaces(relativeCmd)) {
-            reject(`${NoWindowsSpaceInPath}: ${relativeCmd}`);
+        if (!validate(relativeCmd, args, _log)) {
+            reject(`${NoSpaceInPath}`);
         }
         const prc = child.spawn(relativeCmd,  args, {
             cwd: cwd,
@@ -121,10 +141,10 @@ export function killProcess(pid: number, _log: ILog) {
     if (!isWindows()) {
         process.kill(-pid, SIGINT);
     } else { // windows does not kill processes apparently.
-        const spawn = require('child_process').spawn;    
+        const spawn = require('child_process').spawn;
         const cmd = spawn("taskkill", ["/pid", pid, '/f', '/t']);
         cmd.on('exit',(data: any)=>{
             _log.appendLine(`${data}`);
-        });        
+        });
     }
 }
