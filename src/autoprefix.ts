@@ -7,11 +7,10 @@
 import postcss = require('postcss');
 import autoprefixer = require('autoprefixer');
 import browserslist from 'browserslist';
-import * as fs from 'fs';
 import { CompilerConfig } from './config';
 import { Info } from './version';
 import { ILog } from './log';
-import { writeToFile } from './writer';
+import { doTransform, doTransformBytes } from './transform';
 
 export class Prefixer {
 
@@ -46,48 +45,44 @@ export class Prefixer {
     }
 }
 
-
-export function autoPrefixCSS(output: string, data: any,
-    config : CompilerConfig,
-    _log: ILog): Promise<number> {
-    if (config.disableAutoPrefixer) {
-        return writeToFile(output, data, _log);
-    }
-    const prefixer = Prefixer.NewPrefixer(config.autoPrefixBrowsersList);
-    return new Promise<number>(function(resolve, reject) {
+function doAutoprefixCSS(config : CompilerConfig, data: string): Promise<string> {
+    return new Promise<string>(function(resolve, reject) {
+        if (config.disableAutoPrefixer) {
+            resolve(data);
+            return;
+        }
+        const prefixer = Prefixer.NewPrefixer(config.autoPrefixBrowsersList);
         prefixer.process(data).then(
             (prefixedResult: postcss.Result) => {
-                writeToFile(output, prefixedResult.css,  _log).then(
-                    value => resolve(value),
-                    err => reject(err)
-                )
+                resolve(prefixedResult.css);
+                return;
+            },
+            err => {
+                reject(err);
             }
         )
     });
 }
 
-
 export function autoPrefixCSSFile(output: string, inFile: string,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
-    return new Promise<number>(function(resolve, reject) {
-        if (config.disableAutoPrefixer) {
-            resolve(0);
+    return doTransform(inFile, config.encoding, output, _log,
+        (contents: string) => {
+            return doAutoprefixCSS(config, contents);
         }
-        fs.readFile(inFile, 'utf8', function(err, contents) {
-            if (err) {
-                reject(err);
-                return;
-            }
-            autoPrefixCSS(output, contents, config, _log).then(
-                value => resolve(value),
-                err => reject(err)
-            );
-        });
-    });
-
+        );
 }
 
+export function autoPrefixCSSBytes(output: string, inBytes: string,
+    config : CompilerConfig,
+    _log: ILog): Promise<number> {
+    return doTransformBytes(inBytes, output, _log,
+        (contents: string) => {
+            return doAutoprefixCSS(config, contents);
+        }
+        );
+}
 
 export function getVersions(): Array<string> {
     const result = new Array<string>();

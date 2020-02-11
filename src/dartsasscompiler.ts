@@ -13,8 +13,8 @@ import { xformPaths} from './util';
 import { IDocument } from './document';
 import { ILog } from './log';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
-import { writeToFile } from './writer';
-import { autoPrefixCSS } from './autoprefix';
+import { writeToFile } from './transform';
+import { autoPrefixCSSBytes } from './autoprefix';
 import { ProcessOutput } from './run';
 import { Info } from './version';
 
@@ -113,7 +113,7 @@ export class DartSassCompiler {
                         }
                     )
                 } else {
-                    autoPrefixCSS(output, result.css, config,  _log).then(
+                    autoPrefixCSSBytes(output, result.css.toString(config.encoding), config,  _log).then(
                         value => resolve(output),
                         err => reject(err)
                     )

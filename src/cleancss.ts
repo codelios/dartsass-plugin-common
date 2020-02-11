@@ -6,7 +6,7 @@
 
 'use strict';
 import { ILog } from './log';
-import { doMinify } from './minifier';
+import { doTransform } from './transform';
 var CleanCSS = require('clean-css');
 
 
@@ -21,14 +21,16 @@ export class CleanCSSMinifier {
     constructor() {
     }
 
-    public minify(src: string, encoding: string, target: string, _log: ILog): Promise<boolean> {
-        return doMinify(src, encoding, target, _log,
-            (contents) => {
-                const data = new CleanCSS(Options).minify(contents);
-                const result = data.styles;
-                _log.debug(`src: ${src}, tgt: ${target}, data: ${result}, length: ${result.length}`);
-                return result;
+    public minify(src: string, encoding: string, target: string, _log: ILog): Promise<number> {
+        return doTransform(src, encoding, target, _log,
+            (contents: string) => {
+                return new Promise<string>(function(resolve, reject) {
+                    const data = new CleanCSS(Options).minify(contents);
+                    const result = data.styles;
+                    _log.debug(`src: ${src}, tgt: ${target}, data: ${result}, length: ${result.length}`);
+                    resolve(result);
+                });
             }
-            );
+        );
     }
 }
