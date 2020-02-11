@@ -16,6 +16,10 @@ import { getWatchTargetDirectory  } from './target';
 import { cwatchCSS, closeCWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import fs from 'fs';
+import { IMinifier } from './minifier';
+import { CleanCSSMinifier } from './cleancss';
+
+const minifier: IMinifier = new CleanCSSMinifier();
 
 function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
     config: CompilerConfig, _log: ILog): Promise<ProcessOutput> {
@@ -41,7 +45,7 @@ function doMinify(docPath: string, config: CompilerConfig, _log: ILog): any {
     }
     const minifiedCSS = getMinCSS(docPath);
     _log.appendLine(`About to minify ${minifiedCSS}`);
-    // TODO: Use some kind of CSS minifier
+    minifier.minify(docPath, minifiedCSS, _log);
 }
 
 function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
