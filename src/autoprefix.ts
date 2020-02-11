@@ -67,6 +67,7 @@ function doAutoprefixCSS(config : CompilerConfig, data: string): Promise<string>
 export function autoPrefixCSSFile(output: string, inFile: string,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
+    _log.debug(`About to autoprefix file ${inFile} to ${output}`);
     return doTransform(inFile, config.encoding, output, _log,
         (contents: string) => {
             return doAutoprefixCSS(config, contents);
@@ -77,6 +78,7 @@ export function autoPrefixCSSFile(output: string, inFile: string,
 export function autoPrefixCSSBytes(output: string, inBytes: string,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
+    _log.debug(`About to autoprefix bytes to ${output}`);
     return doTransformBytes(inBytes, output, _log,
         (contents: string) => {
             return doAutoprefixCSS(config, contents);
