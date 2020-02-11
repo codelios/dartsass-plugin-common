@@ -18,17 +18,6 @@ export function getWatchTargetDirectory(srcdir: string,  config: CompilerConfig)
     return targetDirectory;
 }
 
-export function getWatchMinifiedTargetDirectory(srcdir: string, config: CompilerConfig): string {
-    let targetMinifiedDirectory = srcdir;
-    if (config.targetMinifiedDirectory.length > 0) {
-        targetMinifiedDirectory = config.targetMinifiedDirectory;
-    }
-    if (config.targetMinifiedDirectory.length === 0 && config.targetDirectory.length > 0) {
-        targetMinifiedDirectory = config.targetDirectory;
-    }
-    return targetMinifiedDirectory;
-}
-
 export function getRelativeDirectory(projectRoot: string, srcdir: string) : string {
     if (!path.isAbsolute(srcdir)) {
         return srcdir;
@@ -44,19 +33,6 @@ export function inferTargetCSSDirectory(document: IDocument, config: CompilerCon
     }
     return targetDirectory;
 }
-
-export function inferTargetMinifiedCSSDirectory(document: IDocument, config: CompilerConfig): string {
-    let targetMinifiedDirectory = path.dirname(document.getFileName());
-    const projectRoot = document.getProjectRoot();
-    if (config.targetMinifiedDirectory.length > 0) {
-        targetMinifiedDirectory = xformPath(projectRoot, config.targetMinifiedDirectory);
-    } 
-    if (config.targetMinifiedDirectory.length === 0 && config.targetDirectory.length > 0) {
-        targetMinifiedDirectory = xformPath(projectRoot, config.targetDirectory);
-    }
-    return targetMinifiedDirectory;
-}
-
 
 export function safeMkdir(directory: string): any {
     try {
@@ -78,11 +54,6 @@ export function validateTargetDirectories(document: IDocument, config : Compiler
     if (err) {
         return err
     }
-    const targetMinifiedDirectory = inferTargetMinifiedCSSDirectory(document, config);
-    err = safeMkdir(targetMinifiedDirectory);
-    if (err) {
-        return err
-    }
     return null;
 }
 
@@ -93,14 +64,9 @@ export function getOutputCSS(document: IDocument, config : CompilerConfig, _log:
 }
 
 export function getOutputMinifiedCSS(document: IDocument, config: CompilerConfig, _log: ILog): string {
-    const targetMinifiedDirectory = inferTargetMinifiedCSSDirectory(document, config);
     const targetDirectory = inferTargetCSSDirectory(document, config);
-    let extension = '.min.css';
-    if (targetDirectory !== targetMinifiedDirectory) {
-        extension = '.css';
-    }
     const fileonly = document.getFileOnly();
-    return path.join(targetMinifiedDirectory, fileonly + extension);
+    return path.join(targetDirectory, fileonly + '.min.css');
 }
 
 

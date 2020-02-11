@@ -20,7 +20,7 @@ import { Info } from './version';
 const NativeSassMessage = `
     The watcher functionality needs native sass binary to be installed in your machine.
     Installation Cmd: npm install sass@1.25.0 (say).
-    After installation, please set "dartsass.sassBinPath": "node_modules/.bin/sass" (Linux) or 
+    After installation, please set "dartsass.sassBinPath": "node_modules/.bin/sass" (Linux) or
     "dartsass.sassBinPath": "node_modules/.bin/sass.cmd"     (Windows) after installation for watcher to work.
 `;
 
@@ -74,7 +74,7 @@ export class DartSassCompiler {
         });
     }
 
-    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, minified: boolean, _log: ILog) : Promise<ProcessOutput> {
+    public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
         return new Promise<ProcessOutput>(function(resolve, reject) {
             reject(`${NativeSassMessage}`);
         });

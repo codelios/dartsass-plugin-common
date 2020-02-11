@@ -29,7 +29,5 @@ export class CompilerConfig {
 
     targetDirectory: string = "";
 
-    targetMinifiedDirectory: string = "";
-
     watchDirectories: Array<string> = [];
 }

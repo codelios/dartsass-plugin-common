@@ -5,41 +5,57 @@
 
 'use strict';
 
+import * as path from 'path';
 import { CompilerConfig } from './config';
 import { ILog } from './log';
 import { ProcessOutput, killProcess } from './run';
 import { xformPath } from './util';
 import { getCurrentCompiler } from './select';
 import { ISassCompiler } from './compiler';
-import { getWatchTargetDirectory, getWatchMinifiedTargetDirectory } from './target';
+import { getWatchTargetDirectory  } from './target';
+import { cwatchCSS, closeCWatcher} from './chokidar_util';
+import { FSWatcher } from 'chokidar';
+import fs from 'fs';
 
 function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
-    config: CompilerConfig, minified: boolean, _log: ILog): Promise<ProcessOutput> {
-    return compiler.watch(srcdir, projectRoot, config, minified, _log);
+    config: CompilerConfig, _log: ILog): Promise<ProcessOutput> {
+    return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
-function doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
-    config: CompilerConfig, _log: ILog): Promise<ProcessOutput> {
-    const targetDirectory = getWatchTargetDirectory(srcdir, config);
-    const targetMinifiedDirectory = getWatchMinifiedTargetDirectory(srcdir, config);
-    if (targetDirectory !== targetMinifiedDirectory) {
-        return doSingleLaunch(compiler, srcdir, projectRoot, config, true, _log);
-    } else {
-        _log.appendLine(`Warning: Failed to launch watcher for minified files since targetMinifiedDirectory \
-            ${targetMinifiedDirectory} same as targetDirectory ${targetDirectory}. Check if property targetMinifiedDirectory is set and not same as targetDirectory property. `);
-        return new Promise<ProcessOutput>(function(resolve, reject) {
-            const processOutput: ProcessOutput = {
-                pid: 0,
-                killed: false
-            }
-            resolve(processOutput);
-        });
+export function getMinCSS(docPath: string) {
+    const fileNameOnly = path.basename(docPath, '.css');
+    return path.join(path.dirname(docPath), fileNameOnly + '.min.css');
+}
+
+function doMinify(docPath: string, config: CompilerConfig, _log: ILog): any {
+    if (config.disableMinifiedFileGeneration) {
+        return;
     }
+    const minifiedCSS = getMinCSS(docPath);
+    _log.appendLine(`About to minify ${minifiedCSS}`);
+    // TODO: Use some kind of CSS minifier
+}
+
+function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
+    // TODO: Delete the .min.css file
+    const minifiedCSS = getMinCSS(docPath);
+    try {
+        fs.unlinkSync(minifiedCSS);
+        _log.appendLine(`Deleted ${minifiedCSS}`);
+    } catch(err) {
+        _log.appendLine(`Warning: Error deleting ${minifiedCSS} - ${err}`)
+    }
+}
+
+export interface WatchInfo {
+    pid: number;
+
+    fsWatcher: FSWatcher;
 }
 
 export class Watcher {
 
-    watchList: Map<string, Array<number>>  = new Map<string, Array<number>>();
+    watchList: Map<string, WatchInfo>  = new Map<string, WatchInfo>();
 
     constructor() {
     }
@@ -55,7 +71,7 @@ export class Watcher {
                 reject(`${srcdir} already being watched ( pids ${pids} )`);
                 return;
             }
-            doSingleLaunch(compiler, srcdir, projectRoot, config, false, _log).then(
+            doSingleLaunch(compiler, srcdir, projectRoot, config, _log).then(
                 (value: ProcessOutput) => {
                     if (value.killed) {
                         reject(`Unable to launch sass watcher for ${srcdir}. process killed. Please check sassBinPath property.`);
@@ -67,32 +83,18 @@ export class Watcher {
                         return;
                     }
                     const pid1 = value.pid;
-                    self.watchList.set(srcdir, [pid1]);
-                    if (config.disableMinifiedFileGeneration) {
-                        resolve(`Done`);
-                        return;
-                    }
-                    doMinifiedLaunch(compiler, srcdir, projectRoot, config, _log).then(
-                            (value2: ProcessOutput) => {
-                                if (value2.killed || value2.pid === undefined || value.pid === null) {
-                                    killProcess(pid1, _log);
-                                    self.watchList.delete(srcdir);
-                                    reject(`Unable to launch minified sass watcher for ${srcdir}. process killed - ${value2.killed} / pid (${value2.pid} is null/undefined. `);
-                                    return;
-                                }
-                                if (value2.pid > 0) {
-                                    self.watchList.set(srcdir, [pid1, value2.pid]);
-                                    resolve(`Good`);
-                                } else {
-                                    resolve(`Failed to launch watcher for minified files since targetMinifiedDirectory is the same as targetDirectory for ${srcdir}`);
-                                }
-                            },
-                            err => {
-                                killProcess(pid1, _log);
-                                self.watchList.delete(srcdir);
-                                reject(`${srcdir} - ${err}`);
-                            }
-                    );
+                    const  _targetDirectory = getWatchTargetDirectory(srcdir, config);
+                    const targetDirectory = xformPath(projectRoot, _targetDirectory);
+                    const fsWatcher = cwatchCSS(targetDirectory, (docPath: string) => {
+                        doMinify(docPath, config, _log);
+                    },
+                    (docPath: string) => {
+                        doDelete(docPath, config, _log);
+                    });
+                    self.watchList.set(srcdir, {
+                        pid: pid1,
+                        fsWatcher: fsWatcher
+                    });
                 },
                 err => {
                     reject(`${srcdir} - ${err}`);
@@ -102,14 +104,15 @@ export class Watcher {
     }
 
     public ClearWatchDirectory(srcdir: string, _log: ILog) : boolean {
-        const pids = this.watchList.get(srcdir);
+        const watchInfo = this.watchList.get(srcdir);
         let cleared = false;
-        if (pids !== null && pids !== undefined) {
-            pids.forEach(function(value: number) {
-                killProcess(value, _log);
-                cleared = true;
-                _log.appendLine(`About to unwatch ${srcdir} with pid ${value}`);
-            });
+        if (watchInfo !== null && watchInfo !== undefined) {
+            killProcess(watchInfo.pid, _log);
+            if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
+                closeCWatcher(watchInfo.fsWatcher);
+            }
+            cleared = true;
+            _log.appendLine(`About to unwatch ${srcdir} with pid ${watchInfo.pid}`);
         } else {
             _log.appendLine(`About to unwatch ${srcdir}. But no watcher launched earlier`);
             cleared = true;
@@ -124,11 +127,12 @@ export class Watcher {
     }
 
     public ClearAll(_log: ILog) {
-        this.watchList.forEach((pids: Array<number>, key: string) => {
-            pids.forEach(function(value: number) {
-                _log.appendLine(`Unwatching ${key} with pid ${value}`);
-                killProcess(value, _log);
-            });
+        this.watchList.forEach((watchInfo: WatchInfo, key: string) => {
+            _log.appendLine(`Unwatching ${key} with pid ${watchInfo.pid}`);
+            killProcess(watchInfo.pid, _log);
+            if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
+                closeCWatcher(watchInfo.fsWatcher);
+            }
         });
         this.watchList.clear();
     }
@@ -145,7 +149,7 @@ export class Watcher {
         return promises;
     }
 
-    public GetWatchList(): Map<string, Array<number>> {
+    public GetWatchList(): Map<string, WatchInfo> {
         return this.watchList;
     }
 
