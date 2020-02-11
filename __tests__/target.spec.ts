@@ -134,11 +134,6 @@ describe('getMinCSS function', () => {
         expect(result).to.equal("/opt/code/src/github.com/heronci/sass-watcher/main.min.css");
     });
 
-    it('main.css.map', () => {
-      const result = isCSSFile("/opt/code/src/github.com/heronci/sass watcher/main.css.map");
-      expect(result).to.equal(false);
-    });
-
 });
 
 
