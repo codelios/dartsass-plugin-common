@@ -28,7 +28,7 @@ export class CleanCSSMinifier {
                     return;
                 }
                 const data = new CleanCSS(options).minify(contents);
-                writeToFile(target, data, _log).then(
+                writeToFile(target, data.styles, _log).then(
                     value => {
                         resolve(true);
                     },
