@@ -44,7 +44,7 @@ describe('Native CompileDocument' , () => {
         const _log = getNullLog();
         native.compileDocument(document, config, _log).then(
             result => {
-                const output = path.join(document.getProjectRoot(), 'out/cmd.min.css');
+                const output = path.join(document.getProjectRoot(), 'out/cmd.css');
                 expect(result).to.equal(output);
             },
             err => {
@@ -80,7 +80,7 @@ describe('Native CompileDocument' , () => {
         const _log = getNullLog();
         native.compileDocument(document, config, _log).then(
             result => {
-                const output = path.join(document.getProjectRoot(), 'out/autoprefixer_example.min.css');
+                const output = path.join(document.getProjectRoot(), 'out/autoprefixer_example.css');
                 const normalOuput = path.join(document.getProjectRoot(), 'out/autoprefixer_example.css');
                 expect(result).to.equal(output);
                 fs.readFile(output, 'utf8', function(err, contents) {

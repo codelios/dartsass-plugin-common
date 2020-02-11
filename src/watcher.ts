@@ -27,8 +27,16 @@ export function getMinCSS(docPath: string) : string {
     return path.join(path.dirname(docPath), fileNameOnly + '.min.css');
 }
 
+export function isMinCSS(docPath: string) {
+    const filename = path.basename(docPath, '.min.css');
+    return filename !== undefined || filename !== null;
+}
+
 function doMinify(docPath: string, config: CompilerConfig, _log: ILog): any {
     if (config.disableMinifiedFileGeneration) {
+        return;
+    }
+    if (isMinCSS(docPath)) {
         return;
     }
     const minifiedCSS = getMinCSS(docPath);
@@ -37,7 +45,9 @@ function doMinify(docPath: string, config: CompilerConfig, _log: ILog): any {
 }
 
 function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
-    // TODO: Delete the .min.css file
+    if (isMinCSS(docPath)) {
+        return;
+    }
     const minifiedCSS = getMinCSS(docPath);
     try {
         fs.unlinkSync(minifiedCSS);
@@ -109,14 +119,15 @@ export class Watcher {
         const watchInfo = this.watchList.get(srcdir);
         let cleared = false;
         if (watchInfo !== null && watchInfo !== undefined) {
+            _log.appendLine(`About to unwatch ${srcdir} with sass watcher pid ${watchInfo.pid}`);
             killProcess(watchInfo.pid, _log);
             if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
+                _log.appendLine(`About to clear chokidar watcher for sass watcher pid ${watchInfo.pid}`);
                 closeCWatcher(watchInfo.fsWatcher);
             }
             cleared = true;
-            _log.appendLine(`About to unwatch ${srcdir} with pid ${watchInfo.pid}`);
         } else {
-            _log.appendLine(`About to unwatch ${srcdir}. But no watcher launched earlier`);
+            _log.appendLine(`Trying to unwatch ${srcdir}. But no watcher launched earlier`);
             cleared = true;
         }
         this.watchList.delete(srcdir);
