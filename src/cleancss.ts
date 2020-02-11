@@ -6,8 +6,7 @@
 
 'use strict';
 import { ILog } from './log';
-import { writeToFile } from './writer';
-import fs from "fs"; // Without star
+import { doMinify } from './minifier';
 var CleanCSS = require('clean-css');
 
 
@@ -23,29 +22,12 @@ export class CleanCSSMinifier {
     }
 
     public minify(src: string, encoding: string, target: string, _log: ILog): Promise<boolean> {
-        return new Promise( function(resolve, reject){
-            _log.debug(`About to minify ${src} to ${target}`);
-            fs.readFile(src, encoding, function(err: (NodeJS.ErrnoException | null), contents) {
-                if (err !== null) {
-                    _log.appendLine(`Error: Minify error while reading file ${src} - ${err}`);
-                    reject(err);
-                    return;
-                }
+        return doMinify(src, encoding, target, _log,
+            (contents) => {
                 const data = new CleanCSS(Options).minify(contents);
-                _log.debug(`Contents: ${contents}`);
-                _log.debug(`data: ${data.styles}`);
-                writeToFile(target, data.styles, _log).then(
-                    value => {
-                        resolve(true);
-                    },
-                    err => {
-                        _log.appendLine(`Error: Error writing minified css to ${target} - ${err}`);
-                        reject(err);
-                    }
-                );
-            });
-        });
+                _log.debug(`src: ${src}, data: ${data.styles}`);
+                return data.styles;
+            }
+            );
     }
-
-
 }
