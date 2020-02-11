@@ -17,6 +17,8 @@ import { ProcessOutput } from './run';
 import util from 'util';
 import fs from "fs";
 
+const VersionArgs = ['--version'];
+
 /**
  * NativeCompiler uses the sass executable present in config.sassBinPath and uses the cmd line to compile the same.
  */
@@ -33,7 +35,7 @@ export class NativeCompiler {
     public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
         try {
-            return Run(sassBinPath, ['--version'], projectRoot, _log, config.debug);
+            return Run(sassBinPath, VersionArgs, projectRoot, _log, config.debug);
         } catch(error) {
             return new Promise(function(_, reject) {
                 reject(error.toString());
