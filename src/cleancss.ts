@@ -23,7 +23,9 @@ export class CleanCSSMinifier {
             var options = { /* options */ };
             fs.readFile(src, encoding, function(err: (NodeJS.ErrnoException | null), contents) {
                 if (err !== null) {
-                    reject(`Error while minifying file ${src}`);
+                    _log.appendLine(`Error: Minify error while reading file ${src} - ${err}`);
+                    reject(err);
+                    return;
                 }
                 const data = new CleanCSS(options).minify(contents);
                 writeToFile(target, data, _log).then(
@@ -31,7 +33,8 @@ export class CleanCSSMinifier {
                         resolve(true);
                     },
                     err => {
-                        _log.appendLine(`Warning: Error writing minified css to ${target} - ${err}`);
+                        _log.appendLine(`Error: Error writing minified css to ${target} - ${err}`);
+                        reject(err);
                     }
                 );
             });
