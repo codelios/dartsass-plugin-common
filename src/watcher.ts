@@ -31,7 +31,10 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     if (config.disableMinifiedFileGeneration) {
         return;
     }
-    if (!isCSSFile(docPath) || isMinCSS(docPath)) {
+    if (!isCSSFile(docPath)) {
+        return;
+    }
+    if (isMinCSS(docPath)) {
         return;
     }
     const minifiedCSS = getMinCSS(docPath);
@@ -44,7 +47,10 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
 
 function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
     _log.debug(`Deletion event received for ${docPath}`);
-    if (!isCSSFile(docPath) || isMinCSS(docPath)) {
+    if (!isCSSFile(docPath)) {
+        return;
+    }
+    if (isMinCSS(docPath)) {
         return;
     }
     const minifiedCSS = getMinCSS(docPath);

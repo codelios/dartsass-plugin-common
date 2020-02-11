@@ -79,7 +79,7 @@ export function isMinCSS(docPath: string) {
 }
 
 export function isCSSFile(docPath: string) {
-    return  docPath.endsWith('.css') && !docPath.endsWith('.min.css');
+    return  docPath.endsWith('.css');
 }
 
 export function doesContainSpaces(value: string): boolean {
