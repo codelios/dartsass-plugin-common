@@ -35,7 +35,7 @@ export function doTransform(src: string, encoding: string, target: string, _log:
 
 export function doTransformBytes(src: string, target: string, _log: ILog, fnTransform: (value: string) => Promise<string>): Promise<number> {
     return new Promise( function(resolve, reject){
-        _log.debug(`About to transform bytes ${src} to ${target}`);
+        _log.debug(`About to transform bytes to ${target}`);
         fnTransform(src).then(
             data => {
                 writeToFile(target, data, _log).then(
