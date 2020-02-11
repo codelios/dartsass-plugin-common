@@ -36,7 +36,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
         return;
     }
     const minifiedCSS = getMinCSS(docPath);
-    _log.appendLine(`About to minify ${minifiedCSS}`);
+    _log.appendLine(`About to minify ${docPath} to ${minifiedCSS}`);
     minifier.minify(docPath, config.encoding, minifiedCSS, _log).then(
         value=> {},
         err => {}
