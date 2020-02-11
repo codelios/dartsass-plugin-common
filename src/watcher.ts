@@ -151,6 +151,13 @@ export class Watcher {
 
 }
 
+/**
+ * watchDirectory adds a given directory to the list of directories being watched.
+ *
+ * Returns false, if directory already being watched. true, if the directory is being watched anew.
+ * @param srcdir
+ * @param config
+ */
 export function watchDirectory(srcdir: string, config: CompilerConfig) : Promise<boolean> {
     return  new Promise<boolean>(function(resolve, reject) {
         for(const watchDir of config.watchDirectories) {
