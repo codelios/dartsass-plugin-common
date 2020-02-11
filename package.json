@@ -42,7 +42,8 @@
         "postcss": "7.0.26",
         "browserslist": "4.8.6",
         "typescript": "3.7.5",
-        "chokidar": "3.3.1"
+        "chokidar": "3.3.1",
+        "clean-css": "4.2.3"
     },
     "devDependencies": {
         "@types/node": "13.7.0",

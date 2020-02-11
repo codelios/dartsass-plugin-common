@@ -36,7 +36,7 @@ export function isMinCSS(docPath: string) {
     return filename !== undefined || filename !== null;
 }
 
-function doMinify(docPath: string, config: CompilerConfig, _log: ILog): any {
+function doMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
     if (config.disableMinifiedFileGeneration) {
         return;
     }
@@ -45,7 +45,10 @@ function doMinify(docPath: string, config: CompilerConfig, _log: ILog): any {
     }
     const minifiedCSS = getMinCSS(docPath);
     _log.appendLine(`About to minify ${minifiedCSS}`);
-    minifier.minify(docPath, minifiedCSS, _log);
+    minifier.minify(docPath, config.encoding, minifiedCSS, _log).then(
+        value=> {},
+        err => {}
+    );
 }
 
 function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {

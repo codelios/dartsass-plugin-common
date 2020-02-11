@@ -9,6 +9,6 @@ import { ILog } from './log';
 
 export interface IMinifier {
 
-    minify(src: string, target: string, _log: ILog): any;
+    minify(src: string, encoding: string, target: string, _log: ILog): Promise<boolean>;
 
 }

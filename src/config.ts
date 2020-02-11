@@ -15,6 +15,8 @@ export class CompilerConfig {
 
     disableSourceMap: boolean = false;
 
+    encoding: string = 'utf8';
+
     debug: boolean = false;
 
     disableCompileOnSave: boolean = false;
