@@ -22,7 +22,7 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
     return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
-export function getMinCSS(docPath: string) {
+export function getMinCSS(docPath: string) : string {
     const fileNameOnly = path.basename(docPath, '.css');
     return path.join(path.dirname(docPath), fileNameOnly + '.min.css');
 }
@@ -91,10 +91,12 @@ export class Watcher {
                     (docPath: string) => {
                         doDelete(docPath, config, _log);
                     });
+                    _log.appendLine(`Started chokidar watcher for ${targetDirectory}`);
                     self.watchList.set(srcdir, {
                         pid: pid1,
                         fsWatcher: fsWatcher
                     });
+                    resolve(`Launched css watchers`);
                 },
                 err => {
                     reject(`${srcdir} - ${err}`);
