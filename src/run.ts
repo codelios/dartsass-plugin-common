@@ -46,7 +46,7 @@ export function validateCmd(relativeCmd: string, args: string[], _log: ILog) : b
     return validated;
 }
 
-export function Run(cmd: string, args: string[], cwd: string, _log: ILog, debug: boolean) : Promise<string> {
+export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Promise<string> {
     return new Promise(function(resolve, reject) {
         const relativeCmd = getRelativeDirectory(cwd, cmd);
         var output = '';
@@ -66,9 +66,7 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog, debug:
             _log.appendLine(`Warning: ${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
             reject(`${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
         } else {
-            if (debug) {
-                _log.appendLine(`${prefix} launched with pid ${prc.pid}`);
-            }
+            _log.debug(`${prefix} launched with pid ${prc.pid}`);
         }
         prc.stdout.setEncoding('utf8');
         prc.stdout.on('data', (data: any) => {

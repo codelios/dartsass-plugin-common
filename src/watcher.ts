@@ -28,11 +28,9 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 
 
 function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
-    _log.debug(`Addition event received for ${docPath}`);
     if (config.disableMinifiedFileGeneration) {
         return;
     }
-    _log.debug(`${docPath}, isCSSFile(docPath): ${isCSSFile(docPath)}, isMinCSS(docPath): ${isMinCSS(docPath)}`);
     if (!isCSSFile(docPath) || isMinCSS(docPath)) {
         return;
     }

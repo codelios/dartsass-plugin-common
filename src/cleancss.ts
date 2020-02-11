@@ -25,7 +25,7 @@ export class CleanCSSMinifier {
         return doMinify(src, encoding, target, _log,
             (contents) => {
                 const data = new CleanCSS(Options).minify(contents);
-                _log.debug(`src: ${src}, data: ${data.styles}`);
+                _log.debug(`src: ${src}, tgt: ${target}, data: ${data.styles}`);
                 return data.styles;
             }
             );

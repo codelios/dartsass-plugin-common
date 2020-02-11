@@ -35,7 +35,7 @@ export class NativeCompiler {
     public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
         try {
-            return Run(sassBinPath, VersionArgs, projectRoot, _log, config.debug);
+            return Run(sassBinPath, VersionArgs, projectRoot, _log);
         } catch(error) {
             return new Promise(function(_, reject) {
                 reject(error.toString());
@@ -59,7 +59,7 @@ export class NativeCompiler {
     doCompileDocument(sassBinPath: string, output: string,
         config: CompilerConfig, cwd: string, _log: ILog, args: string[]): Promise<string> {
         return new Promise(function(resolve, reject) {
-            Run(sassBinPath, args, cwd, _log, config.debug).then(
+            Run(sassBinPath, args, cwd, _log).then(
                 originalValue => {
                     autoPrefixCSSFile(output, output, config,  _log).then(
                         autoPrefixvalue => {
