@@ -6,9 +6,9 @@
 
 'use strict';
 import { ILog } from './log';
-var CleanCSS = require('clean-css');
 import { writeToFile } from './writer';
 import fs from "fs"; // Without star
+var CleanCSS = require('clean-css');
 
 
 export class CleanCSSMinifier {
