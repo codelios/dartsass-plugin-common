@@ -18,6 +18,7 @@ import fs from 'fs';
 import { IMinifier } from './minifier';
 import { CleanCSSMinifier } from './cleancss';
 
+
 const minifier: IMinifier = new CleanCSSMinifier();
 
 function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,

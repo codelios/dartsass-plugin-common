@@ -11,7 +11,12 @@ import fs from "fs"; // Without star
 var CleanCSS = require('clean-css');
 
 
+const Options = {
+
+};
+
 export class CleanCSSMinifier {
+
 
 
     constructor() {
@@ -19,15 +24,14 @@ export class CleanCSSMinifier {
 
     public minify(src: string, encoding: string, target: string, _log: ILog): Promise<boolean> {
         return new Promise( function(resolve, reject){
-            _log.appendLine(`About to minify ${src} to ${target}`);
-            var options = { /* options */ };
+            _log.debug(`About to minify ${src} to ${target}`);
             fs.readFile(src, encoding, function(err: (NodeJS.ErrnoException | null), contents) {
                 if (err !== null) {
                     _log.appendLine(`Error: Minify error while reading file ${src} - ${err}`);
                     reject(err);
                     return;
                 }
-                const data = new CleanCSS(options).minify(contents);
+                const data = new CleanCSS(Options).minify(contents);
                 writeToFile(target, data.styles, _log).then(
                     value => {
                         resolve(true);

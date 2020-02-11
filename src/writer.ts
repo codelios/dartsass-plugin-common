@@ -12,15 +12,15 @@ import { ILog } from './log';
 import { Prefixer } from './autoprefix';
 import postcss = require('postcss');
 
-export function writeToFile(output: string, data: any, _log: ILog) : Promise<string> {
+export function writeToFile(outPath: string, data: any, _log: ILog) : Promise<string> {
     return new Promise( function(resolve, reject){
-        fs.writeFile(output, data, (err: NodeJS.ErrnoException | null) => {
+        fs.writeFile(outPath, data, (err: NodeJS.ErrnoException | null) => {
             if (err !== null) {
-                _log.appendLine(`${err} while writing ${output}`);
-                reject(`Error while writing to file ${output}`);
+                _log.appendLine(`Warning: ${err} while writing ${outPath}`);
+                reject(`Error while writing to file ${outPath}`);
                 return;
             }
-            resolve(`${output}`);
+            resolve(`${outPath}`);
         });
     });
 }
