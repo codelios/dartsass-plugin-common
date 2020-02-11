@@ -33,7 +33,7 @@ function doMinifiedLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: 
                 killed: false
             }
             resolve(processOutput);
-        });            
+        });
     }
 }
 
@@ -151,16 +151,16 @@ export class Watcher {
 
 }
 
-export function watchDirectory(srcdir: string, config: CompilerConfig) : Promise<string> {
-    return  new Promise<string>(function(resolve, reject) {
+export function watchDirectory(srcdir: string, config: CompilerConfig) : Promise<boolean> {
+    return  new Promise<boolean>(function(resolve, reject) {
         for(const watchDir of config.watchDirectories) {
             if (watchDir === srcdir) {
-                resolve(`${srcdir} already being watched`);
+                resolve(false);
                 return;
             }
         }
         config.watchDirectories.push(srcdir);
-        resolve(`${srcdir} added successfully`);
+        resolve(true);
     });
 }
 
