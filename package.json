@@ -1,6 +1,6 @@
 {
     "name": "dartsass-plugin-common",
-    "version": "0.7.30",
+    "version": "0.7.31",
     "license": "MIT",
     "description": "Common Library code to compile sass files using Dart/JS compiler",
     "main": "dist/main.js",
