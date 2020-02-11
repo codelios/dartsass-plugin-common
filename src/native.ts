@@ -11,7 +11,7 @@ import { ILog } from './log';
 import { Run, RunDetached } from './run';
 import { xformPath, xformPaths} from './util';
 import { getWatchTargetDirectory, getOutputCSS, getRelativeDirectory} from './target';
-import { autoPrefixCSSFile } from './writer';
+import { autoPrefixCSSFile } from './autoprefix';
 import { isBeingWatched } from './compiler';
 import { ProcessOutput, isWindows } from './run';
 import util from 'util';
@@ -63,7 +63,7 @@ export class NativeCompiler {
                 originalValue => {
                     autoPrefixCSSFile(output, output, config,  _log).then(
                         autoPrefixvalue => {
-                            resolve(originalValue + autoPrefixvalue);
+                            resolve(output);
                         },
                         err => reject(err)
                     )

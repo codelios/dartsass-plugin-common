@@ -13,7 +13,8 @@ import { xformPaths} from './util';
 import { IDocument } from './document';
 import { ILog } from './log';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
-import { autoPrefixCSS, writeToFile } from './writer';
+import { writeToFile } from './writer';
+import { autoPrefixCSS } from './autoprefix';
 import { ProcessOutput } from './run';
 import { Info } from './version';
 
@@ -113,7 +114,7 @@ export class DartSassCompiler {
                     )
                 } else {
                     autoPrefixCSS(output, result.css, config,  _log).then(
-                        value => resolve(value),
+                        value => resolve(output),
                         err => reject(err)
                     )
                     if (!config.disableSourceMap && !(result.map === null || result.map === undefined)) {
