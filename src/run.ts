@@ -26,7 +26,7 @@ function isWindows(): boolean {
     return (os.platform() === 'win32');
 }
 
-function validate(relativeCmd: string, args: string[], _log: ILog) : boolean {
+export function validateCmd(relativeCmd: string, args: string[], _log: ILog) : boolean {
     let validated = true;
     if (isWindows()) {
         if (doesContainSpaces(relativeCmd)) {
@@ -50,7 +50,7 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog, debug:
     return new Promise(function(resolve, reject) {
         const relativeCmd = getRelativeDirectory(cwd, cmd);
         var output = '';
-        if (!validate(relativeCmd, args, _log)) {
+        if (!validateCmd(relativeCmd, args, _log)) {
             reject(`${NoSpaceInPath}`);
         }
         const prefix = `Run: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`;
@@ -93,7 +93,7 @@ export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog
     return new Promise(function(resolve, reject) {
         const relativeCmd = getRelativeDirectory(cwd, cmd);
         _log.appendLine(`RunDetached: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`);
-        if (!validate(relativeCmd, args, _log)) {
+        if (!validateCmd(relativeCmd, args, _log)) {
             reject(`${NoSpaceInPath}`);
         }
         const prc = child.spawn(relativeCmd,  args, {
