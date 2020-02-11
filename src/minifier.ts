@@ -27,8 +27,6 @@ export function doMinify(src: string, encoding: string, target: string, _log: IL
                 return;
             }
             const data = fnMinify(contents);
-            _log.debug(`Contents: ${contents}`);
-            _log.debug(`data: ${data}`);
             writeToFile(target, data, _log).then(
                 value => {
                     resolve(true);
