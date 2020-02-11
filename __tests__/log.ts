@@ -8,6 +8,8 @@ import { ILog } from '../src/log';
 export function getNullLog(): ILog {
     const _log : ILog = {
 
+        debug(msg: string): any {},
+
         warning(msg: string): any {},
 
         appendLine(msg: string): any {},
@@ -20,6 +22,10 @@ export function getNullLog(): ILog {
 
 export function getConsoleLog(): ILog {
     const _log : ILog = {
+
+        debug(msg: string): any {
+            console.log(`DEBUG: ${msg}`);
+        },
 
         warning(msg: string): any {
             console.log(msg);
@@ -41,7 +47,7 @@ export class BufLog  {
     buf = Buffer.alloc(20);
 
     appendLine(msg: string): any {
-        
+
     }
 
     warning(msg: string): any {

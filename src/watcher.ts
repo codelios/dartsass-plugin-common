@@ -27,16 +27,16 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 
 
 function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
-    _log.appendLine(`Addition event received for ${docPath}`);
+    _log.debug(`Addition event received for ${docPath}`);
     if (config.disableMinifiedFileGeneration) {
         return;
     }
-    _log.appendLine(`${docPath}, isCSSFile(docPath): ${isCSSFile(docPath)}, isMinCSS(docPath): ${isMinCSS(docPath)}`);
+    _log.debug(`${docPath}, isCSSFile(docPath): ${isCSSFile(docPath)}, isMinCSS(docPath): ${isMinCSS(docPath)}`);
     if (!isCSSFile(docPath) || isMinCSS(docPath)) {
         return;
     }
     const minifiedCSS = getMinCSS(docPath);
-    _log.appendLine(`About to minify ${docPath} to ${minifiedCSS}`);
+    _log.debug(`About to minify ${docPath} to ${minifiedCSS}`);
     minifier.minify(docPath, config.encoding, minifiedCSS, _log).then(
         value=> {},
         err => {}
@@ -44,14 +44,14 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
 }
 
 function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
-    _log.appendLine(`Deletion event received for ${docPath}`);
+    _log.debug(`Deletion event received for ${docPath}`);
     if (!isCSSFile(docPath) || isMinCSS(docPath)) {
         return;
     }
     const minifiedCSS = getMinCSS(docPath);
     try {
         fs.unlinkSync(minifiedCSS);
-        _log.appendLine(`Deleted ${minifiedCSS}`);
+        _log.debug(`Deleted ${minifiedCSS}`);
     } catch(err) {
         _log.appendLine(`Warning: Error deleting ${minifiedCSS} - ${err}`)
     }
@@ -67,7 +67,7 @@ function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _
     (docPath: string) => {
         doDelete(docPath, config, _log);
     });
-    _log.appendLine(`Started chokidar watcher for ${pattern}`);
+    _log.debug(`Started chokidar watcher for ${pattern}`);
     return fsWatcher;
 }
 
