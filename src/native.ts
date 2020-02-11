@@ -13,7 +13,7 @@ import { xformPath, xformPaths} from './util';
 import { getWatchTargetDirectory, getOutputCSS, getRelativeDirectory} from './target';
 import { autoPrefixCSSFile } from './writer';
 import { isBeingWatched } from './compiler';
-import { ProcessOutput } from './run';
+import { ProcessOutput, isWindows } from './run';
 import util from 'util';
 import fs from "fs";
 
@@ -146,7 +146,13 @@ export class NativeCompiler {
         const args = this.doGetWatchArgs(projectRoot, config, srcdir);
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
         _log.appendLine(`Watching ${srcdir} by ${sassBinPath}.`);
-        return RunDetached(sassBinPath, projectRoot, args, _log);
+        if (isWindows()) {
+            const relativeCmd = getRelativeDirectory(projectRoot, sassBinPath);
+            args.unshift(relativeCmd);
+            return RunDetached("node.exe", projectRoot, args, _log);
+        } else {
+            return RunDetached(sassBinPath, projectRoot, args, _log);
+        }
     }
 
 }

@@ -22,7 +22,7 @@ export interface ProcessOutput {
     killed: boolean;
 }
 
-function isWindows(): boolean {
+export function isWindows(): boolean {
     return (os.platform() === 'win32');
 }
 
