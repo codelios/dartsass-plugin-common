@@ -46,6 +46,10 @@ export class BufLog  {
 
     buf = Buffer.alloc(20);
 
+    debug(msg: string): any {
+
+    }
+
     appendLine(msg: string): any {
 
     }
