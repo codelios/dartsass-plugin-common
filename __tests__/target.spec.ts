@@ -6,7 +6,8 @@
 'use strict';
 import { expect } from 'chai';
 import 'mocha';
-import { inferTargetCSSDirectory, getOutputCSS, getOutputMinifiedCSS, getRelativeDirectory, doesContainSpaces, safeMkdir } from '../src/target';
+import { inferTargetCSSDirectory, getOutputCSS, getOutputMinifiedCSS, getRelativeDirectory, doesContainSpaces,
+    getMinCSS, isMinCSS, isCSSFile, safeMkdir } from '../src/target';
 import { IDocument } from '../src/document';
 import { CompilerConfig } from '../src/config';
 import { getSassDocument} from './document';
@@ -97,6 +98,49 @@ describe('getRelativeDirectory function', () => {
   });
 
 });
+
+describe('isMinCSS function', () => {
+
+    it('main.css', () => {
+        const result = isMinCSS("/opt/code/src/github.com/heronci/sass-watcher/main.css");
+        expect(result).to.equal(false);
+    });
+
+    it('main.min.css', () => {
+      const result = isMinCSS("/opt/code/src/github.com/heronci/sass watcher/main.min.css");
+      expect(result).to.equal(true);
+    });
+
+});
+
+describe('isCSSFile function', () => {
+
+    it('main.css', () => {
+        const result = isCSSFile("/opt/code/src/github.com/heronci/sass-watcher/main.css");
+        expect(result).to.equal(true);
+    });
+
+    it('main.css.map', () => {
+      const result = isCSSFile("/opt/code/src/github.com/heronci/sass watcher/main.css.map");
+      expect(result).to.equal(false);
+    });
+
+});
+
+describe('getMinCSS function', () => {
+
+    it('main.css', () => {
+        const result = getMinCSS("/opt/code/src/github.com/heronci/sass-watcher/main.css");
+        expect(result).to.equal("/opt/code/src/github.com/heronci/sass-watcher/main.min.css");
+    });
+
+    it('main.css.map', () => {
+      const result = isCSSFile("/opt/code/src/github.com/heronci/sass watcher/main.css.map");
+      expect(result).to.equal(false);
+    });
+
+});
+
 
 describe('doesContainSpaces function', () => {
 

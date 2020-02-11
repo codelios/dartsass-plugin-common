@@ -8,8 +8,9 @@
 import chokidar, { FSWatcher } from 'chokidar';
 
 
-export function cwatchCSS(dir: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any) : FSWatcher {
-    const watcher = chokidar.watch(dir+"/**/*.css", {
+export function cwatchCSS(pattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any) : FSWatcher {
+    const watcher = chokidar.watch(pattern, {
+        ignored: /[\/\\]\./,
         persistent: true,
     });
     // Add event listeners.

@@ -69,6 +69,18 @@ export function getOutputMinifiedCSS(document: IDocument, config: CompilerConfig
     return path.join(targetDirectory, fileonly + '.min.css');
 }
 
+export function getMinCSS(docPath: string) : string {
+    const fileNameOnly = path.basename(docPath, '.css');
+    return path.join(path.dirname(docPath), fileNameOnly + '.min.css');
+}
+
+export function isMinCSS(docPath: string) {
+    return docPath.endsWith('.min.css');
+}
+
+export function isCSSFile(docPath: string) {
+    return  docPath.endsWith('.css') && !docPath.endsWith('.min.css');
+}
 
 export function doesContainSpaces(value: string): boolean {
     return value.indexOf(' ') !== -1;

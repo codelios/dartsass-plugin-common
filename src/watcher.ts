@@ -5,14 +5,13 @@
 
 'use strict';
 
-import * as path from 'path';
 import { CompilerConfig } from './config';
 import { ILog } from './log';
 import { ProcessOutput, killProcess } from './run';
 import { xformPath } from './util';
 import { getCurrentCompiler } from './select';
 import { ISassCompiler } from './compiler';
-import { getWatchTargetDirectory  } from './target';
+import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './target';
 import { cwatchCSS, closeCWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import fs from 'fs';
@@ -26,21 +25,14 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
     return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
-export function getMinCSS(docPath: string) : string {
-    const fileNameOnly = path.basename(docPath, '.css');
-    return path.join(path.dirname(docPath), fileNameOnly + '.min.css');
-}
 
-export function isMinCSS(docPath: string) {
-    const filename = path.basename(docPath, '.min.css');
-    return filename !== undefined || filename !== null;
-}
-
-function doMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
+function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
+    _log.appendLine(`Addition event received for ${docPath}`);
     if (config.disableMinifiedFileGeneration) {
         return;
     }
-    if (isMinCSS(docPath)) {
+    _log.appendLine(`${docPath}, isCSSFile(docPath): ${isCSSFile(docPath)}, isMinCSS(docPath): ${isMinCSS(docPath)}`);
+    if (!isCSSFile(docPath) || isMinCSS(docPath)) {
         return;
     }
     const minifiedCSS = getMinCSS(docPath);
@@ -52,7 +44,8 @@ function doMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
 }
 
 function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
-    if (isMinCSS(docPath)) {
+    _log.appendLine(`Deletion event received for ${docPath}`);
+    if (!isCSSFile(docPath) || isMinCSS(docPath)) {
         return;
     }
     const minifiedCSS = getMinCSS(docPath);
@@ -63,6 +56,21 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
         _log.appendLine(`Warning: Error deleting ${minifiedCSS} - ${err}`)
     }
 }
+
+function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): FSWatcher {
+    const  _targetDirectory = getWatchTargetDirectory(srcdir, config);
+    const targetDirectory = xformPath(projectRoot, _targetDirectory);
+    const pattern = targetDirectory+"/**/*.css";
+    const fsWatcher = cwatchCSS(targetDirectory, (docPath: string) => {
+        _internalMinify(docPath, config, _log);
+    },
+    (docPath: string) => {
+        doDelete(docPath, config, _log);
+    });
+    _log.appendLine(`Started chokidar watcher for ${pattern}`);
+    return fsWatcher;
+}
+
 
 export interface WatchInfo {
     pid: number;
@@ -76,7 +84,6 @@ export class Watcher {
 
     constructor() {
     }
-
 
     doLaunch(_srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): Promise<string> {
         const srcdir =  xformPath(projectRoot, _srcdir);
@@ -99,18 +106,9 @@ export class Watcher {
                         reject(`Unable to launch sass watcher for ${srcdir}. pid is undefined. Please check sassBinPath property.`);
                         return;
                     }
-                    const pid1 = value.pid;
-                    const  _targetDirectory = getWatchTargetDirectory(srcdir, config);
-                    const targetDirectory = xformPath(projectRoot, _targetDirectory);
-                    const fsWatcher = cwatchCSS(targetDirectory, (docPath: string) => {
-                        doMinify(docPath, config, _log);
-                    },
-                    (docPath: string) => {
-                        doDelete(docPath, config, _log);
-                    });
-                    _log.appendLine(`Started chokidar watcher for ${targetDirectory}`);
+                    const fsWatcher = doMinify(srcdir, projectRoot, config, _log);
                     self.watchList.set(srcdir, {
-                        pid: pid1,
+                        pid: value.pid,
                         fsWatcher: fsWatcher
                     });
                     resolve(`Launched css watchers`);
