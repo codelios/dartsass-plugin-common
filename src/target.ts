@@ -65,7 +65,7 @@ export function getOutputCSS(document: IDocument, config : CompilerConfig, _log:
 
 function doGetCSS(docPath: string, dir: string, ext: string) : string {
     const fileNameOnly = path.basename(docPath, ext);
-    return path.join(dir, fileNameOnly + '.min.css');
+    return path.join(dir, fileNameOnly + '.icss');
 }
 
 export function getOutputMinifiedCSS(document: IDocument, config: CompilerConfig, _log: ILog): string {
