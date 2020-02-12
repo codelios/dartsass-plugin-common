@@ -63,20 +63,18 @@ export function getOutputCSS(document: IDocument, config : CompilerConfig, _log:
     return path.join(targetDirectory, fileonly + '.css');
 }
 
-export function getOutputMinifiedCSS(document: IDocument, config: CompilerConfig, _log: ILog): string {
-    const targetDirectory = inferTargetCSSDirectory(document, config);
-    return getMinCSS(document.getFileName(), targetDirectory, '.scss');
+function doGetCSS(docPath: string, dir: string, ext: string) : string {
+    const fileNameOnly = path.basename(docPath, ext);
+    return path.join(dir, fileNameOnly + '.min.css');
 }
 
-export function getMinCSS(docPath: string, dir: string|null, ext: string|null) : string {
-    if (ext === undefined || ext === null) {
-        ext = ".css";
-    }
-    const fileNameOnly = path.basename(docPath, ext);
-    if (dir === undefined || dir === null) {
-        dir = path.dirname(docPath);
-    }
-    return path.join(dir, fileNameOnly + '.min.css');
+export function getOutputMinifiedCSS(document: IDocument, config: CompilerConfig, _log: ILog): string {
+    const targetDirectory = inferTargetCSSDirectory(document, config);
+    return doGetCSS(document.getFileName(), targetDirectory, '.scss');
+}
+
+export function getMinCSS(docPath: string) : string {
+    return doGetCSS(docPath, path.dirname(docPath), ".css");
 }
 
 export function isMinCSS(docPath: string) {
