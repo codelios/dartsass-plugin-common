@@ -9,7 +9,7 @@ import { ILog } from './log';
 
 export interface IMinifier {
 
-    minify(src: string, encoding: string, target: string, _log: ILog): Promise<number>;
+    minify(src: string, encoding: string, target: string, fnTransform: (value: string) => Promise<string>, _log: ILog): Promise<number>;
 
 }
 

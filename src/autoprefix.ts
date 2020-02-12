@@ -13,7 +13,7 @@ import { ILog } from './log';
 import { doTransform, doTransformBytes } from './transform';
 
 
-function doAutoprefixCSS(data: string, config : CompilerConfig): Promise<string> {
+export function doAutoprefixCSS(data: string, config : CompilerConfig): Promise<string> {
     return new Promise<string>(function(resolve, reject) {
         if (config.disableAutoPrefixer) {
             resolve(data);

@@ -11,6 +11,7 @@ import { ProcessOutput, killProcess } from './run';
 import { xformPath } from './util';
 import { getCurrentCompiler } from './select';
 import { ISassCompiler } from './compiler';
+import { doAutoprefixCSS } from './autoprefix';
 import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './target';
 import { cwatchCSS, closeCWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
@@ -39,7 +40,11 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     }
     const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
     _log.debug(`About to minify ${docPath} to ${minifiedCSS}`);
-    minifier.minify(docPath, config.encoding, minifiedCSS, _log).then(
+    minifier.minify(docPath, config.encoding, minifiedCSS,
+        (contents: string) => {
+            return doAutoprefixCSS(contents, config);
+        },
+        _log).then(
         value=> {},
         err => {}
     );
