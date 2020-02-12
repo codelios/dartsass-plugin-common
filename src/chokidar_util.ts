@@ -9,7 +9,7 @@ import { isMinCSS, isCSSFile  } from './target';
 import chokidar, { FSWatcher } from 'chokidar';
 import { ILog } from './log';
 
-function getIgnoreFunction(_log: ILog): (docPath: string) => any {
+export function getIgnoreFunction(_log: ILog): (docPath: string) => any {
     return (docPath: string) => {
         _log.debug(`Checking if we can ignore ${docPath}`);
         if (!isCSSFile(docPath)) {
@@ -24,7 +24,6 @@ function getIgnoreFunction(_log: ILog): (docPath: string) => any {
 
 export function cwatchCSS(pattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, _log: ILog) : FSWatcher {
     const watcher = chokidar.watch(pattern, {
-        ignored: getIgnoreFunction(_log),
         persistent: true,
     });
     // Add event listeners.
@@ -35,10 +34,10 @@ export function cwatchCSS(pattern: string, fnOnFile: (docPath: string)=>any , fn
     return watcher;
 }
 
-export function closeCWatcher(watcher: FSWatcher) {
+export function closeCWatcher(watcher: FSWatcher, _log: ILog) {
     watcher.close().then(
         () => {
-
+            _log.debug(`Closed a FSWatcher`);
         }
     );
 }

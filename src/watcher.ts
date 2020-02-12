@@ -137,7 +137,7 @@ export class Watcher {
             killProcess(watchInfo.pid, _log);
             if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
                 _log.appendLine(`About to clear chokidar watcher for sass watcher pid ${watchInfo.pid}`);
-                closeCWatcher(watchInfo.fsWatcher);
+                closeCWatcher(watchInfo.fsWatcher, _log);
             }
             cleared = true;
         } else {
@@ -158,7 +158,7 @@ export class Watcher {
             _log.appendLine(`Unwatching ${key} with pid ${watchInfo.pid}`);
             killProcess(watchInfo.pid, _log);
             if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
-                closeCWatcher(watchInfo.fsWatcher);
+                closeCWatcher(watchInfo.fsWatcher, _log);
             }
         });
         this.watchList.clear();
