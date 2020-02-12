@@ -34,13 +34,14 @@ export class NativeCompiler {
 
     public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
-        try {
-            return Run(sassBinPath, VersionArgs, projectRoot, _log);
-        } catch(error) {
-            return new Promise(function(_, reject) {
-                reject(error.toString());
-            });
+        const args = VersionArgs;
+        let runPromise = Run(sassBinPath, args, projectRoot, _log);
+        if (isWindows()) {
+            const relativeCmd = getRelativeDirectory(projectRoot, sassBinPath);
+            args.unshift(relativeCmd);
+            runPromise = Run("node.exe", args, projectRoot, _log);
         }
+        return runPromise;
     }
 
     public validate(config: CompilerConfig, projectRoot: string): Promise<string> {
@@ -59,7 +60,13 @@ export class NativeCompiler {
     doCompileDocument(sassBinPath: string, output: string,
         config: CompilerConfig, cwd: string, _log: ILog, args: string[]): Promise<string> {
         return new Promise(function(resolve, reject) {
-            Run(sassBinPath, args, cwd, _log).then(
+            let runPromise = Run(sassBinPath, args, cwd, _log);
+            if (isWindows()) {
+                const relativeCmd = getRelativeDirectory(cwd, sassBinPath);
+                args.unshift(relativeCmd);
+                runPromise = Run("node.exe", args, cwd, _log);
+            }
+            runPromise.then(
                 originalValue => {
                     autoPrefixCSSFile(output, output, config,  _log).then(
                         autoPrefixvalue => {
