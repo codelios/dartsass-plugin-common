@@ -78,6 +78,7 @@ describe('getOutputMinifiedCSS function', () => {
     it('default', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
+        config.minCSSExtension = ".min.css";
         config.targetDirectory =  "";
         const _log = getNullLog();
         const result = getOutputMinifiedCSS(document, config, _log);
@@ -102,12 +103,12 @@ describe('getRelativeDirectory function', () => {
 describe('isMinCSS function', () => {
 
     it('main.css', () => {
-        const result = isMinCSS("/opt/code/src/github.com/heronci/sass-watcher/main.css");
+        const result = isMinCSS("/opt/code/src/github.com/heronci/sass-watcher/main.css", ".min.css");
         expect(result).to.equal(false);
     });
 
     it('main.min.css', () => {
-      const result = isMinCSS("/opt/code/src/github.com/heronci/sass watcher/main.min.css");
+      const result = isMinCSS("/opt/code/src/github.com/heronci/sass watcher/main.min.css", ".min.css");
       expect(result).to.equal(true);
     });
 
@@ -130,7 +131,7 @@ describe('isCSSFile function', () => {
 describe('getMinCSS function', () => {
 
     it('main.css', () => {
-        const result = getMinCSS("/opt/code/src/github.com/heronci/sass-watcher/main.css");
+        const result = getMinCSS("/opt/code/src/github.com/heronci/sass-watcher/main.css", ".min.css");
         expect(result).to.equal("/opt/code/src/github.com/heronci/sass-watcher/main.min.css");
     });
 

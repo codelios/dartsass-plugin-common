@@ -34,10 +34,10 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     if (!isCSSFile(docPath)) {
         return;
     }
-    if (isMinCSS(docPath)) {
+    if (isMinCSS(docPath, config.minCSSExtension)) {
         return;
     }
-    const minifiedCSS = getMinCSS(docPath);
+    const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
     _log.debug(`About to minify ${docPath} to ${minifiedCSS}`);
     minifier.minify(docPath, config.encoding, minifiedCSS, _log).then(
         value=> {},
@@ -50,10 +50,10 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
     if (!isCSSFile(docPath)) {
         return;
     }
-    if (isMinCSS(docPath)) {
+    if (isMinCSS(docPath, config.minCSSExtension)) {
         return;
     }
-    const minifiedCSS = getMinCSS(docPath);
+    const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
     try {
         fs.unlink(minifiedCSS, function(err) {
             if (err) {
