@@ -74,14 +74,13 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
 function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): FSWatcher {
     const  _targetDirectory = getWatchTargetDirectory(srcdir, config);
     const targetDirectory = xformPath(projectRoot, _targetDirectory);
-    const pattern = targetDirectory+"/**/*.css";
     const fsWatcher = cwatchCSS(targetDirectory, (docPath: string) => {
         _internalMinify(docPath, config, _log);
     },
     (docPath: string) => {
         doDelete(docPath, config, _log);
     }, _log);
-    _log.debug(`Started chokidar watcher for ${pattern}`);
+    _log.debug(`Started chokidar watcher for ${targetDirectory}`);
     return fsWatcher;
 }
 
@@ -89,7 +88,7 @@ function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _
 export interface WatchInfo {
     pid: number;
 
-    fsWatcher: FSWatcher;
+    fsWatcher: FSWatcher | null;
 }
 
 export class Watcher {
@@ -120,7 +119,12 @@ export class Watcher {
                         reject(`Unable to launch sass watcher for ${srcdir}. pid is undefined. Please check sassBinPath property.`);
                         return;
                     }
-                    const fsWatcher = doMinify(srcdir, projectRoot, config, _log);
+                    let fsWatcher = null;
+                    if (config.targetDirectory.length === 0) {
+                        _log.appendLine(`Warning: There is some quirkiness with sass watcher that expects targetDirectory to be set for minified files to work. Not minifying until then`);
+                    } else {
+                        fsWatcher = doMinify(srcdir, projectRoot, config, _log);
+                    }
                     self.watchList.set(srcdir, {
                         pid: value.pid,
                         fsWatcher: fsWatcher
