@@ -136,6 +136,9 @@ export class NativeCompiler {
     doGetWatchArgs(projectRoot: string, config: CompilerConfig, _srcdir: string): Array<string> {
         const args = this.doGetArgs(projectRoot, config);
         args.push('--watch');
+        if (config.disableSourceMap) {
+            args.push('--sourcemap=none');
+        }
         const relativeSrcDir = getRelativeDirectory(projectRoot, _srcdir);
         let targetDirectory = getWatchTargetDirectory(relativeSrcDir, config);
         args.push(util.format("%s:%s", relativeSrcDir, targetDirectory));
