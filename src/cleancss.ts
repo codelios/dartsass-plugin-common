@@ -26,10 +26,10 @@ export class CleanCSSMinifier {
             (contents: string) => {
                 return new Promise<string>(function(resolve, reject) {
                     fnTransform(contents).then(
-                        value=> {
-                            const data = new CleanCSS(Options).minify(contents);
+                        (value: string) => {
+                            const data = new CleanCSS(Options).minify(value);
                             const result = data.styles;
-                            _log.debug(`src: ${src}, tgt: ${target}, data: ${result}, length: ${result.length}`);
+                            _log.debug(`src: ${src}, tgt: ${target}, data length: ${result.length} bytes`);
                             resolve(result);
                         },
                         err => reject(err)

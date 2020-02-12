@@ -8,9 +8,12 @@
 import chokidar, { FSWatcher } from 'chokidar';
 import { ILog } from './log';
 
+const IgnoreBlackListRegEx =  `[*.scss|*.min.css|*.map|*.jpg|*.png|*.html|*.js|*.ts]`;
 
 export function cwatchCSS(pattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, _log: ILog) : FSWatcher {
     const watcher = chokidar.watch(pattern, {
+        ignored: IgnoreBlackListRegEx,
+        awaitWriteFinish: true,
         persistent: true,
     });
     // Add event listeners.
