@@ -27,7 +27,7 @@ export function writeToFile(outPath: string, data: any, _log: ILog) : Promise<nu
 }
 
 
-export function doTransform(src: string, encoding: string, target: string, _log: ILog, fnTransform: (value: string) => Promise<string>): Promise<number> {
+export function doTransformSync(src: string, encoding: string, target: string, _log: ILog, fnTransform: (value: string) => Promise<string>): Promise<number> {
     _log.debug(`About to transform ${src} to ${target}`);
     const contents = fs.readFileSync(src, encoding);
     return doTransformBytes(contents, target, _log, fnTransform);

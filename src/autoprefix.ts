@@ -10,7 +10,7 @@ import browserslist from 'browserslist';
 import { CompilerConfig } from './config';
 import { Info } from './version';
 import { ILog } from './log';
-import { doTransform, doTransformBytes } from './transform';
+import { doTransformSync, doTransformBytes } from './transform';
 
 
 export function doAutoprefixCSS(data: string, config : CompilerConfig): Promise<string> {
@@ -35,7 +35,7 @@ export function autoPrefixCSSFile(output: string, inFile: string,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
     _log.debug(`About to autoprefix file ${inFile} to ${output}`);
-    return doTransform(inFile, config.encoding, output, _log,
+    return doTransformSync(inFile, config.encoding, output, _log,
         (contents: string) => {
             return doAutoprefixCSS(contents, config);
         }

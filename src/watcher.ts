@@ -18,6 +18,7 @@ import { FSWatcher } from 'chokidar';
 import fs from 'fs';
 import { IMinifier } from './minifier';
 import { CleanCSSMinifier } from './cleancss';
+import { doTransformSync } from './transform';
 
 
 const minifier: IMinifier = new CleanCSSMinifier();
@@ -31,6 +32,23 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
     return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
+function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog): (value: string) => Promise<string> {
+    return (contents: string) => {
+        return new Promise<string>(function(resolve, reject) {
+            doAutoprefixCSS(contents, config).then(
+                (value: string) => {
+                    minifier.minify(value).then(
+                        (minifiedValue:string) => {
+                            resolve(minifiedValue);
+                        },
+                        err => reject(err)
+                    )
+                },
+                err => reject(err)
+            )
+        });
+    };
+}
 
 function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
     if (config.disableMinifiedFileGeneration) {
@@ -44,14 +62,15 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     }
     const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
     _log.debug(`About to minify ${docPath} to ${minifiedCSS}`);
-    minifier.minify(docPath, config.encoding, minifiedCSS,
-        (contents: string) => {
-            return doAutoprefixCSS(contents, config);
-        },
-        _log).then(
-        value=> {},
-        err => {}
-    );
+    doTransformSync(docPath, config.encoding, minifiedCSS, _log,
+        getTransformation(minifier, config, _log)).then(
+            (value: number) => {
+                _log.debug(`Wrote ${value} bytes to ${minifiedCSS}`);
+            },
+            err => {
+                _log.appendLine(`Warning: Error transforming ${docPath} to ${minifiedCSS} - ${err}`);
+            }
+        );
 }
 
 function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
