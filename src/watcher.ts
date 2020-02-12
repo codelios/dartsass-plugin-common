@@ -37,7 +37,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     if (isMinCSS(docPath)) {
         return;
     }
-    const minifiedCSS = getMinCSS(docPath);
+    const minifiedCSS = getMinCSS(docPath, null, null);
     _log.debug(`About to minify ${docPath} to ${minifiedCSS}`);
     minifier.minify(docPath, config.encoding, minifiedCSS, _log).then(
         value=> {},
@@ -53,7 +53,7 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
     if (isMinCSS(docPath)) {
         return;
     }
-    const minifiedCSS = getMinCSS(docPath);
+    const minifiedCSS = getMinCSS(docPath, null, null);
     try {
         fs.unlinkSync(minifiedCSS);
         _log.debug(`Deleted ${minifiedCSS}`);

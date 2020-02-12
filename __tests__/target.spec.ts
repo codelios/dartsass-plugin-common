@@ -130,7 +130,7 @@ describe('isCSSFile function', () => {
 describe('getMinCSS function', () => {
 
     it('main.css', () => {
-        const result = getMinCSS("/opt/code/src/github.com/heronci/sass-watcher/main.css");
+        const result = getMinCSS("/opt/code/src/github.com/heronci/sass-watcher/main.css", null, null);
         expect(result).to.equal("/opt/code/src/github.com/heronci/sass-watcher/main.min.css");
     });
 
