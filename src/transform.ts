@@ -10,7 +10,7 @@ import { ILog } from './log';
 
 
 export function writeToFile(outPath: string, data: any, _log: ILog) : Promise<number> {
-    return new Promise( function(resolve, reject){
+    return new Promise<number>( function(resolve, reject){
         fs.writeFile(outPath, data, (err: NodeJS.ErrnoException | null) => {
             if (err !== null) {
                 _log.appendLine(`Warning: ${err} while writing ${outPath}`);
@@ -34,7 +34,7 @@ export function doTransformSync(src: string, target: string, _log: ILog, fnTrans
 }
 
 export function doTransformBytes(src: Buffer, target: string, _log: ILog, fnTransform: (value: Buffer) => Promise<Buffer>): Promise<number> {
-    return new Promise( function(resolve, reject){
+    return new Promise<number>( function(resolve, reject){
         fnTransform(src).then(
             data => {
                 writeToFile(target, data, _log).then(
