@@ -34,5 +34,5 @@ export class CompilerConfig {
 
     watchDirectories: Array<string> = [];
 
-    minCSSExtension: string = '.dist.css';
+    minCSSExtension: string = '.min.css';
 }
