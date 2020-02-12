@@ -22,6 +22,10 @@ import { CleanCSSMinifier } from './cleancss';
 
 const minifier: IMinifier = new CleanCSSMinifier();
 
+const quirkyMinifiedFiles = `
+** There is some quirkiness with sass watcher that expects "dartsass.targetDirectory" to be set, for minified files to be generated as output **
+`;
+
 function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
     config: CompilerConfig, _log: ILog): Promise<ProcessOutput> {
     return compiler.watch(srcdir, projectRoot, config, _log);
@@ -121,7 +125,7 @@ export class Watcher {
                     }
                     let fsWatcher = null;
                     if (config.targetDirectory.length === 0) {
-                        _log.appendLine(`Warning: There is some quirkiness with sass watcher that expects targetDirectory to be set for minified files to work. Not minifying until then`);
+                        _log.appendLine(`Warning: ${quirkyMinifiedFiles}`);
                     } else {
                         fsWatcher = doMinify(srcdir, projectRoot, config, _log);
                     }
