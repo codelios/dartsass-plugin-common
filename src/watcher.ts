@@ -55,8 +55,12 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
     }
     const minifiedCSS = getMinCSS(docPath);
     try {
-        fs.unlinkSync(minifiedCSS);
-        _log.debug(`Deleted ${minifiedCSS}`);
+        fs.unlink(minifiedCSS, function(err) {
+            if (err) {
+                _log.appendLine(`Warning: Error deleting ${minifiedCSS} - ${err}`);
+            }
+            _log.debug(`Deleted ${minifiedCSS} successfully`);
+        });
     } catch(err) {
         _log.appendLine(`Warning: Error deleting ${minifiedCSS} - ${err}`)
     }
@@ -71,7 +75,7 @@ function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _
     },
     (docPath: string) => {
         doDelete(docPath, config, _log);
-    });
+    }, _log);
     _log.debug(`Started chokidar watcher for ${pattern}`);
     return fsWatcher;
 }

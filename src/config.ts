@@ -4,6 +4,7 @@
 // https://opensource.org/licenses/MIT
 'use strict';
 
+export const DefaultBrowsersList: Array<string> = ["> 1%", "last 2 versions"];
 
 export class CompilerConfig {
 
@@ -27,7 +28,7 @@ export class CompilerConfig {
 
     disableAutoPrefixer: boolean = false;
 
-    autoPrefixBrowsersList: Array<string> = ["> 1%", "last 2 versions"];
+    autoPrefixBrowsersList: Array<string> = DefaultBrowsersList;
 
     targetDirectory: string = "";
 
