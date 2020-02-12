@@ -31,14 +31,10 @@ export function isBeingWatched(document: IDocument, config: CompilerConfig, _log
     for (const watchDirectory of config.watchDirectories) {
         const fqWatchDirectory = xformPath(projectRoot, watchDirectory);
         const relativeDocPath = getRelativeDirectory(fqWatchDirectory, docPath);
-        if (config.debug) {
-            _log.appendLine(`relativeDocPath: ${relativeDocPath}, docPath: ${docPath} for fqWatchDirectory: ${fqWatchDirectory}`);
-        }
+        _log.debug(`relativeDocPath: ${relativeDocPath}, docPath: ${docPath} for fqWatchDirectory: ${fqWatchDirectory}`);
         if (!relativeDocPath.startsWith("..") && relativeDocPath !== docPath) {
             // Indeed it is a subdirectory of watchDirectory so being watched
-            if (config.debug) {
-                _log.appendLine(`Warning: Failed to compile ${docPath} as the directory ( ${watchDirectory} ) is already being watched `);
-            }
+            _log.debug(`Warning: Failed to compile ${docPath} as the directory ( ${watchDirectory} ) is already being watched `);
             watched = true;
             break;
         }
