@@ -8,7 +8,7 @@
 
 export interface IMinifier {
 
-    minify(src: string): Promise<string>;
+    minify(src: Buffer): Promise<Buffer>;
 
 }
 

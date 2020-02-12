@@ -13,8 +13,8 @@ import { ILog } from './log';
 import { doTransformSync, doTransformBytes } from './transform';
 
 
-export function doAutoprefixCSS(data: string, config : CompilerConfig): Promise<string> {
-    return new Promise<string>(function(resolve, reject) {
+export function doAutoprefixCSS(data: Buffer, config : CompilerConfig): Promise<Buffer> {
+    return new Promise<Buffer>(function(resolve, reject) {
         if (config.disableAutoPrefixer) {
             resolve(data);
             return;
@@ -25,7 +25,7 @@ export function doAutoprefixCSS(data: string, config : CompilerConfig): Promise<
             })
           );
         processor.process(data, {from:'', to: ''}).then(
-            (value: postcss.Result) => resolve(value.css),
+            (value: postcss.Result) => resolve(Buffer.from(value.css, 'utf-8')),
             err => reject(err)
         )
     });
@@ -35,19 +35,19 @@ export function autoPrefixCSSFile(output: string, inFile: string,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
     _log.debug(`About to autoprefix file ${inFile} to ${output}`);
-    return doTransformSync(inFile, config.encoding, output, _log,
-        (contents: string) => {
+    return doTransformSync(inFile, output, _log,
+        (contents: Buffer) => {
             return doAutoprefixCSS(contents, config);
         }
         );
 }
 
-export function autoPrefixCSSBytes(output: string, inBytes: string,
+export function autoPrefixCSSBytes(output: string, inBytes: Buffer,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
     _log.debug(`About to autoprefix bytes to ${output}`);
     return doTransformBytes(inBytes, output, _log,
-        (contents: string) => {
+        (contents: Buffer) => {
             return doAutoprefixCSS(contents, config);
         }
         );

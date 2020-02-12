@@ -32,13 +32,13 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
     return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
-function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog): (value: string) => Promise<string> {
-    return (contents: string) => {
-        return new Promise<string>(function(resolve, reject) {
+function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog): (value: Buffer) => Promise<Buffer> {
+    return (contents: Buffer) => {
+        return new Promise<Buffer>(function(resolve, reject) {
             doAutoprefixCSS(contents, config).then(
-                (value: string) => {
+                (value: Buffer) => {
                     minifier.minify(value).then(
-                        (minifiedValue:string) => {
+                        (minifiedValue:Buffer) => {
                             resolve(minifiedValue);
                         },
                         err => reject(err)
@@ -62,7 +62,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     }
     const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
     _log.debug(`About to minify ${docPath} to ${minifiedCSS}`);
-    doTransformSync(docPath, config.encoding, minifiedCSS, _log,
+    doTransformSync(docPath, minifiedCSS, _log,
         getTransformation(minifier, config, _log)).then(
             (value: number) => {
                 _log.debug(`Wrote ${value} bytes to ${minifiedCSS}`);

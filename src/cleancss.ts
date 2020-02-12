@@ -19,8 +19,8 @@ export class CleanCSSMinifier {
     constructor() {
     }
 
-    public minify(src: string): Promise<string> {
-        return new Promise<string>(function(resolve, reject) {
+    public minify(src: Buffer): Promise<Buffer> {
+        return new Promise<Buffer>(function(resolve, reject) {
             const data = new CleanCSS(Options).minify(src);
             const result = data.styles;
             resolve(result);

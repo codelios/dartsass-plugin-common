@@ -27,13 +27,13 @@ export function writeToFile(outPath: string, data: any, _log: ILog) : Promise<nu
 }
 
 
-export function doTransformSync(src: string, encoding: string, target: string, _log: ILog, fnTransform: (value: string) => Promise<string>): Promise<number> {
+export function doTransformSync(src: string, target: string, _log: ILog, fnTransform: (value: Buffer) => Promise<Buffer>): Promise<number> {
     _log.debug(`About to transform ${src} to ${target}`);
-    const contents = fs.readFileSync(src, encoding);
+    const contents = fs.readFileSync(src);
     return doTransformBytes(contents, target, _log, fnTransform);
 }
 
-export function doTransformBytes(src: string, target: string, _log: ILog, fnTransform: (value: string) => Promise<string>): Promise<number> {
+export function doTransformBytes(src: Buffer, target: string, _log: ILog, fnTransform: (value: Buffer) => Promise<Buffer>): Promise<number> {
     return new Promise( function(resolve, reject){
         fnTransform(src).then(
             data => {
