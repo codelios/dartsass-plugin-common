@@ -10,5 +10,7 @@ export interface IMinifier {
 
     minify(src: Buffer): Promise<Buffer>;
 
+    minifySync(src: Buffer): Buffer;
+
 }
 

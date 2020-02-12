@@ -20,10 +20,14 @@ export class CleanCSSMinifier {
     }
 
     public minify(src: Buffer): Promise<Buffer> {
+        const self = this;
         return new Promise<Buffer>(function(resolve, reject) {
-            const data = new CleanCSS(Options).minify(src);
-            const result = data.styles;
-            resolve(result);
+            resolve(self.minifySync(src));
         });
+    }
+
+    public minifySync(src: Buffer): Buffer {
+            const data = new CleanCSS(Options).minify(src);
+            return data.styles;
     }
 }
