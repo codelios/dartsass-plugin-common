@@ -81,19 +81,18 @@ export class DartSassCompiler {
         });
     }
 
-    handleError(err: sass.SassException, config : CompilerConfig, _log: ILog): Promise<string> {
-        return new Promise( function(resolve, reject){
-            const fileonly = path.basename(err.file);
-            const formattedMessage = ` ${err.line}:${err.column} ${err.formatted}`;
-            _log.appendLine(`${err.formatted}`);
-            reject(`${fileonly}: ${formattedMessage}`);
-        });
+    handleError(err: sass.SassException, config : CompilerConfig, _log: ILog): string {
+        const fileonly = path.basename(err.file);
+        const formattedMessage = ` ${err.line}:${err.column} ${err.formatted}`;
+        _log.appendLine(`Warning: ${err.formatted}`);
+        return `${fileonly}: ${formattedMessage}`;
     }
 
     asyncCompile(document: IDocument, compressed: boolean, output: string,
         config : CompilerConfig,
         _log: ILog): Promise<string> {
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
+        _log.debug(`asyncCompile (compileOnSave) IncludePaths: ${includePaths}`);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
             sass.render({
@@ -104,15 +103,10 @@ export class DartSassCompiler {
                 sourceMap: !config.disableSourceMap
             }, function (err: sass.SassException, result: sass.Result) {
                 if (err) {
-                    self.handleError(err, config, _log).then(
-                        value => {
-                            resolve(value)
-                        },
-                        err => {
-                            reject(err);
-                        }
-                    )
+                    const msg = self.handleError(err, config, _log);
+                    reject(`${msg}`);
                 } else {
+                    _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix`);
                     autoPrefixCSSBytes(output, result.css.toString(config.encoding), config,  _log).then(
                         value => resolve(output),
                         err => reject(err)
