@@ -70,7 +70,7 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Prom
         }
         prc.stdout.setEncoding('utf8');
         prc.stdout.on('data', (data: any) => {
-            _log.appendLine(`${data}`);
+            _log.debug(`${data}`);
             output = data;
         });
         prc.stderr.setEncoding('utf8');
