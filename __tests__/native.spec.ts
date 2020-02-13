@@ -41,6 +41,7 @@ describe('Native CompileDocument' , () => {
         const config = new CompilerConfig();
         config.targetDirectory = "out";
         config.sassBinPath = "/usr/local/bin/sass";
+        config.disableMinifiedFileGeneration = true;
         const _log = getNullLog();
         native.compileDocument(document, config, _log).then(
             result => {
@@ -77,6 +78,7 @@ describe('Native CompileDocument' , () => {
         config.targetDirectory = "out";
         config.sassBinPath = "/usr/local/bin/sass";
         config.autoPrefixBrowsersList = ["last 2 version"];
+        config.disableMinifiedFileGeneration = true;
         const _log = getNullLog();
         native.compileDocument(document, config, _log).then(
             result => {
