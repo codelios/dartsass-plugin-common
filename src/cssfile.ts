@@ -31,7 +31,7 @@ export function doTransformBytes(src: CSSFile, fnTransform: (value: CSSFile) => 
 
 function writeSourceMap(value: any, sourceMapFile: string, _log: ILog): Promise<number> {
     if (value === undefined || value === null) {
-        _log.debug(`Warning: ${sourceMapFile} not being written. sourcemap is null`);
+        _log.debug(`Warning: sourcemap is null. Hence ${sourceMapFile} not being written and deleted`);
         deleteFile(sourceMapFile, _log);
     }
     return writeToFile(sourceMapFile, value, _log);

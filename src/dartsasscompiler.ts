@@ -13,7 +13,6 @@ import { xformPaths} from './util';
 import { IDocument } from './document';
 import { ILog } from './log';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
-import { writeToFile } from './fileutil';
 import { autoPrefixCSSBytes } from './autoprefix';
 import { ProcessOutput } from './run';
 import { Info } from './version';
@@ -111,12 +110,6 @@ export class DartSassCompiler {
                         value => resolve(output),
                         err => reject(err)
                     )
-                    if (!config.disableSourceMap && !(result.map === null || result.map === undefined)) {
-                        writeToFile(output+'.map', result.map, _log).then(
-                            value => {},
-                            err => reject(err)
-                        );
-                    }
                 }
             });
         });
