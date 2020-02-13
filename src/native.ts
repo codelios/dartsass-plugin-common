@@ -32,12 +32,17 @@ export class NativeCompiler {
         return xformPath(projectRoot, sassBinPath);
     }
 
+    verifySassBinPath(sassBinPath: string, _log: ILog): boolean {
+        return true;
+    }
+
     public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
         const args = VersionArgs;
         let runPromise = Run(sassBinPath, args, projectRoot, _log);
         if (isWindows()) {
             const relativeCmd = getRelativeDirectory(projectRoot, sassBinPath);
+            this.verifySassBinPath(relativeCmd, _log);
             args.unshift(relativeCmd);
             runPromise = Run("node.exe", args, projectRoot, _log);
         }
@@ -59,19 +64,19 @@ export class NativeCompiler {
 
     doCompileDocument(sassBinPath: string, output: string,
         config: CompilerConfig, cwd: string, _log: ILog, args: string[]): Promise<string> {
+        const self = this;
         return new Promise(function(resolve, reject) {
             let runPromise = Run(sassBinPath, args, cwd, _log);
             if (isWindows()) {
                 const relativeCmd = getRelativeDirectory(cwd, sassBinPath);
+                self.verifySassBinPath(relativeCmd, _log);
                 args.unshift(relativeCmd);
                 runPromise = Run("node.exe", args, cwd, _log);
             }
             runPromise.then(
                 originalValue => {
                     autoPrefixCSSFile(output, output, config,  _log).then(
-                        autoPrefixvalue => {
-                            resolve(output);
-                        },
+                        autoPrefixvalue => resolve(output),
                         err => reject(err)
                     )
                },
@@ -96,12 +101,8 @@ export class NativeCompiler {
                 const output = getOutputCSS(document, config, _log);
                 const args = self.getArgs(document, config, output);
                 self.doCompileDocument(sassBinPath, output, config, document.getProjectRoot(), _log, args).then(
-                    value => {
-                        resolve(value);
-                    },
-                    err => {
-                        reject(err);
-                    }
+                    value =>  resolve(value),
+                    err => reject(err)
                 )
             });
         } catch(err) {
@@ -155,6 +156,7 @@ export class NativeCompiler {
         _log.appendLine(`Watching ${srcdir} by ${sassBinPath}.`);
         if (isWindows()) {
             const relativeCmd = getRelativeDirectory(projectRoot, sassBinPath);
+            this.verifySassBinPath(relativeCmd, _log);
             args.unshift(relativeCmd);
             return RunDetached("node.exe", projectRoot, args, _log);
         } else {
