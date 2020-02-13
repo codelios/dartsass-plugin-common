@@ -16,22 +16,9 @@ export interface CSSFile {
 
 
 
-export function doTransformBytes(src: CSSFile, fnTransform: (value: CSSFile) => Promise<CSSFile>): Promise<CSSFile> {
-    return new Promise<CSSFile>( function(resolve, reject){
-        fnTransform(src).then(
-            (data: CSSFile) => {
-                resolve(data);
-            },
-            err => {
-                reject(err);
-            }
-        )
-    });
-}
-
 function writeSourceMap(value: any, sourceMapFile: string, _log: ILog): Promise<number> {
     if (value === undefined || value === null) {
-        _log.debug(`Warning: sourcemap is null. Hence ${sourceMapFile} not being written and deleted`);
+        _log.debug(`Warning: sourcemap is null. Hence ${sourceMapFile} not being written but deleted`);
         deleteFile(sourceMapFile, _log);
     }
     return writeToFile(sourceMapFile, value, _log);

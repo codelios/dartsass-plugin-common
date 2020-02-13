@@ -26,16 +26,16 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log:
           );
         processor.process({
             css: cssfile.css.toString(),
-            // map: cssfile.sourceMap,
+            map: cssfile.sourceMap,
         }, {from:'', to: ''}).then(
             (result: postcss.Result) => {
                 result.warnings().forEach(warn => {
-                    _log.appendLine(`Warning: ${warn}`);
+                    _log.appendLine(`Autoprefixer warning: ${warn}`);
                 });
                 resolve({
                     css: Buffer.from(result.css),
                     sourceMap: result.map
-                })
+                });
             },
             err => reject(err)
         )

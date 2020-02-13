@@ -16,7 +16,7 @@ import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './targ
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import { IMinifier } from './minifier';
-import { CSSFile, doTransformBytes, writeCSSFile, getInputSourceMap } from './cssfile';
+import { CSSFile, writeCSSFile, getInputSourceMap } from './cssfile';
 import { CleanCSSMinifier } from './cleancss';
 import { deleteFile, readFileSync } from './fileutil';
 
@@ -33,9 +33,8 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 }
 
 
-function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog) : (value: CSSFile) => Promise<CSSFile> {
-    return  (contents: CSSFile) => {
-        return new Promise<CSSFile>(function(resolve, reject) {
+function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: IMinifier, _log: ILog) : Promise<CSSFile> {
+    return new Promise<CSSFile>(function(resolve, reject) {
         doAutoprefixCSS(contents, config, _log).then(
             (value: CSSFile) => {
                 minifier.minify(value, config.disableSourceMap).then(
@@ -46,9 +45,8 @@ function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: IL
                 )
                 },
             err => reject(err)
-            )
-        });
-    }
+            );
+    });
 }
 
 function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
@@ -69,14 +67,14 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
         css: readFileSync(docPath),
         sourceMap: getInputSourceMap(inputSourceMapFile)
     };
-    doTransformBytes(inputCSSFile,  getTransformation(minifier, config, _log)).then(
+    getTransformation(inputCSSFile, config, minifier, _log).then(
         (value: CSSFile) => {
             writeCSSFile(value, minifiedCSS, _log).then(
                 (written: number) => {
                     _log.debug(`Wrote to ${minifiedCSS}[.map]`)
                 },
                 err =>_log.debug(`Error writing to ${minifiedCSS} - ${err}`)
-            )
+            );
         },
         err => _log.debug(`Error transforming file ${minifiedCSS} - ${err}`)
     );
