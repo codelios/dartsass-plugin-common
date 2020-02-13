@@ -34,6 +34,9 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 
 function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer) => void {
     return (value: Buffer) => {
+        if (value === undefined || value === null) {
+            _log.debug(`Warning: ${sourceMapFile} not being written. sourcemap is null`);
+        }
         writeToFile(sourceMapFile, value, _log).then(
             (value: number) => {
                 _log.debug(`Wrote to source {sourceMapFile} - ${value} bytes`);
