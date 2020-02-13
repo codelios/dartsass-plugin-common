@@ -13,7 +13,7 @@ import { ILog } from './log';
 import { CSSFile, writeCSSFile } from './cssfile'
 
 
-export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig): Promise<CSSFile> {
+export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log: ILog): Promise<CSSFile> {
     return new Promise<CSSFile>(function(resolve, reject) {
         if (config.disableAutoPrefixer) {
             resolve(cssfile);
@@ -24,15 +24,19 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig): Prom
               browsers: config.autoPrefixBrowsersList
             })
           );
-        const myMap = cssfile.sourceMap;
         processor.process({
             css: cssfile.css.toString(),
-            map: myMap,
+            // map: cssfile.sourceMap,
         }, {from:'', to: ''}).then(
-            (value: postcss.Result) => resolve({
-                css: Buffer.from(value.css),
-                sourceMap: value.map
-            }),
+            (result: postcss.Result) => {
+                result.warnings().forEach(warn => {
+                    _log.appendLine(`Warning: ${warn}`);
+                });
+                resolve({
+                    css: Buffer.from(result.css),
+                    sourceMap: result.map
+                })
+            },
             err => reject(err)
         )
     });
@@ -42,7 +46,7 @@ export function autoPrefixCSSBytes(output: string, inFile: CSSFile,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
     return new Promise<number>( function(resolve, reject){
-        doAutoprefixCSS(inFile, config).then(
+        doAutoprefixCSS(inFile, config, _log).then(
             (value: CSSFile) => {
                 writeCSSFile(value, output, _log).then(
                     (value: number) => resolve(value),

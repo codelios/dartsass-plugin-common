@@ -45,7 +45,7 @@ export function writeCSSFile(src: CSSFile, output: string, _log: ILog): Promise<
                 writeSourceMap(src.sourceMap, sourceMapFile, _log).then(
                     value => resolve(value),
                     err => reject(err)
-                )
+                );
             },
             err => {
                 reject(err);
