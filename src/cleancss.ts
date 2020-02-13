@@ -17,17 +17,17 @@ export class CleanCSSMinifier {
     constructor() {
     }
 
-    public minify(src: Buffer, disableSourceMap: boolean): Promise<MinifyOutput> {
+    public minify(src: Buffer, inputSourceMap: any, disableSourceMap: boolean): Promise<MinifyOutput> {
         const self = this;
         return new Promise<MinifyOutput>(function(resolve, reject) {
-            resolve(self.minifySync(src, disableSourceMap));
+            resolve(self.minifySync(src, inputSourceMap, disableSourceMap));
         });
     }
 
-    public minifySync(src: Buffer, disableSourceMap: boolean): MinifyOutput {
+    public minifySync(src: Buffer, inputSourceMap: any, disableSourceMap: boolean): MinifyOutput {
         const data = new CleanCSS({
             sourceMap: !disableSourceMap
-        }).minify(src);
+        }).minify(src, inputSourceMap);
         return  {
             output: data.styles,
             sourceMap: data.sourceMap

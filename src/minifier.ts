@@ -15,9 +15,9 @@ export interface MinifyOutput {
 
 export interface IMinifier {
 
-    minify(src: Buffer, disableSourceMap: boolean): Promise<MinifyOutput>;
+    minify(src: Buffer, inputSourceMap: any, disableSourceMap: boolean): Promise<MinifyOutput>;
 
-    minifySync(src: Buffer, disableSourceMap: boolean): MinifyOutput;
+    minifySync(src: Buffer, inputSourceMap: any, disableSourceMap: boolean): MinifyOutput;
 
 }
 
