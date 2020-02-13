@@ -42,13 +42,13 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: 
                         resolve(minifiedValue);
                     },
                     err => {
-                        _log.debug(`Error running minifier - ${value.sourceMap} - ${err}`);
+                        _log.debug(`Error running minifier - ${value.sourceMap} - value.css.length: ${value.css.length} - ${err}`);
                         reject(err);
                     }
                 )
                 },
             err => {
-                _log.debug(`Error running autoprefixer: ${contents.sourceMap}  - ${err}`);
+                _log.debug(`Error running autoprefixer: ${contents.sourceMap}  - contents.css.length: ${contents.css.length} - ${err}`);
                 reject(err);
             }
             );
