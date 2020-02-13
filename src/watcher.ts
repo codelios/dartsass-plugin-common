@@ -15,10 +15,9 @@ import { doAutoprefixCSS } from './autoprefix';
 import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './target';
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
-import fs from 'fs';
 import { IMinifier, MinifyOutput } from './minifier';
 import { CleanCSSMinifier, getDefaultCleanCSSOptions } from './cleancss';
-import { doTransformSync, writeToFile } from './transform';
+import { doTransformSync, writeToFile, deleteFile } from './transform';
 
 
 const minifier: IMinifier = new CleanCSSMinifier(getDefaultCleanCSSOptions());
@@ -34,21 +33,9 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 
 function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer, disableSourceMap: boolean) => void {
     return (value: Buffer, disableSourceMap:boolean) => {
-        if (disableSourceMap) {
-            try {
-                fs.unlink(sourceMapFile, function(err) {
-                    if (err) {
-                        _log.appendLine(`Warning: Error deleting ${sourceMapFile} - ${err}`);
-                    }
-                    _log.debug(`Deleted ${sourceMapFile} successfully`);
-                });
-            } catch(err) {
-                _log.appendLine(`Warning: Error deleting ${sourceMapFile} - ${err}`)
-            }
-            return;
-        }
         if (value === undefined || value === null) {
             _log.debug(`Warning: ${sourceMapFile} not being written. sourcemap is null`);
+            deleteFile(sourceMapFile, _log);
         }
         writeToFile(sourceMapFile, value, _log).then(
             (value: number) => {
@@ -66,7 +53,7 @@ function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: IL
         return new Promise<Buffer>(function(resolve, reject) {
             doAutoprefixCSS(contents, config).then(
                 (value: Buffer) => {
-                    minifier.minify(value).then(
+                    minifier.minify(value, config.disableSourceMap).then(
                         (minifiedValue:MinifyOutput) => {
                             fnSourceMap(minifiedValue.sourceMap, config.disableSourceMap);
                             resolve(minifiedValue.output);
@@ -109,16 +96,7 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
         return;
     }
     const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
-    try {
-        fs.unlink(minifiedCSS, function(err) {
-            if (err) {
-                _log.appendLine(`Warning: Error deleting ${minifiedCSS} - ${err}`);
-            }
-            _log.debug(`Deleted ${minifiedCSS} successfully`);
-        });
-    } catch(err) {
-        _log.appendLine(`Warning: Error deleting ${minifiedCSS} - ${err}`)
-    }
+    deleteFile(minifiedCSS, _log);
 }
 
 function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): FSWatcher {

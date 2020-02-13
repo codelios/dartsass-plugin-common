@@ -26,6 +26,18 @@ export function writeToFile(outPath: string, data: any, _log: ILog) : Promise<nu
     });
 }
 
+export function deleteFile(docPath: string, _log: ILog) {
+    try {
+        fs.unlink(docPath, function(err) {
+            if (err) {
+                _log.appendLine(`Warning: Error deleting ${docPath} - ${err}`);
+            }
+            _log.debug(`Deleted ${docPath} successfully`);
+        });
+    } catch(err) {
+        _log.appendLine(`Warning: Error deleting ${docPath} - ${err}`)
+    }
+}
 
 export function doTransformSync(src: string, target: string, _log: ILog, fnTransform: (value: Buffer) => Promise<Buffer>): Promise<number> {
     const contents = fs.readFileSync(src);

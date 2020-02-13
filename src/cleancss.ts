@@ -26,14 +26,14 @@ export class CleanCSSMinifier {
         this.options = options;
     }
 
-    public minify(src: Buffer): Promise<MinifyOutput> {
+    public minify(src: Buffer, disableSourceMap: boolean): Promise<MinifyOutput> {
         const self = this;
         return new Promise<MinifyOutput>(function(resolve, reject) {
-            resolve(self.minifySync(src));
+            resolve(self.minifySync(src, disableSourceMap));
         });
     }
 
-    public minifySync(src: Buffer): MinifyOutput {
+    public minifySync(src: Buffer, disableSourceMap: boolean): MinifyOutput {
         const data = new CleanCSS(this.options).minify(src);
         return  {
             output: data.styles,
