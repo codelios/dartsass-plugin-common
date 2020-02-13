@@ -5,6 +5,8 @@
 
 
 'use strict';
+import { MinifyOutput } from './minifier';
+
 var CleanCSS = require('clean-css');
 
 
@@ -24,15 +26,18 @@ export class CleanCSSMinifier {
         this.options = options;
     }
 
-    public minify(src: Buffer): Promise<Buffer> {
+    public minify(src: Buffer): Promise<MinifyOutput> {
         const self = this;
-        return new Promise<Buffer>(function(resolve, reject) {
+        return new Promise<MinifyOutput>(function(resolve, reject) {
             resolve(self.minifySync(src));
         });
     }
 
-    public minifySync(src: Buffer): Buffer {
-            const data = new CleanCSS(this.options).minify(src);
-            return data.styles;
+    public minifySync(src: Buffer): MinifyOutput {
+        const data = new CleanCSS(this.options).minify(src);
+        return  {
+            output: data.styles,
+            sourceMap: data.sourceMap
+        };
     }
 }

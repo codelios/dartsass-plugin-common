@@ -16,7 +16,7 @@ import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './targ
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import fs from 'fs';
-import { IMinifier } from './minifier';
+import { IMinifier, MinifyOutput } from './minifier';
 import { CleanCSSMinifier, getDefaultCleanCSSOptions } from './cleancss';
 import { doTransformSync } from './transform';
 
@@ -38,8 +38,8 @@ function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: IL
             doAutoprefixCSS(contents, config).then(
                 (value: Buffer) => {
                     minifier.minify(value).then(
-                        (minifiedValue:Buffer) => {
-                            resolve(minifiedValue);
+                        (minifiedValue:MinifyOutput) => {
+                            resolve(minifiedValue.output);
                         },
                         err => reject(err)
                     )

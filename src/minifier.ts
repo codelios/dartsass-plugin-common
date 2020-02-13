@@ -6,11 +6,18 @@
 
 'use strict';
 
+export interface MinifyOutput {
+
+    output: Buffer;
+
+    sourceMap: Buffer;
+}
+
 export interface IMinifier {
 
-    minify(src: Buffer): Promise<Buffer>;
+    minify(src: Buffer): Promise<MinifyOutput>;
 
-    minifySync(src: Buffer): Buffer;
+    minifySync(src: Buffer): MinifyOutput;
 
 }
 
