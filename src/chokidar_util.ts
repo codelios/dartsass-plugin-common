@@ -8,11 +8,11 @@
 import chokidar, { FSWatcher } from 'chokidar';
 import { ILog } from './log';
 
-const IgnoreBlackListRegEx =  `[*.scss|*.min.css|*.map|*.jpg|*.png|*.html|*.js|*.ts]`;
 
-export function cwatchCSS(pattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, _log: ILog) : FSWatcher {
+
+function doWatch(pattern: string, ignorePattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, _log: ILog) : FSWatcher {
     const watcher = chokidar.watch(pattern, {
-        ignored: IgnoreBlackListRegEx,
+        ignored: ignorePattern,
         awaitWriteFinish: true,
         persistent: true,
     });
@@ -24,7 +24,17 @@ export function cwatchCSS(pattern: string, fnOnFile: (docPath: string)=>any , fn
     return watcher;
 }
 
-export function closeCWatcher(watcher: FSWatcher, _log: ILog) {
+export function cssWatch(pattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, _log: ILog) : FSWatcher {
+    const ignoreBlackListRegEx =  `[*.scss|*.min.css|*.map|*.jpg|*.png|*.html|*.js|*.ts]`;
+    return doWatch(pattern, ignoreBlackListRegEx, fnOnFile, fnOnDeleteFile, _log);
+}
+
+export function scssWatch(pattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, _log: ILog) : FSWatcher {
+    const ignoreBlackListRegEx =  `[*.css|*.min.css|*.map|*.jpg|*.png|*.html|*.js|*.ts]`;
+    return doWatch(pattern, ignoreBlackListRegEx, fnOnFile, fnOnDeleteFile, _log);
+}
+
+export function closeChokidarWatcher(watcher: FSWatcher, _log: ILog) {
     watcher.close().then(
         () => {
             _log.debug(`Closed a FSWatcher`);

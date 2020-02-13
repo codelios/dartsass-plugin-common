@@ -13,7 +13,7 @@ import { getCurrentCompiler } from './select';
 import { ISassCompiler } from './compiler';
 import { doAutoprefixCSS } from './autoprefix';
 import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './target';
-import { cwatchCSS, closeCWatcher} from './chokidar_util';
+import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import fs from 'fs';
 import { IMinifier } from './minifier';
@@ -97,7 +97,7 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
 function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): FSWatcher {
     const  _targetDirectory = getWatchTargetDirectory(srcdir, config);
     const targetDirectory = xformPath(projectRoot, _targetDirectory);
-    const fsWatcher = cwatchCSS(targetDirectory, (docPath: string) => {
+    const fsWatcher = cssWatch(targetDirectory, (docPath: string) => {
         _internalMinify(docPath, config, _log);
     },
     (docPath: string) => {
@@ -169,7 +169,7 @@ export class Watcher {
             killProcess(watchInfo.pid, _log);
             if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
                 _log.appendLine(`About to clear chokidar watcher for sass watcher pid ${watchInfo.pid}`);
-                closeCWatcher(watchInfo.fsWatcher, _log);
+                closeChokidarWatcher(watchInfo.fsWatcher, _log);
             }
             cleared = true;
         } else {
@@ -190,7 +190,7 @@ export class Watcher {
             _log.appendLine(`Unwatching ${key} with pid ${watchInfo.pid}`);
             killProcess(watchInfo.pid, _log);
             if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
-                closeCWatcher(watchInfo.fsWatcher, _log);
+                closeChokidarWatcher(watchInfo.fsWatcher, _log);
             }
         });
         this.watchList.clear();

@@ -28,7 +28,6 @@ export function writeToFile(outPath: string, data: any, _log: ILog) : Promise<nu
 
 
 export function doTransformSync(src: string, target: string, _log: ILog, fnTransform: (value: Buffer) => Promise<Buffer>): Promise<number> {
-    _log.debug(`About to transform ${src} to ${target}`);
     const contents = fs.readFileSync(src);
     return doTransformBytes(contents, target, _log, fnTransform);
 }
