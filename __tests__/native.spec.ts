@@ -54,7 +54,7 @@ describe('Native CompileDocument' , () => {
         ).finally(done);
     });
 
-    it('compileDocument incorrect scss should result in error', (done) => {
+    it('compileDocument invalid/nonexistent/incorrect scss should result in error', (done) => {
         const native = new NativeCompiler();
         const document: IDocument = getDocumentForFile('invalid.scss');
         const config = new CompilerConfig();
@@ -115,7 +115,7 @@ describe('Native CompileDocument' , () => {
 
 describe('Native Validate' , () => {
 
-    it('directory for sassBinPath should fail', (done) => {
+    it('directory value for sassBinPath should fail', (done) => {
         const native = new NativeCompiler();
         const config = new CompilerConfig();
         config.sassBinPath = "/usr/local/bin";

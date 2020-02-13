@@ -56,6 +56,10 @@ export function writeCSSFile(src: CSSFile, output: string, _log: ILog): Promise<
 
 export function getInputSourceMap(inputSourceMapFile: string): any {
     const contents = readFileSync(inputSourceMapFile);
+    return getInputSourceMapFromBuffer(contents);
+}
+
+export function getInputSourceMapFromBuffer(contents: Buffer): any {
     if (contents !== undefined && contents !== null && contents.length > 0) {
         return JSON.parse(contents.toString());
     } else {

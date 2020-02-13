@@ -16,7 +16,7 @@ import { getOutputCSS, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSSBytes } from './autoprefix';
 import { ProcessOutput } from './run';
 import { Info } from './version';
-import { getInputSourceMap } from './cssfile';
+import { getInputSourceMapFromBuffer } from './cssfile';
 
 
 const NativeSassMessage = `
@@ -103,15 +103,18 @@ export class DartSassCompiler {
                     const msg = self.handleError(err, config, _log);
                     reject(`${msg}`);
                 } else {
-                    const sourceMap = output + ".map";
-                    _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix - sourceMap ${sourceMap}`);
+                    _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix - sourceMap`);
+                    let sourceMap = null;
+                    if (result.map !== undefined && result.map !== null) {
+                        sourceMap = getInputSourceMapFromBuffer(result.map);
+                    }
                     autoPrefixCSSBytes(output, {
                             css: result.css,
-                            sourceMap: getInputSourceMap(sourceMap)},
+                            sourceMap: sourceMap},
                             config,  _log).then(
                         value => resolve(output),
                         err => reject(err)
-                    )
+                    );
                 }
             });
         });

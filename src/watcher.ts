@@ -36,7 +36,7 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog) : (value: CSSFile) => Promise<CSSFile> {
     return  (contents: CSSFile) => {
         return new Promise<CSSFile>(function(resolve, reject) {
-        doAutoprefixCSS(contents, config).then(
+        doAutoprefixCSS(contents, config, _log).then(
             (value: CSSFile) => {
                 minifier.minify(value, config.disableSourceMap).then(
                     (minifiedValue:CSSFile) => {
