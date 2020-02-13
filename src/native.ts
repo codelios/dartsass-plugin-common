@@ -104,7 +104,7 @@ export class NativeCompiler {
                     value =>  {
                         if (!config.disableMinifiedFileGeneration) {
                             const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
-                            const args = self.getArgs(document, config, output, true);
+                            const args = self.getArgs(document, config, minifiedOutput, true);
                             self.doCompileDocument(sassBinPath, minifiedOutput, config, document.getProjectRoot(), _log, args).then(
                                 value => resolve(value),
                                 err => reject(err)
