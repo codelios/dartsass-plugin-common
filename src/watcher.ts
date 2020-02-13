@@ -24,7 +24,7 @@ import { doTransformSync } from './transform';
 const minifier: IMinifier = new CleanCSSMinifier(getDefaultCleanCSSOptions());
 
 const quirkyMinifiedFiles = `
-** There is some quirkiness with sass watcher that expects "dartsass.targetDirectory" to be set, for minified files to be generated as output **
+** There is some quirkiness with sass watcher / chokidar that expects "dartsass.targetDirectory" to be set, for minified files to be generated as output **
 `;
 
 function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: string,
