@@ -6,12 +6,13 @@
 'use strict';
 import { ILog } from './log';
 import { writeToFile, deleteFile, readFileSync } from './fileutil';
+import postcss = require('postcss');
 
 export interface CSSFile {
 
     css: Buffer;
 
-    sourceMap: any;
+    sourceMap: postcss.ResultMap | null;
 }
 
 
@@ -54,9 +55,9 @@ export function writeCSSFile(src: CSSFile, output: string, _log: ILog): Promise<
     });
 }
 
-export function getInputSourceMap(inputSourceMapFile: string): any | null {
+export function getInputSourceMap(inputSourceMapFile: string): any {
     const contents = readFileSync(inputSourceMapFile);
-    if (contents.length > 0) {
+    if (contents !== undefined && contents !== null && contents.length > 0) {
         return JSON.parse(contents.toString());
     } else {
         return null;
