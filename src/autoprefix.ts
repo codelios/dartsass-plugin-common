@@ -24,17 +24,11 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig): Prom
               browsers: config.autoPrefixBrowsersList
             })
           );
-        let lazyResult = processor.process({
-            css: cssfile.css.toString(),
-        }, {from:'', to: ''});
         const myMap = cssfile.sourceMap;
-        if (myMap !== undefined && myMap !== null) {
-            lazyResult = processor.process({
-                css: cssfile.css.toString(),
-                map: myMap
-            }, {from:'', to: ''});
-        }
-        lazyResult.then(
+        processor.process({
+            css: cssfile.css.toString(),
+            map: myMap,
+        }, {from:'', to: ''}).then(
             (value: postcss.Result) => resolve({
                 css: Buffer.from(value.css),
                 sourceMap: value.map

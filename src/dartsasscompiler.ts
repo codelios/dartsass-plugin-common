@@ -103,10 +103,11 @@ export class DartSassCompiler {
                     const msg = self.handleError(err, config, _log);
                     reject(`${msg}`);
                 } else {
-                    _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix`);
+                    const sourceMap = output + ".map";
+                    _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix - sourceMap ${sourceMap}`);
                     autoPrefixCSSBytes(output, {
                             css: result.css,
-                            sourceMap: getInputSourceMap(output + ".map")},
+                            sourceMap: getInputSourceMap(sourceMap)},
                             config,  _log).then(
                         value => resolve(output),
                         err => reject(err)
