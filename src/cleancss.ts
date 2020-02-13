@@ -11,19 +11,10 @@ var CleanCSS = require('clean-css');
 
 
 
-export function getDefaultCleanCSSOptions(): any {
-    return {
-        sourceMap: true
-    };
-}
-
 export class CleanCSSMinifier {
 
 
-    options: any;
-
-    constructor(options: any) {
-        this.options = options;
+    constructor() {
     }
 
     public minify(src: Buffer, disableSourceMap: boolean): Promise<MinifyOutput> {
@@ -34,7 +25,9 @@ export class CleanCSSMinifier {
     }
 
     public minifySync(src: Buffer, disableSourceMap: boolean): MinifyOutput {
-        const data = new CleanCSS(this.options).minify(src);
+        const data = new CleanCSS({
+            sourceMap: !disableSourceMap
+        }).minify(src);
         return  {
             output: data.styles,
             sourceMap: data.sourceMap

@@ -5,13 +5,13 @@
 
 'use strict';
 import 'mocha';
-import { CleanCSSMinifier, getDefaultCleanCSSOptions } from '../src/cleancss';
+import { CleanCSSMinifier } from '../src/cleancss';
 import { expect } from 'chai';
 
 describe('CleanCSSMinifier' , () => {
 
     it('minifySync', () => {
-        const minifier = new CleanCSSMinifier(getDefaultCleanCSSOptions());
+        const minifier = new CleanCSSMinifier();
         const minifyOutput = minifier.minifySync(Buffer.from(`a { color: brown; }`), false);
         var should = require('chai').should();
         should.exist(minifyOutput.output)

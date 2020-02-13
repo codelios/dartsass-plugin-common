@@ -16,11 +16,11 @@ import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './targ
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import { IMinifier, MinifyOutput } from './minifier';
-import { CleanCSSMinifier, getDefaultCleanCSSOptions } from './cleancss';
+import { CleanCSSMinifier } from './cleancss';
 import { doTransformSync, writeToFile, deleteFile } from './transform';
 
 
-const minifier: IMinifier = new CleanCSSMinifier(getDefaultCleanCSSOptions());
+const minifier: IMinifier = new CleanCSSMinifier();
 
 const quirkyMinifiedFiles = `
 ** There is some quirkiness with sass watcher / chokidar that expects "dartsass.targetDirectory" to be set, for minified files to be generated as output **
