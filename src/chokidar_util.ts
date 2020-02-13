@@ -15,6 +15,7 @@ function doWatch(pattern: string, ignorePattern: string, fnOnFile: (docPath: str
         ignored: ignorePattern,
         awaitWriteFinish: true,
         persistent: true,
+        ignoreInitial: true,
     });
     // Add event listeners.
     watcher
