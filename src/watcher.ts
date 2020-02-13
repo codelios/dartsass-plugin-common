@@ -17,7 +17,8 @@ import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import { IMinifier, MinifyOutput } from './minifier';
 import { CleanCSSMinifier } from './cleancss';
-import { doTransformSync, writeToFile, deleteFile, readFileSync } from './transform';
+import { doTransformSync } from './transform';
+import { writeToFile, deleteFile, readFileSync } from './fileutil';
 
 
 const minifier: IMinifier = new CleanCSSMinifier();
@@ -31,8 +32,13 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
     return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
-function getInputSourceMap(inputSourceMapFile: string): Buffer {
-    return readFileSync(inputSourceMapFile);
+function getInputSourceMap(inputSourceMapFile: string): any | null {
+    const contents = readFileSync(inputSourceMapFile);
+    if (contents.length > 0) {
+        return JSON.parse(contents.toString());
+    } else {
+        return null;
+    }
 }
 
 function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer, disableSourceMap: boolean) => void {
@@ -43,7 +49,7 @@ function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer, disable
         }
         writeToFile(sourceMapFile, value, _log).then(
             (value: number) => {
-                _log.debug(`Wrote to source {sourceMapFile} - ${value} bytes`);
+                _log.debug(`Wrote to sourceMap ${sourceMapFile} - ${value} bytes`);
             },
             err => {
                 _log.debug(`Error writing to sourcemap ${sourceMapFile} - ${err}`);

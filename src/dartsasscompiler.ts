@@ -13,7 +13,7 @@ import { xformPaths} from './util';
 import { IDocument } from './document';
 import { ILog } from './log';
 import { getOutputCSS, getOutputMinifiedCSS} from './target';
-import { writeToFile } from './transform';
+import { writeToFile } from './fileutil';
 import { autoPrefixCSSBytes } from './autoprefix';
 import { ProcessOutput } from './run';
 import { Info } from './version';
