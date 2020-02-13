@@ -16,10 +16,10 @@ import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './targ
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import { IMinifier } from './minifier';
-import { CSSFile } from './cssfile';
+import { CSSFile, doTransformBytes, writeCSSFile } from './cssfile';
 import { CleanCSSMinifier } from './cleancss';
-import { writeToFile, deleteFile, readFileSync } from './fileutil';
-import { doTransformBytes } from './transform';
+import { deleteFile, readFileSync } from './fileutil';
+
 
 const minifier: IMinifier = new CleanCSSMinifier();
 
@@ -41,41 +41,22 @@ function getInputSourceMap(inputSourceMapFile: string): any | null {
     }
 }
 
-function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer, disableSourceMap: boolean) => void {
-    return (value: Buffer, disableSourceMap:boolean) => {
-        if (value === undefined || value === null) {
-            _log.debug(`Warning: ${sourceMapFile} not being written. sourcemap is null`);
-            deleteFile(sourceMapFile, _log);
-        }
-        writeToFile(sourceMapFile, value, _log).then(
-            (value: number) => {
-                _log.debug(`Wrote to sourceMap ${sourceMapFile} - ${value} bytes`);
-            },
-            err => {
-                _log.debug(`Error writing to sourcemap ${sourceMapFile} - ${err}`);
-            }
-        );
-    };
-}
-
-function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog,
-    fnSourceMap: (value: Buffer, disableSourceMap: boolean)=> void ): (value: CSSFile) => Promise<CSSFile> {
-    return (contents: CSSFile) => {
+function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog) : (value: CSSFile) => Promise<CSSFile> {
+    return  (contents: CSSFile) => {
         return new Promise<CSSFile>(function(resolve, reject) {
-            doAutoprefixCSS(contents, config).then(
-                (value: CSSFile) => {
-                    minifier.minify(value, config.disableSourceMap).then(
-                        (minifiedValue:CSSFile) => {
-                            fnSourceMap(minifiedValue.sourceMap, config.disableSourceMap);
-                            resolve(minifiedValue);
-                        },
-                        err => reject(err)
-                    )
+        doAutoprefixCSS(contents, config).then(
+            (value: CSSFile) => {
+                minifier.minify(value, config.disableSourceMap).then(
+                    (minifiedValue:CSSFile) => {
+                        resolve(minifiedValue);
+                    },
+                    err => reject(err)
+                )
                 },
-                err => reject(err)
+            err => reject(err)
             )
         });
-    };
+    }
 }
 
 function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
@@ -92,16 +73,21 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     const sourceMapFile = minifiedCSS + ".map";
     const inputSourceMapFile = docPath + ".map";
     _log.debug(`About to minify ${docPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
-    const inputSourceMap = getInputSourceMap(inputSourceMapFile);
-    doTransformBytes({
+    const inputCSSFile = {
         output: readFileSync(docPath),
-        sourceMap: inputSourceMap
-    }, minifiedCSS, _log,
-        getTransformation(minifier, config, _log,
-            onSourceMap(sourceMapFile, _log))).then(
-                (value: number) => _log.debug(`Wrote ${value} bytes to ${minifiedCSS}`),
-                err =>  _log.appendLine(`Warning: Error transforming ${docPath} to ${minifiedCSS} - ${err}`)
-        );
+        sourceMap: getInputSourceMap(inputSourceMapFile)
+    };
+    doTransformBytes(inputCSSFile,  getTransformation(minifier, config, _log)).then(
+        (value: CSSFile) => {
+            writeCSSFile(value, minifiedCSS, _log).then(
+                (written: number) => {
+                    _log.debug(`Wrote to ${minifiedCSS}[.map]`)
+                },
+                err =>_log.debug(`Error writing to ${minifiedCSS} - ${err}`)
+            )
+        },
+        err => _log.debug(`Error transforming file ${minifiedCSS} - ${err}`)
+    );
 }
 
 function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {

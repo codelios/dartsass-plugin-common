@@ -10,8 +10,7 @@ import browserslist from 'browserslist';
 import { CompilerConfig } from './config';
 import { Info } from './version';
 import { ILog } from './log';
-import { CSSFile } from './cssfile'
-import { doTransformBytes } from './transform';
+import { CSSFile, writeCSSFile } from './cssfile'
 import { readFileSync } from 'fs';
 
 
@@ -39,10 +38,9 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig): Prom
 export function autoPrefixCSSFile(output: string, inFile: string,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
-    const data = readFileSync(inFile);
     _log.debug(`About to autoprefix file ${inFile} to ${output}`);
     return autoPrefixCSSBytes(output, {
-        output: data,
+        output: readFileSync(inFile),
         sourceMap: null,
     }, config, _log);
 }
@@ -50,11 +48,17 @@ export function autoPrefixCSSFile(output: string, inFile: string,
 export function autoPrefixCSSBytes(output: string, inFile: CSSFile,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
-    return doTransformBytes(inFile, output, _log,
-        (contents: CSSFile) => {
-            return doAutoprefixCSS(contents, config);
-        }
-        );
+    return new Promise<number>( function(resolve, reject){
+        doAutoprefixCSS(inFile, config).then(
+            (value: CSSFile) => {
+                writeCSSFile(value, output, _log).then(
+                    (value: number) => resolve(value),
+                    err => reject(err)
+                )
+            },
+            err => reject(err)
+        )
+    });
 }
 
 
