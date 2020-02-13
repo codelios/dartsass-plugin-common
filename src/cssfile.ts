@@ -6,13 +6,12 @@
 'use strict';
 import { ILog } from './log';
 import { writeToFile, deleteFile, readFileSync } from './fileutil';
-import postcss = require('postcss');
 
 export interface CSSFile {
 
     css: Buffer;
 
-    sourceMap: postcss.ResultMap | null;
+    sourceMap: any;
 }
 
 
