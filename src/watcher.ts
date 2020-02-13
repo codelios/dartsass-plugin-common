@@ -18,7 +18,7 @@ import { FSWatcher } from 'chokidar';
 import fs from 'fs';
 import { IMinifier, MinifyOutput } from './minifier';
 import { CleanCSSMinifier, getDefaultCleanCSSOptions } from './cleancss';
-import { doTransformSync } from './transform';
+import { doTransformSync, writeToFile } from './transform';
 
 
 const minifier: IMinifier = new CleanCSSMinifier(getDefaultCleanCSSOptions());
@@ -32,13 +32,26 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
     return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
-function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog): (value: Buffer) => Promise<Buffer> {
+function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer) => void {
+    return (value: Buffer) => {
+        writeToFile(sourceMapFile, value, _log).then(
+            (value: number) => {
+                _log.debug(`Wrote to source {sourceMapFile} - ${value} bytes`);
+            },
+            err => {
+                _log.debug(`Error writing to sourcemap ${sourceMapFile} - ${err}`);
+            }
+        );
+    };
+}
+function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog, fnSourceMap: (value: Buffer)=> void ): (value: Buffer) => Promise<Buffer> {
     return (contents: Buffer) => {
         return new Promise<Buffer>(function(resolve, reject) {
             doAutoprefixCSS(contents, config).then(
                 (value: Buffer) => {
                     minifier.minify(value).then(
                         (minifiedValue:MinifyOutput) => {
+                            fnSourceMap(minifiedValue.sourceMap);
                             resolve(minifiedValue.output);
                         },
                         err => reject(err)
@@ -61,15 +74,12 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
         return;
     }
     const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
-    _log.debug(`About to minify ${docPath} to ${minifiedCSS}`);
+    const sourceMapFile = minifiedCSS + ".map";
+    _log.debug(`About to minify ${docPath} to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
     doTransformSync(docPath, minifiedCSS, _log,
-        getTransformation(minifier, config, _log)).then(
-            (value: number) => {
-                _log.debug(`Wrote ${value} bytes to ${minifiedCSS}`);
-            },
-            err => {
-                _log.appendLine(`Warning: Error transforming ${docPath} to ${minifiedCSS} - ${err}`);
-            }
+        getTransformation(minifier, config, _log, onSourceMap(sourceMapFile, _log))).then(
+            (value: number) => _log.debug(`Wrote ${value} bytes to ${minifiedCSS}`),
+            err =>  _log.appendLine(`Warning: Error transforming ${docPath} to ${minifiedCSS} - ${err}`)
         );
 }
 
