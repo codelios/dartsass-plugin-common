@@ -11,7 +11,6 @@ import { CompilerConfig } from './config';
 import { Info } from './version';
 import { ILog } from './log';
 import { CSSFile, writeCSSFile } from './cssfile'
-import { readFileSync } from 'fs';
 
 
 export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig): Promise<CSSFile> {
@@ -33,16 +32,6 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig): Prom
             err => reject(err)
         )
     });
-}
-
-export function autoPrefixCSSFile(output: string, inFile: string,
-    config : CompilerConfig,
-    _log: ILog): Promise<number> {
-    _log.debug(`About to autoprefix file ${inFile} to ${output}`);
-    return autoPrefixCSSBytes(output, {
-        output: readFileSync(inFile),
-        sourceMap: null,
-    }, config, _log);
 }
 
 export function autoPrefixCSSBytes(output: string, inFile: CSSFile,

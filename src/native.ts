@@ -11,7 +11,9 @@ import { ILog } from './log';
 import { Run, RunDetached } from './run';
 import { xformPath, xformPaths} from './util';
 import { getWatchTargetDirectory, getOutputCSS, getOutputMinifiedCSS, getRelativeDirectory} from './target';
-import { autoPrefixCSSFile } from './autoprefix';
+import { autoPrefixCSSBytes } from './autoprefix';
+import { getInputSourceMap } from './cssfile';
+import { readFileSync } from './fileutil';
 import { isBeingWatched } from './compiler';
 import { ProcessOutput, isWindows } from './run';
 import util from 'util';
@@ -75,7 +77,11 @@ export class NativeCompiler {
             }
             runPromise.then(
                 originalValue => {
-                    autoPrefixCSSFile(output, output, config,  _log).then(
+                    const data = readFileSync(output);
+                    autoPrefixCSSBytes(output, {
+                        output: data,
+                        sourceMap: getInputSourceMap(output + ".map"),
+                    }, config,  _log).then(
                         autoPrefixvalue => resolve(output),
                         err => reject(err)
                     )

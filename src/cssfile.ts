@@ -5,7 +5,7 @@
 
 'use strict';
 import { ILog } from './log';
-import { writeToFile, deleteFile } from './fileutil';
+import { writeToFile, deleteFile, readFileSync } from './fileutil';
 
 export interface CSSFile {
 
@@ -52,4 +52,13 @@ export function writeCSSFile(src: CSSFile, output: string, _log: ILog): Promise<
             }
         );
     });
+}
+
+export function getInputSourceMap(inputSourceMapFile: string): any | null {
+    const contents = readFileSync(inputSourceMapFile);
+    if (contents.length > 0) {
+        return JSON.parse(contents.toString());
+    } else {
+        return null;
+    }
 }
