@@ -104,7 +104,7 @@ export class DartSassCompiler {
                 } else {
                     _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix`);
                     autoPrefixCSSBytes(output, {
-                            output: result.css,
+                            css: result.css,
                             sourceMap: null},
                             config,  _log).then(
                         value => resolve(output),

@@ -79,7 +79,7 @@ export class NativeCompiler {
                 originalValue => {
                     const data = readFileSync(output);
                     autoPrefixCSSBytes(output, {
-                        output: data,
+                        css: data,
                         sourceMap: getInputSourceMap(output + ".map"),
                     }, config,  _log).then(
                         autoPrefixvalue => resolve(output),

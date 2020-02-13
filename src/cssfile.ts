@@ -9,7 +9,7 @@ import { writeToFile, deleteFile, readFileSync } from './fileutil';
 
 export interface CSSFile {
 
-    output: Buffer;
+    css: Buffer;
 
     sourceMap: any;
 }
@@ -39,7 +39,7 @@ function writeSourceMap(value: any, sourceMapFile: string, _log: ILog): Promise<
 
 export function writeCSSFile(src: CSSFile, output: string, _log: ILog): Promise<number> {
     return new Promise<number>(function(resolve, reject) {
-        writeToFile(output, src.output, _log).then(
+        writeToFile(output, src.css, _log).then(
             value => {
                 const sourceMapFile = output + ".map";
                 writeSourceMap(src.sourceMap, sourceMapFile, _log).then(

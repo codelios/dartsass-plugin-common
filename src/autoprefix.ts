@@ -24,9 +24,9 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig): Prom
               browsers: config.autoPrefixBrowsersList
             })
           );
-        processor.process(cssfile.output, {from:'', to: ''}).then(
+        processor.process(cssfile.css, {from:'', to: ''}).then(
             (value: postcss.Result) => resolve({
-                output: Buffer.from(value.css),
+                css: Buffer.from(value.css),
                 sourceMap: value.map
             }),
             err => reject(err)

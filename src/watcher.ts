@@ -66,7 +66,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     const inputSourceMapFile = docPath + ".map";
     _log.debug(`About to minify ${docPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
     const inputCSSFile = {
-        output: readFileSync(docPath),
+        css: readFileSync(docPath),
         sourceMap: getInputSourceMap(inputSourceMapFile)
     };
     doTransformBytes(inputCSSFile,  getTransformation(minifier, config, _log)).then(

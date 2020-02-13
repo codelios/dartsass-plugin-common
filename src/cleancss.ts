@@ -27,9 +27,9 @@ export class CleanCSSMinifier {
     public minifySync(src: CSSFile, disableSourceMap: boolean): CSSFile {
         const data = new CleanCSS({
             sourceMap: !disableSourceMap
-        }).minify(src.output, src.sourceMap);
+        }).minify(src.css, src.sourceMap);
         return  {
-            output: data.styles,
+            css: data.styles,
             sourceMap: data.sourceMap
         };
     }
