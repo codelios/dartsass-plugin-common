@@ -17,11 +17,11 @@ import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import fs from 'fs';
 import { IMinifier } from './minifier';
-import { CleanCSSMinifier } from './cleancss';
+import { CleanCSSMinifier, getDefaultCleanCSSOptions } from './cleancss';
 import { doTransformSync } from './transform';
 
 
-const minifier: IMinifier = new CleanCSSMinifier();
+const minifier: IMinifier = new CleanCSSMinifier(getDefaultCleanCSSOptions());
 
 const quirkyMinifiedFiles = `
 ** There is some quirkiness with sass watcher that expects "dartsass.targetDirectory" to be set, for minified files to be generated as output **

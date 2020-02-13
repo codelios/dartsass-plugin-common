@@ -8,15 +8,20 @@
 var CleanCSS = require('clean-css');
 
 
-const Options = {
 
-};
+export function getDefaultCleanCSSOptions(): any {
+    return {
+        sourceMap: true
+    };
+}
 
 export class CleanCSSMinifier {
 
 
+    options: any;
 
-    constructor() {
+    constructor(options: any) {
+        this.options = options;
     }
 
     public minify(src: Buffer): Promise<Buffer> {
@@ -27,7 +32,7 @@ export class CleanCSSMinifier {
     }
 
     public minifySync(src: Buffer): Buffer {
-            const data = new CleanCSS(Options).minify(src);
+            const data = new CleanCSS(this.options).minify(src);
             return data.styles;
     }
 }
