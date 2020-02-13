@@ -32,8 +32,21 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
     return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
-function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer) => void {
-    return (value: Buffer) => {
+function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer, disableSourceMap: boolean) => void {
+    return (value: Buffer, disableSourceMap:boolean) => {
+        if (disableSourceMap) {
+            try {
+                fs.unlink(sourceMapFile, function(err) {
+                    if (err) {
+                        _log.appendLine(`Warning: Error deleting ${sourceMapFile} - ${err}`);
+                    }
+                    _log.debug(`Deleted ${sourceMapFile} successfully`);
+                });
+            } catch(err) {
+                _log.appendLine(`Warning: Error deleting ${sourceMapFile} - ${err}`)
+            }
+            return;
+        }
         if (value === undefined || value === null) {
             _log.debug(`Warning: ${sourceMapFile} not being written. sourcemap is null`);
         }
@@ -47,14 +60,15 @@ function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer) => void
         );
     };
 }
-function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog, fnSourceMap: (value: Buffer)=> void ): (value: Buffer) => Promise<Buffer> {
+function getTransformation(minifier: IMinifier, config: CompilerConfig, _log: ILog,
+    fnSourceMap: (value: Buffer, disableSourceMap: boolean)=> void ): (value: Buffer) => Promise<Buffer> {
     return (contents: Buffer) => {
         return new Promise<Buffer>(function(resolve, reject) {
             doAutoprefixCSS(contents, config).then(
                 (value: Buffer) => {
                     minifier.minify(value).then(
                         (minifiedValue:MinifyOutput) => {
-                            fnSourceMap(minifiedValue.sourceMap);
+                            fnSourceMap(minifiedValue.sourceMap, config.disableSourceMap);
                             resolve(minifiedValue.output);
                         },
                         err => reject(err)
