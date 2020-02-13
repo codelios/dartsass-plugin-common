@@ -17,7 +17,7 @@ import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import { IMinifier, MinifyOutput } from './minifier';
 import { CleanCSSMinifier } from './cleancss';
-import { doTransformSync, writeToFile, deleteFile } from './transform';
+import { doTransformSync, writeToFile, deleteFile, readFileSync } from './transform';
 
 
 const minifier: IMinifier = new CleanCSSMinifier();
@@ -31,8 +31,8 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
     return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
-function getInputSourceMap(inputSourceMapFile: string): any {
-    return null;
+function getInputSourceMap(inputSourceMapFile: string): Buffer {
+    return readFileSync(inputSourceMapFile);
 }
 
 function onSourceMap(sourceMapFile: string, _log: ILog): (value: Buffer, disableSourceMap: boolean) => void {
@@ -86,7 +86,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
     const sourceMapFile = minifiedCSS + ".map";
     const inputSourceMapFile = docPath + ".map";
-    _log.debug(`About to minify ${docPath} to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
+    _log.debug(`About to minify ${docPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
     doTransformSync(docPath, minifiedCSS, _log,
         getTransformation(minifier, config, _log, getInputSourceMap(inputSourceMapFile),
             onSourceMap(sourceMapFile, _log))).then(

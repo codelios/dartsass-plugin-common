@@ -39,8 +39,16 @@ export function deleteFile(docPath: string, _log: ILog) {
     }
 }
 
+export function readFileSync(docPath: string): Buffer {
+    if (fs.existsSync(docPath)) {
+        return fs.readFileSync(docPath);
+    } else {
+        return Buffer.from('');
+    }
+}
+
 export function doTransformSync(src: string, target: string, _log: ILog, fnTransform: (value: Buffer) => Promise<Buffer>): Promise<number> {
-    const contents = fs.readFileSync(src);
+    const contents = readFileSync(src);
     return doTransformBytes(contents, target, _log, fnTransform);
 }
 
