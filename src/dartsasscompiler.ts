@@ -52,13 +52,9 @@ export class DartSassCompiler {
     }
 
     public compileDocument(document: IDocument, config: CompilerConfig,_log: ILog): Promise<string> {
-        const input = document.getFileName();
         const output = getOutputCSS( document, config, _log);
         const compressedOutput = getOutputMinifiedCSS(document, config, _log);
-        if (config.debug) {
-            _log.appendLine("include path: " + config.includePath.join(","));
-        }
-        _log.appendLine(`${input} -> ${output}`);
+        _log.debug("${document.getFileName()} -> ${output}, include path: " + config.includePath.join(","));
         const self = this;
         return new Promise<string>(function(resolve, reject) {
             self.asyncCompile(document, false, output, config, _log).then(
@@ -92,7 +88,7 @@ export class DartSassCompiler {
         config : CompilerConfig,
         _log: ILog): Promise<string> {
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
-        _log.debug(`asyncCompile (compileOnSave) IncludePaths: ${includePaths}`);
+        _log.debug(`asyncCompile (compileOnSave) IncludePaths: ${includePaths}, minified: ${compressed}`);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
             sass.render({
