@@ -6,18 +6,13 @@
 
 'use strict';
 
-export interface MinifyOutput {
-
-    output: Buffer;
-
-    sourceMap: Buffer;
-}
+import { CSSFile } from './cssfile';
 
 export interface IMinifier {
 
-    minify(src: Buffer, inputSourceMap: any | null, disableSourceMap: boolean): Promise<MinifyOutput>;
+    minify(src: CSSFile, disableSourceMap: boolean): Promise<CSSFile>;
 
-    minifySync(src: Buffer, inputSourceMap: any | null, disableSourceMap: boolean): MinifyOutput;
+    minifySync(src: CSSFile, disableSourceMap: boolean): CSSFile;
 
 }
 

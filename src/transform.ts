@@ -6,19 +6,16 @@
 
 'use strict';
 import { ILog } from './log';
-import { readFileSync, writeToFile } from './fileutil';
+import { writeToFile } from './fileutil';
+import { CSSFile } from './cssfile';
 
 
-export function doTransformSync(src: string, target: string, _log: ILog, fnTransform: (value: Buffer) => Promise<Buffer>): Promise<number> {
-    const contents = readFileSync(src);
-    return doTransformBytes(contents, target, _log, fnTransform);
-}
 
-export function doTransformBytes(src: Buffer, target: string, _log: ILog, fnTransform: (value: Buffer) => Promise<Buffer>): Promise<number> {
+export function doTransformBytes(src: CSSFile, target: string, _log: ILog, fnTransform: (value: CSSFile) => Promise<CSSFile>): Promise<number> {
     return new Promise<number>( function(resolve, reject){
         fnTransform(src).then(
-            data => {
-                writeToFile(target, data, _log).then(
+            (data: CSSFile) => {
+                writeToFile(target, data.output, _log).then(
                     value => {
                         resolve(value);
                     },

@@ -10,13 +10,15 @@ import browserslist from 'browserslist';
 import { CompilerConfig } from './config';
 import { Info } from './version';
 import { ILog } from './log';
-import { doTransformSync, doTransformBytes } from './transform';
+import { CSSFile } from './cssfile'
+import { doTransformBytes } from './transform';
+import { readFileSync } from 'fs';
 
 
-export function doAutoprefixCSS(data: Buffer, config : CompilerConfig): Promise<Buffer> {
-    return new Promise<Buffer>(function(resolve, reject) {
+export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig): Promise<CSSFile> {
+    return new Promise<CSSFile>(function(resolve, reject) {
         if (config.disableAutoPrefixer) {
-            resolve(data);
+            resolve(cssfile);
             return;
         }
         const processor = postcss().use(
@@ -24,8 +26,11 @@ export function doAutoprefixCSS(data: Buffer, config : CompilerConfig): Promise<
               browsers: config.autoPrefixBrowsersList
             })
           );
-        processor.process(data, {from:'', to: ''}).then(
-            (value: postcss.Result) => resolve(Buffer.from(value.css)),
+        processor.process(cssfile.output, {from:'', to: ''}).then(
+            (value: postcss.Result) => resolve({
+                output: Buffer.from(value.css),
+                sourceMap: value.map
+            }),
             err => reject(err)
         )
     });
@@ -34,24 +39,24 @@ export function doAutoprefixCSS(data: Buffer, config : CompilerConfig): Promise<
 export function autoPrefixCSSFile(output: string, inFile: string,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
+    const data = readFileSync(inFile);
     _log.debug(`About to autoprefix file ${inFile} to ${output}`);
-    return doTransformSync(inFile, output, _log,
-        (contents: Buffer) => {
+    return autoPrefixCSSBytes(output, {
+        output: data,
+        sourceMap: null,
+    }, config, _log);
+}
+
+export function autoPrefixCSSBytes(output: string, inFile: CSSFile,
+    config : CompilerConfig,
+    _log: ILog): Promise<number> {
+    return doTransformBytes(inFile, output, _log,
+        (contents: CSSFile) => {
             return doAutoprefixCSS(contents, config);
         }
         );
 }
 
-export function autoPrefixCSSBytes(output: string, inBytes: Buffer,
-    config : CompilerConfig,
-    _log: ILog): Promise<number> {
-    _log.debug(`About to autoprefix bytes to ${output}`);
-    return doTransformBytes(inBytes, output, _log,
-        (contents: Buffer) => {
-            return doAutoprefixCSS(contents, config);
-        }
-        );
-}
 
 export function getVersions(): Array<string> {
     const result = new Array<string>();

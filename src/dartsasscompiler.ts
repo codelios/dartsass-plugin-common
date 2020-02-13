@@ -18,6 +18,7 @@ import { autoPrefixCSSBytes } from './autoprefix';
 import { ProcessOutput } from './run';
 import { Info } from './version';
 
+
 const NativeSassMessage = `
     The watcher functionality needs native sass binary to be installed in your machine.
     Installation Cmd: npm install sass@1.25.0 (say).
@@ -103,7 +104,10 @@ export class DartSassCompiler {
                     reject(`${msg}`);
                 } else {
                     _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix`);
-                    autoPrefixCSSBytes(output, result.css, config,  _log).then(
+                    autoPrefixCSSBytes(output, {
+                            output: result.css,
+                            sourceMap: null},
+                            config,  _log).then(
                         value => resolve(output),
                         err => reject(err)
                     )

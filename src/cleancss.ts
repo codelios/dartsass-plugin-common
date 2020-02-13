@@ -5,7 +5,7 @@
 
 
 'use strict';
-import { MinifyOutput } from './minifier';
+import { CSSFile } from './cssfile';
 
 var CleanCSS = require('clean-css');
 
@@ -17,17 +17,17 @@ export class CleanCSSMinifier {
     constructor() {
     }
 
-    public minify(src: Buffer, inputSourceMap: any | null, disableSourceMap: boolean): Promise<MinifyOutput> {
+    public minify(src: CSSFile, disableSourceMap: boolean): Promise<CSSFile> {
         const self = this;
-        return new Promise<MinifyOutput>(function(resolve, reject) {
-            resolve(self.minifySync(src, inputSourceMap, disableSourceMap));
+        return new Promise<CSSFile>(function(resolve, reject) {
+            resolve(self.minifySync(src, disableSourceMap));
         });
     }
 
-    public minifySync(src: Buffer, inputSourceMap: any | null, disableSourceMap: boolean): MinifyOutput {
+    public minifySync(src: CSSFile, disableSourceMap: boolean): CSSFile {
         const data = new CleanCSS({
             sourceMap: !disableSourceMap
-        }).minify(src, inputSourceMap);
+        }).minify(src.output, src.sourceMap);
         return  {
             output: data.styles,
             sourceMap: data.sourceMap
