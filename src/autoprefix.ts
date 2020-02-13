@@ -13,7 +13,7 @@ import { ILog } from './log';
 import { CSSFile, writeCSSFile } from './cssfile'
 
 
-export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log: ILog): Promise<CSSFile> {
+export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, from: string, to:string,  _log: ILog): Promise<CSSFile> {
     return new Promise<CSSFile>(function(resolve, reject) {
         if (config.disableAutoPrefixer) {
             resolve(cssfile);
@@ -26,8 +26,7 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log:
           );
         processor.process({
             css: cssfile.css.toString(),
-            map: cssfile.sourceMap,
-        }, {from:'', to: ''}).then(
+        }, {from: from, to: to}).then(
             (result: postcss.Result) => {
                 result.warnings().forEach(warn => {
                     _log.appendLine(`Autoprefixer warning: ${warn}`);
@@ -45,10 +44,12 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log:
 }
 
 export function autoPrefixCSSBytes(output: string, inFile: CSSFile,
+    from: string,
+    to: string,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
     return new Promise<number>( function(resolve, reject){
-        doAutoprefixCSS(inFile, config, _log).then(
+        doAutoprefixCSS(inFile, config, from, to, _log).then(
             (value: CSSFile) => {
                 writeCSSFile(value, output, _log).then(
                     (value: number) => resolve(value),

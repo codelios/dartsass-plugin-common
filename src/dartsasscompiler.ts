@@ -6,7 +6,6 @@
 
 'use strict';
 import * as path from 'path';
-
 import sass = require("sass");
 import { CompilerConfig } from './config';
 import { xformPaths} from './util';
@@ -16,7 +15,6 @@ import { getOutputCSS, getOutputMinifiedCSS} from './target';
 import { autoPrefixCSSBytes } from './autoprefix';
 import { ProcessOutput } from './run';
 import { Info } from './version';
-import { getInputSourceMapFromBuffer } from './cssfile';
 
 
 const NativeSassMessage = `
@@ -104,13 +102,11 @@ export class DartSassCompiler {
                     reject(`${msg}`);
                 } else {
                     _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix - sourceMap`);
-                    let sourceMap = null;
-                    if (result.map !== undefined && result.map !== null) {
-                        sourceMap = getInputSourceMapFromBuffer(result.map);
-                    }
                     autoPrefixCSSBytes(output, {
                             css: result.css,
-                            sourceMap: sourceMap},
+                            sourceMap: null},
+                            path.basename(output),
+                            path.basename(output),
                             config,  _log).then(
                         value => resolve(output),
                         err => reject(err)

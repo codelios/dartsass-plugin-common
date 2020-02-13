@@ -16,10 +16,10 @@ import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './targ
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import { IMinifier } from './minifier';
-import { CSSFile, writeCSSFile } from './cssfile';
+import { CSSFile, writeCSSFile, getInputSourceMap } from './cssfile';
 import { CleanCSSMinifier } from './cleancss';
 import { deleteFile, readFileSync } from './fileutil';
-
+var path = require("path");
 
 const minifier: IMinifier = new CleanCSSMinifier();
 
@@ -33,22 +33,22 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 }
 
 
-function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: IMinifier, _log: ILog) : Promise<CSSFile> {
+function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: IMinifier, from: string, to: string, _log: ILog) : Promise<CSSFile> {
     return new Promise<CSSFile>(function(resolve, reject) {
-        doAutoprefixCSS(contents, config, _log).then(
+        doAutoprefixCSS(contents, config, from, to, _log).then(
             (value: CSSFile) => {
                 minifier.minify(value, config.disableSourceMap).then(
                     (minifiedValue:CSSFile) => {
                         resolve(minifiedValue);
                     },
                     err => {
-                        _log.debug(`Error running minifier - ${value.sourceMap} - value.css.length: ${value.css.length} - ${err}`);
+                        _log.debug(`Error running minifier - ${value.sourceMap} ( ${typeof(value.sourceMap)} ) - value.css.length: ${value.css.length} - ${err}`);
                         reject(err);
                     }
                 )
                 },
             err => {
-                _log.debug(`Error running autoprefixer: ${contents.sourceMap}  - contents.css.length: ${contents.css.length} - ${err}`);
+                _log.debug(`Error running autoprefixer: ${contents.sourceMap}  ( ${typeof(contents.sourceMap)} ) - contents.css.length: ${contents.css.length} - ${err}`);
                 reject(err);
             }
             );
@@ -71,15 +71,15 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     _log.debug(`About to minify ${docPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
     const inputCSSFile = {
         css: readFileSync(docPath),
-        sourceMap: readFileSync(inputSourceMapFile).toString()
+        sourceMap: getInputSourceMap(inputSourceMapFile)
     };
-    getTransformation(inputCSSFile, config, minifier, _log).then(
+    getTransformation(inputCSSFile, config, minifier, path.basename(docPath), path.basepath(minifiedCSS), _log).then(
         (value: CSSFile) => {
             writeCSSFile(value, minifiedCSS, _log).then(
                 (written: number) => {
                     _log.debug(`Wrote to ${minifiedCSS}[.map]`)
                 },
-                err =>_log.debug(`Error writing to ${minifiedCSS} - ${err}`)
+                err =>_log.debug(`Error writing css file to ${minifiedCSS} - ${err}`)
             );
         },
         err => _log.debug(`Error transforming file ${minifiedCSS} - ${err}`)
