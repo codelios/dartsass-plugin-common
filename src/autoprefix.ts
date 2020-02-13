@@ -37,7 +37,9 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log:
                     sourceMap: result.map
                 });
             },
-            err => reject(err)
+            err => {
+                reject(err);
+            }
         )
     });
 }

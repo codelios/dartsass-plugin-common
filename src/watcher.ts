@@ -16,7 +16,7 @@ import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './targ
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import { IMinifier } from './minifier';
-import { CSSFile, writeCSSFile, getInputSourceMap } from './cssfile';
+import { CSSFile, writeCSSFile } from './cssfile';
 import { CleanCSSMinifier } from './cleancss';
 import { deleteFile, readFileSync } from './fileutil';
 
@@ -41,10 +41,16 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: 
                     (minifiedValue:CSSFile) => {
                         resolve(minifiedValue);
                     },
-                    err => reject(err)
+                    err => {
+                        _log.debug(`Error running minifier - ${value.sourceMap} - ${err}`);
+                        reject(err);
+                    }
                 )
                 },
-            err => reject(err)
+            err => {
+                _log.debug(`Error running autoprefixer: ${contents.sourceMap}  - ${err}`);
+                reject(err);
+            }
             );
     });
 }
@@ -65,7 +71,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     _log.debug(`About to minify ${docPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
     const inputCSSFile = {
         css: readFileSync(docPath),
-        sourceMap: getInputSourceMap(inputSourceMapFile)
+        sourceMap: readFileSync(inputSourceMapFile).toString()
     };
     getTransformation(inputCSSFile, config, minifier, _log).then(
         (value: CSSFile) => {
