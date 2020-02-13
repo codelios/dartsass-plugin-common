@@ -44,7 +44,7 @@ export class NativeCompiler {
             const relativeCmd = getRelativeDirectory(projectRoot, sassBinPath);
             this.verifySassBinPath(relativeCmd, _log);
             args.unshift(relativeCmd);
-            runPromise = Run("node.exe", args, projectRoot, _log);
+            runPromise = Run(config.nodeExePath, args, projectRoot, _log);
         }
         return runPromise;
     }
@@ -71,7 +71,7 @@ export class NativeCompiler {
                 const relativeCmd = getRelativeDirectory(cwd, sassBinPath);
                 self.verifySassBinPath(relativeCmd, _log);
                 args.unshift(relativeCmd);
-                runPromise = Run("node.exe", args, cwd, _log);
+                runPromise = Run(config.nodeExePath, args, cwd, _log);
             }
             runPromise.then(
                 originalValue => {
@@ -173,7 +173,7 @@ export class NativeCompiler {
             const relativeCmd = getRelativeDirectory(projectRoot, sassBinPath);
             this.verifySassBinPath(relativeCmd, _log);
             args.unshift(relativeCmd);
-            return RunDetached("node.exe", projectRoot, args, _log);
+            return RunDetached(config.nodeExePath, projectRoot, args, _log);
         } else {
             return RunDetached(sassBinPath, projectRoot, args, _log);
         }

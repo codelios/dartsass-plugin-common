@@ -18,6 +18,8 @@ export class CompilerConfig {
 
     sourceEncoding:string = "utf-8";
 
+    nodeExePath = "node.exe";
+
     debug: boolean = false;
 
     disableCompileOnSave: boolean = false;
