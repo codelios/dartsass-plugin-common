@@ -7,7 +7,7 @@
 import 'mocha';
 import { CompilerConfig } from '../src/config';
 import { CSSFile } from '../src/cssfile';
-import { getVersions, doAutoprefixCSS } from '../src/autoprefix';
+import { doAutoprefixCSS } from '../src/autoprefix';
 import { expect } from 'chai';
 
 const InputCSS = `
@@ -30,6 +30,7 @@ describe('autoprefix' , () => {
             (value: CSSFile) => {
                 expect(value.css).to.be.not.null;
                 expect(value.sourceMap).to.be.not.null;
+                console.log(value);
             },
             err => {
                 expect(err).to.be.not.null;
@@ -37,10 +38,4 @@ describe('autoprefix' , () => {
         ).finally(done);
     });
 
-    it('getVersions', () => {
-        const versions = getVersions();
-        const output = versions.join(",")
-        console.log(output);
-        // expect(output).to.equal('PostCSS');
-    });
 });
