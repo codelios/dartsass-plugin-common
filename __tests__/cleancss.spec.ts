@@ -13,11 +13,10 @@ describe('CleanCSSMinifier' , () => {
     it('minifySync', () => {
         const minifier = new CleanCSSMinifier(getDefaultCleanCSSOptions());
         const minifyOutput = minifier.minifySync(Buffer.from(`a { color: brown}`));
-        expect(minifyOutput.output).to.be.not.null;
-        expect(minifyOutput.output).to.be.not.undefined;
+        var should = require('chai').should();
+        should.exist(minifyOutput.output)
         expect(minifyOutput.output.length).to.be.greaterThan(0);
-        expect(minifyOutput.sourceMap).to.be.not.null;
-        expect(minifyOutput.sourceMap).to.be.not.undefined;
+        should.exist(minifyOutput.sourceMap);
         expect(minifyOutput.sourceMap.length).to.be.greaterThan(0);
     });
 });
