@@ -25,7 +25,7 @@ export function doAutoprefixCSS(data: Buffer, config : CompilerConfig): Promise<
             })
           );
         processor.process(data, {from:'', to: ''}).then(
-            (value: postcss.Result) => resolve(Buffer.from(value.css, 'utf-8')),
+            (value: postcss.Result) => resolve(Buffer.from(value.css)),
             err => reject(err)
         )
     });
