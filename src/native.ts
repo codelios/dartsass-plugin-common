@@ -4,7 +4,6 @@
 // https://opensource.org/licenses/MIT
 
 'use strict';
-import * as path from 'path';
 import { CompilerConfig } from './config';
 import { IDocument } from './document';
 import { ILog } from './log';
@@ -17,6 +16,7 @@ import { isBeingWatched } from './compiler';
 import { ProcessOutput, isWindows } from './run';
 import util from 'util';
 import fs from "fs";
+import { getInputSourceMap } from './cssfile';
 
 const VersionArgs = ['--version'];
 
@@ -64,7 +64,7 @@ export class NativeCompiler {
     }
 
     doCompileDocument(sassBinPath: string, output: string,
-        config: CompilerConfig, cwd: string, _log: ILog, from: string, to:string, args: string[]): Promise<string> {
+        config: CompilerConfig, cwd: string, _log: ILog, args: string[]): Promise<string> {
         const self = this;
         return new Promise(function(resolve, reject) {
             let runPromise = Run(sassBinPath, args, cwd, _log);
@@ -79,8 +79,8 @@ export class NativeCompiler {
                     const data = readFileSync(output);
                     autoPrefixCSSBytes(output, {
                         css: data,
-                        sourceMap: null,
-                    }, from, to , config,  _log).then(
+                        sourceMap: getInputSourceMap(output+".map"),
+                    }, config,  _log).then(
                         autoPrefixvalue => resolve(output),
                         err => reject(err)
                     )
@@ -105,12 +105,12 @@ export class NativeCompiler {
             return new Promise(function(resolve, reject) {
                 const output = getOutputCSS(document, config, _log);
                 const args = self.getArgs(document, config, output, false);
-                self.doCompileDocument(sassBinPath, output, config, document.getProjectRoot(), _log, path.basename(output), path.basename(output), args).then(
+                self.doCompileDocument(sassBinPath, output, config, document.getProjectRoot(), _log, args).then(
                     value =>  {
                         if (!config.disableMinifiedFileGeneration) {
                             const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
                             const args = self.getArgs(document, config, minifiedOutput, true);
-                            self.doCompileDocument(sassBinPath, minifiedOutput, config, document.getProjectRoot(), _log, path.basename(minifiedOutput), path.basename(minifiedOutput), args).then(
+                            self.doCompileDocument(sassBinPath, minifiedOutput, config, document.getProjectRoot(), _log, args).then(
                                 value => resolve(value),
                                 err => reject(err)
                             );

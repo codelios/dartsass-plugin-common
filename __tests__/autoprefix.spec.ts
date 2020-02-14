@@ -28,7 +28,7 @@ describe('autoprefix' , () => {
         doAutoprefixCSS({
             css: Buffer.from(InputCSS),
             sourceMap: null,
-        }, config, "main.css", "main.css", _log).then(
+        }, config, _log).then(
             (value: CSSFile) => {
                 expect(value.css).to.be.not.null;
                 expect(value.sourceMap).to.be.not.null;

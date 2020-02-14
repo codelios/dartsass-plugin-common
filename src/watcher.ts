@@ -19,7 +19,6 @@ import { IMinifier } from './minifier';
 import { CSSFile, writeCSSFile, getInputSourceMap } from './cssfile';
 import { CleanCSSMinifier } from './cleancss';
 import { deleteFile, readFileSync } from './fileutil';
-var path = require("path");
 
 const minifier: IMinifier = new CleanCSSMinifier();
 
@@ -33,9 +32,9 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
 }
 
 
-function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: IMinifier, from: string, to: string, _log: ILog) : Promise<CSSFile> {
+function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: IMinifier, _log: ILog) : Promise<CSSFile> {
     return new Promise<CSSFile>(function(resolve, reject) {
-        doAutoprefixCSS(contents, config, from, to, _log).then(
+        doAutoprefixCSS(contents, config, _log).then(
             (value: CSSFile) => {
                 minifier.minify(value, config.disableSourceMap).then(
                     (minifiedValue:CSSFile) => {
@@ -73,7 +72,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
         css: readFileSync(docPath),
         sourceMap: getInputSourceMap(inputSourceMapFile)
     };
-    getTransformation(inputCSSFile, config, minifier, path.basename(docPath), path.basepath(minifiedCSS), _log).then(
+    getTransformation(inputCSSFile, config, minifier, _log).then(
         (value: CSSFile) => {
             writeCSSFile(value, minifiedCSS, _log).then(
                 (written: number) => {

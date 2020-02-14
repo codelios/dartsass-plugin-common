@@ -105,8 +105,6 @@ export class DartSassCompiler {
                     autoPrefixCSSBytes(output, {
                             css: result.css,
                             sourceMap: result.map},
-                            path.basename(output),
-                            path.basename(output),
                             config,  _log).then(
                         value => resolve(output),
                         err => reject(err)

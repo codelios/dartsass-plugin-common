@@ -44,12 +44,10 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log:
 }
 
 export function autoPrefixCSSBytes(output: string, inFile: CSSFile,
-    from: string,
-    to: string,
     config : CompilerConfig,
     _log: ILog): Promise<number> {
     return new Promise<number>( function(resolve, reject){
-        doAutoprefixCSS(inFile, config, from, to, _log).then(
+        doAutoprefixCSS(inFile, config, _log).then(
             (value: CSSFile) => {
                 writeCSSFile(value, output, _log).then(
                     (value: number) => resolve(value),
