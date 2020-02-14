@@ -6,6 +6,7 @@
 
 'use strict';
 import { CSSFile } from './cssfile';
+import { removeStdIn } from './minifier';
 
 var CleanCSS = require('clean-css');
 
@@ -30,7 +31,7 @@ export class CleanCSSMinifier {
         }).minify(src.css, src.sourceMap);
         return  {
             css: data.styles,
-            sourceMap: data.sourceMap
+            sourceMap: removeStdIn(data.sourceMap)
         };
     }
 }

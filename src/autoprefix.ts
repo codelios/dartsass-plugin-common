@@ -24,12 +24,13 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log:
               browsers: config.autoPrefixBrowsersList
             })
           );
-        processor.process({
-            css: cssfile.css.toString(),
-        }, {from: '', to: ''}).then(
+        processor.process(cssfile.css.toString(), {
+            from: '',
+            to: ''
+        }).then(
             (result: postcss.Result) => {
                 result.warnings().forEach(warn => {
-                    _log.appendLine(`Autoprefixer warning: ${warn}`);
+                    _log.appendLine(`Warning: Autoprefixer: ${warn}`);
                 });
                 resolve({
                     css: Buffer.from(result.css),
@@ -55,7 +56,7 @@ export function autoPrefixCSSBytes(output: string, inFile: CSSFile,
                 )
             },
             err => reject(err)
-        )
+        );
     });
 }
 

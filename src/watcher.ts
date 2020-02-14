@@ -15,7 +15,7 @@ import { doAutoprefixCSS } from './autoprefix';
 import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './target';
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
-import { IMinifier } from './minifier';
+import { IMinifier, removeStdIn } from './minifier';
 import { CSSFile, writeCSSFile, getInputSourceMap } from './cssfile';
 import { CleanCSSMinifier } from './cleancss';
 import { deleteFile, readFileSync } from './fileutil';
@@ -36,18 +36,22 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: 
     return new Promise<CSSFile>(function(resolve, reject) {
         doAutoprefixCSS(contents, config, _log).then(
             (value: CSSFile) => {
+                _log.debug(`sourcemap: ${typeof(value.sourceMap)} - string: ${JSON.stringify(value.sourceMap)}`);
+                const inputSourceMap = removeStdIn(value.sourceMap);
+                _log.debug(`inputSourceMap ${inputSourceMap}`);
                 minifier.minify(value, config.disableSourceMap).then(
                     (minifiedValue:CSSFile) => {
+                        _log.debug(`Fix the same minifedValue typeof(sourceMap): ${typeof(minifiedValue.sourceMap)}`);
                         resolve(minifiedValue);
                     },
                     err => {
                         _log.debug(`Error running minifier - ${value.sourceMap} ( ${typeof(value.sourceMap)} ) - value.css.length: ${value.css.length} - ${err}`);
                         reject(err);
                     }
-                )
-                },
+                );
+            },
             err => {
-                _log.debug(`Error running autoprefixer: ${contents.sourceMap}  ( ${typeof(contents.sourceMap)} ) - contents.css.length: ${contents.css.length} - ${err}`);
+                _log.debug(`Error running autoprefixer: ${contents.sourceMap}  ( sourceMap: ${typeof(contents.sourceMap)}, css: ${typeof(contents.css)} ) - contents.css.toString().length: ${contents.css.toString().length} - ${err}`);
                 reject(err);
             }
             );

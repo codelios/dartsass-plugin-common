@@ -16,3 +16,9 @@ export interface IMinifier {
 
 }
 
+export function removeStdIn(inputMap: any): any {
+    if (inputMap.hasOwnProperty("sources")) {
+        delete inputMap.sources["$stdin"];
+    }
+    return inputMap;
+}

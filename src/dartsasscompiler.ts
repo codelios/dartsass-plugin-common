@@ -97,18 +97,18 @@ export class DartSassCompiler {
                 outFile: output,
                 sourceMap: !config.disableSourceMap
             }, function (err: sass.SassException, result: sass.Result) {
-                if (err) {
-                    const msg = self.handleError(err, config, _log);
-                    reject(`${msg}`);
-                } else {
+                if (!err) {
                     _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix - sourceMap`);
-                    autoPrefixCSSBytes(output, {
-                            css: result.css,
-                            sourceMap: result.map},
-                            config,  _log).then(
+                    const inputCSSFile = {
+                        css: result.css,
+                        sourceMap: result.map};
+                    autoPrefixCSSBytes(output, inputCSSFile, config,  _log).then(
                         value => resolve(output),
                         err => reject(err)
                     );
+                } else {
+                    const msg = self.handleError(err, config, _log);
+                    reject(`${msg}`);
                 }
             });
         });
