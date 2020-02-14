@@ -15,7 +15,7 @@ import { doAutoprefixCSS } from './autoprefix';
 import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './target';
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
-import { IMinifier, removeStdIn } from './minifier';
+import { IMinifier } from './minifier';
 import { CSSFile, writeCSSFile, getInputSourceMap } from './cssfile';
 import { CleanCSSMinifier } from './cleancss';
 import { deleteFile, readFileSync } from './fileutil';
@@ -38,7 +38,6 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: 
             (value: CSSFile) => {
                 minifier.minify(value, config.disableSourceMap).then(
                     (minifiedValue:CSSFile) => {
-                        _log.debug(`Fix the same minifedValue typeof(sourceMap): ${typeof(minifiedValue.sourceMap)}`);
                         resolve(minifiedValue);
                     },
                     err => {
@@ -53,6 +52,13 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: 
             }
             );
     });
+}
+
+export function removeStdIn(inputMap: any, _log: ILog): any {
+    const input = JSON.stringify(inputMap);
+    // TODO: This is just an awful way to remove $stdin . Got to do something else.
+    const output = input.replace('"\$stdin",', '');
+    return output;
 }
 
 function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
@@ -75,9 +81,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     };
     getTransformation(inputCSSFile, config, minifier, _log).then(
         (value: CSSFile) => {
-            _log.debug(`sourcemap: ${typeof(value.sourceMap)} ,  string: ${JSON.stringify(value.sourceMap)}`);
-            const outputSourceMap = removeStdIn(value.sourceMap);
-            _log.debug(`inputSourceMap (${JSON.stringify(value.sourceMap)}) ==> output: ${JSON.stringify(outputSourceMap)}`);
+            const outputSourceMap = removeStdIn(value.sourceMap, _log);
             value.sourceMap = outputSourceMap;
             writeCSSFile(value, minifiedCSS, _log).then(
                 (written: number) => {
