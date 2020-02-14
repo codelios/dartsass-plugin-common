@@ -36,9 +36,6 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: 
     return new Promise<CSSFile>(function(resolve, reject) {
         doAutoprefixCSS(contents, config, _log).then(
             (value: CSSFile) => {
-                _log.debug(`sourcemap: ${typeof(value.sourceMap)} - string: ${JSON.stringify(value.sourceMap)}`);
-                const inputSourceMap = removeStdIn(value.sourceMap);
-                _log.debug(`inputSourceMap ${inputSourceMap}`);
                 minifier.minify(value, config.disableSourceMap).then(
                     (minifiedValue:CSSFile) => {
                         _log.debug(`Fix the same minifedValue typeof(sourceMap): ${typeof(minifiedValue.sourceMap)}`);
@@ -78,6 +75,10 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     };
     getTransformation(inputCSSFile, config, minifier, _log).then(
         (value: CSSFile) => {
+            _log.debug(`sourcemap: ${typeof(value.sourceMap)} ,  string: ${JSON.stringify(value.sourceMap)}`);
+            const outputSourceMap = removeStdIn(value.sourceMap);
+            _log.debug(`inputSourceMap (${JSON.stringify(value.sourceMap)}) ==> output: ${JSON.stringify(outputSourceMap)}`);
+            value.sourceMap = outputSourceMap;
             writeCSSFile(value, minifiedCSS, _log).then(
                 (written: number) => {
                     _log.debug(`Wrote to ${minifiedCSS}[.map]`)
