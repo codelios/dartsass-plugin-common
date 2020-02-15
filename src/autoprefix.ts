@@ -12,7 +12,7 @@ import { Info } from './version';
 import { ILog } from './log';
 import { CSSFile, writeCSSFile } from './cssfile'
 
-function getProcessArgs(sourceMap: string|null): any {
+function getProcessArgs(sourceMap: Buffer|null): any {
     if (sourceMap !== undefined && sourceMap !== null && sourceMap.length > 0) {
         return {
             map: {
