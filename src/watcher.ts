@@ -4,7 +4,6 @@
 // https://opensource.org/licenses/MIT
 
 'use strict';
-
 import { CompilerConfig } from './config';
 import { ILog } from './log';
 import { ProcessOutput, killProcess } from './run';
@@ -16,7 +15,7 @@ import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './targ
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import { IMinifier } from './minifier';
-import { CSSFile, writeCSSFile, getInputSourceMap } from './cssfile';
+import { CSSFile, writeCSSFile } from './cssfile';
 import { CleanCSSMinifier } from './cleancss';
 import { deleteFile, readFileSync } from './fileutil';
 
@@ -31,11 +30,23 @@ function doSingleLaunch(compiler: ISassCompiler, srcdir: string, projectRoot: st
     return compiler.watch(srcdir, projectRoot, config, _log);
 }
 
+function xformSourceMap(inputSourceMap: any): any {
+    if (inputSourceMap === null) {
+        return null;
+    }
+    if (inputSourceMap == undefined) {
+        return undefined;
+    }
+    return JSON.parse(JSON.stringify(inputSourceMap));
+}
 
 function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: IMinifier, _log: ILog) : Promise<CSSFile> {
     return new Promise<CSSFile>(function(resolve, reject) {
         doAutoprefixCSS(contents, config, _log).then(
             (value: CSSFile) => {
+                _log.debug(`Autoprefixer successful. Now about to run minifier`);
+                const output = xformSourceMap(value.sourceMap);
+                value.sourceMap = output;
                 minifier.minify(value, config.disableSourceMap).then(
                     (minifiedValue:CSSFile) => {
                         resolve(minifiedValue);
@@ -50,15 +61,8 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: 
                 _log.debug(`Error running autoprefixer: ${contents.sourceMap}  ( sourceMap: ${typeof(contents.sourceMap)}, css: ${typeof(contents.css)} ) - contents.css.toString().length: ${contents.css.toString().length} - ${err}`);
                 reject(err);
             }
-            );
+        );
     });
-}
-
-export function removeStdIn(inputMap: any, _log: ILog): any {
-    const input = JSON.stringify(inputMap);
-    // TODO: This is just an awful way to remove $stdin . Got to do something else.
-    const output = input.replace('"\$stdin",', '');
-    return output;
 }
 
 function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
@@ -77,12 +81,10 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     _log.debug(`About to minify ${docPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
     const inputCSSFile = {
         css: readFileSync(docPath),
-        sourceMap: getInputSourceMap(inputSourceMapFile)
+        sourceMap: readFileSync(inputSourceMapFile)
     };
     getTransformation(inputCSSFile, config, minifier, _log).then(
         (value: CSSFile) => {
-            const outputSourceMap = removeStdIn(value.sourceMap, _log);
-            value.sourceMap = outputSourceMap;
             writeCSSFile(value, minifiedCSS, _log).then(
                 (written: number) => {
                     _log.debug(`Wrote to ${minifiedCSS}[.map]`)

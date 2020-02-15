@@ -12,6 +12,18 @@ import { Info } from './version';
 import { ILog } from './log';
 import { CSSFile, writeCSSFile } from './cssfile'
 
+function getProcessArgs(sourceMap: string|null): any {
+    if (sourceMap !== undefined && sourceMap !== null && sourceMap.length > 0) {
+        return {
+            map: {
+                prev: sourceMap.toString(),
+                inline: false,
+            },
+        }
+    } else {
+        return {};
+    }
+}
 
 export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log: ILog): Promise<CSSFile> {
     return new Promise<CSSFile>(function(resolve, reject) {
@@ -24,23 +36,20 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, _log:
               browsers: config.autoPrefixBrowsersList
             })
           );
-        processor.process(cssfile.css.toString(), {
-            from: '',
-            to: ''
-        }).then(
+        processor.process(cssfile.css.toString(), getProcessArgs(cssfile.sourceMap)).then(
             (result: postcss.Result) => {
                 result.warnings().forEach(warn => {
                     _log.appendLine(`Warning: Autoprefixer: ${warn}`);
                 });
                 resolve({
                     css: Buffer.from(result.css),
-                    sourceMap: cssfile.sourceMap
+                    sourceMap: result.map
                 });
             },
             err => {
                 reject(err);
             }
-        )
+        );
     });
 }
 

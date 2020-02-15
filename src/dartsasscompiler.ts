@@ -52,20 +52,28 @@ export class DartSassCompiler {
 
     public compileDocument(document: IDocument, config: CompilerConfig,_log: ILog): Promise<string> {
         const output = getOutputCSS( document, config, _log);
-        const compressedOutput = getOutputMinifiedCSS(document, config, _log);
-        _log.debug("${document.getFileName()} -> ${output}, include path: " + config.includePath.join(","));
+        _log.debug(`${document.getFileName()} -> ${output}, include path: ${config.includePath.join(",")}`);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
+            _log.debug(`About to compile normal file ${document.getFileName()}`);
             self.asyncCompile(document, false, output, config, _log).then(
                 value => {
+                    _log.debug(`Compiled normal file ${document.getFileName()}`);
                     if (!config.disableMinifiedFileGeneration) {
+                        const compressedOutput = getOutputMinifiedCSS(document, config, _log);
                         self.asyncCompile(document, true, compressedOutput, config,  _log).then(
                             value => resolve(value),
-                            err => reject(err)
+                            err => {
+                                _log.debug(`Error compiling minified file ${document.getFileName()} -> ${output}:   ${err}`);
+                                reject(err);
+                            }
                         )
                     }
                 },
-                err => reject(err)
+                err => {
+                    _log.debug(`Error compiling ${document.getFileName()} -> ${output}:   ${err}`);
+                    reject(err);
+                }
             )
         });
     }
@@ -87,7 +95,7 @@ export class DartSassCompiler {
         config : CompilerConfig,
         _log: ILog): Promise<string> {
         const includePaths = xformPaths(document.getProjectRoot(), config.includePath);
-        _log.debug(`asyncCompile (compileOnSave) IncludePaths: ${includePaths}, minified: ${compressed}`);
+        _log.debug(`asyncCompile (compileOnSave) ${document.getFileName()} to ${output}, IncludePaths: ${includePaths}, minified: ${compressed}`);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
             sass.render({
@@ -98,7 +106,7 @@ export class DartSassCompiler {
                 sourceMap: !config.disableSourceMap
             }, function (err: sass.SassException, result: sass.Result) {
                 if (!err) {
-                    _log.debug(`asyncCompile(compileOnSave) over. Starting autoprefix - sourceMap`);
+                    _log.debug(`Completed asyncCompile(compileOnSave) ${document.getFileName()} to ${output}. Starting autoprefix - sourceMap`);
                     const inputCSSFile = {
                         css: result.css,
                         sourceMap: result.map};
@@ -108,7 +116,7 @@ export class DartSassCompiler {
                     );
                 } else {
                     const msg = self.handleError(err, config, _log);
-                    reject(`${msg}`);
+                    reject(msg);
                 }
             });
         });

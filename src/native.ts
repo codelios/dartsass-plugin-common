@@ -16,7 +16,6 @@ import { isBeingWatched } from './compiler';
 import { ProcessOutput, isWindows } from './run';
 import util from 'util';
 import fs from "fs";
-import { getInputSourceMap } from './cssfile';
 
 const VersionArgs = ['--version'];
 
@@ -79,8 +78,8 @@ export class NativeCompiler {
                     const data = readFileSync(output);
                     autoPrefixCSSBytes(output, {
                         css: data,
-                        sourceMap: getInputSourceMap(output+".map"),
-                    }, config,  _log).then(
+                        sourceMap: readFileSync(output+".map"),
+                    }, config, _log).then(
                         autoPrefixvalue => resolve(output),
                         err => reject(err)
                     )
