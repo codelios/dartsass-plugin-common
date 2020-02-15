@@ -44,7 +44,6 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: 
     return new Promise<CSSFile>(function(resolve, reject) {
         doAutoprefixCSS(contents, config, _log).then(
             (value: CSSFile) => {
-                _log.debug(`Autoprefixer successful. Now about to run minifier`);
                 const output = xformSourceMap(value.sourceMap);
                 value.sourceMap = output;
                 minifier.minify(value, config.disableSourceMap).then(
