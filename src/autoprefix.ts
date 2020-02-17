@@ -22,7 +22,9 @@ function getProcessArgs(to: string, sourceMap: Buffer|null): any {
             },
         }
     } else {
-        return {};
+        return {
+            to: to
+        };
     }
 }
 
