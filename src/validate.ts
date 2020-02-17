@@ -38,9 +38,7 @@ export function validateDocument(document: IDocument,
         return false;
     }
     if (isTooSoon(extensionConfig.pauseInterval)) {
-        if (extensionConfig.debug) {
-            _log.appendLine(`Last Compiled Time: ${lastCompiledTime}. Too soon and ignoring hence`);
-        }
+        _log.debug(`Last Compiled Time: ${lastCompiledTime}. Too soon and ignoring hence`);
         return false;
     }
     // This assignment of lastCompiledTime should be the final line before quitting this function

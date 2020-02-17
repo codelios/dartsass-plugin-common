@@ -55,10 +55,8 @@ export class DartSassCompiler {
         _log.debug(`${document.getFileName()} -> ${output}, include path: ${config.includePath.join(",")}`);
         const self = this;
         return new Promise<string>(function(resolve, reject) {
-            _log.debug(`About to compile normal file ${document.getFileName()}`);
             self.asyncCompile(document, false, output, config, _log).then(
                 value => {
-                    _log.debug(`Compiled normal file ${document.getFileName()}`);
                     if (!config.disableMinifiedFileGeneration) {
                         const compressedOutput = getOutputMinifiedCSS(document, config, _log);
                         self.asyncCompile(document, true, compressedOutput, config,  _log).then(

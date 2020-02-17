@@ -4,6 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 'use strict';
+import * as path from 'path';
 import { CompilerConfig } from './config';
 import { ILog } from './log';
 import { ProcessOutput, killProcess } from './run';
@@ -40,9 +41,9 @@ function xformSourceMap(inputSourceMap: any): any {
     return JSON.parse(JSON.stringify(inputSourceMap));
 }
 
-function getTransformation(contents: CSSFile, config: CompilerConfig, minifier: IMinifier, _log: ILog) : Promise<CSSFile> {
+function getTransformation(contents: CSSFile, config: CompilerConfig, to: string, minifier: IMinifier, _log: ILog) : Promise<CSSFile> {
     return new Promise<CSSFile>(function(resolve, reject) {
-        doAutoprefixCSS(contents, config, _log).then(
+        doAutoprefixCSS(contents, config, to, _log).then(
             (value: CSSFile) => {
                 const output = xformSourceMap(value.sourceMap);
                 value.sourceMap = output;
@@ -82,7 +83,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
         css: readFileSync(docPath),
         sourceMap: readFileSync(inputSourceMapFile)
     };
-    getTransformation(inputCSSFile, config, minifier, _log).then(
+    getTransformation(inputCSSFile, config, path.basename(minifiedCSS), minifier, _log).then(
         (value: CSSFile) => {
             writeCSSFile(value, minifiedCSS, _log).then(
                 (written: number) => {
