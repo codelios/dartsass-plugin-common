@@ -24,7 +24,7 @@ export class CompilerConfig {
 
     disableCompileOnSave: boolean = false;
 
-    pauseInterval: number = 10;
+    pauseInterval: number = 3;
 
     enableStartWithUnderscores: boolean = false;
 
