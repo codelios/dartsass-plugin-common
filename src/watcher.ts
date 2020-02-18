@@ -35,7 +35,7 @@ function xformSourceMap(inputSourceMap: any): any {
     if (inputSourceMap === null) {
         return null;
     }
-    if (inputSourceMap == undefined) {
+    if (inputSourceMap === undefined) {
         return undefined;
     }
     return JSON.parse(JSON.stringify(inputSourceMap));
