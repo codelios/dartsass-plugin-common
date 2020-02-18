@@ -46,7 +46,7 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, to: s
                 });
                 resolve({
                     css: Buffer.from(result.css),
-                    sourceMap: result.map
+                    sourceMap: (config.disableSourceMap ? null : result.map)
                 });
             },
             err => {

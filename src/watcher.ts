@@ -81,7 +81,7 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
     _log.debug(`About to minify ${docPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
     const inputCSSFile = {
         css: readFileSync(docPath),
-        sourceMap: readFileSync(inputSourceMapFile)
+        sourceMap: (config.disableSourceMap ? null : readFileSync(inputSourceMapFile))
     };
     getTransformation(inputCSSFile, config, path.basename(minifiedCSS), minifier, _log).then(
         (value: CSSFile) => {

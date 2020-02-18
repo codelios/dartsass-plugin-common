@@ -20,8 +20,12 @@ function writeSourceMap(value: any, sourceMapFile: string, _log: ILog): Promise<
     if (value === undefined || value === null) {
         _log.debug(`Warning: sourcemap is null. Hence ${sourceMapFile} not being written but deleted`);
         deleteFile(sourceMapFile, _log);
+        return new Promise<number>(function(resolve, reject) {
+            resolve(0);
+        });
+    } else {
+        return writeToFile(sourceMapFile, value, _log);
     }
-    return writeToFile(sourceMapFile, value, _log);
 }
 
 export function writeCSSFile(src: CSSFile, output: string, _log: ILog): Promise<number> {

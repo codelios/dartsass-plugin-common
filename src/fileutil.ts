@@ -28,12 +28,12 @@ export function deleteFile(docPath: string, _log: ILog) {
     try {
         fs.unlink(docPath, function(err) {
             if (err) {
-                _log.appendLine(`Warning: Error deleting ${docPath} - ${err}`);
+                _log.debug(`Warning: Error deleting ${docPath} - ${err}`);
             }
             _log.debug(`Deleted ${docPath} successfully`);
         });
     } catch(err) {
-        _log.appendLine(`Warning: Error deleting ${docPath} - ${err}`)
+        _log.debug(`Warning: Error deleting ${docPath} - ${err}`)
     }
 }
 
