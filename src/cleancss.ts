@@ -28,15 +28,19 @@ export class CleanCSSMinifier {
         const cleancss = new CleanCSS({
             sourceMap: !disableSourceMap
         });
-        let data = null;
-        if (src.sourceMap !== undefined && src.sourceMap !== null && !disableSourceMap) {
-            data = cleancss.minify(src.css, src.sourceMap);
+        if (src.sourceMap !== undefined && src.sourceMap !== null) {
+            const data = cleancss.minify(src.css, src.sourceMap);
+            return  {
+                css: data.styles,
+                sourceMap:  !disableSourceMap ? data.sourceMap : undefined,
+            };
         } else {
-            data = cleancss.minify(src.css);
+            const data = cleancss.minify(src.css);
+            return  {
+                css: data.styles,
+                sourceMap: !disableSourceMap ? data.sourceMap : undefined,
+            };
+
         }
-        return  {
-            css: data.styles,
-            sourceMap: data.sourceMap
-        };
     }
 }
