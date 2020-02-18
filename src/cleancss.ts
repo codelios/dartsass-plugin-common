@@ -29,7 +29,7 @@ export class CleanCSSMinifier {
             sourceMap: !disableSourceMap
         });
         let data = null;
-        if (src.sourceMap !== undefined || src.sourceMap !== null) {
+        if (src.sourceMap !== undefined && src.sourceMap !== null && !disableSourceMap) {
             data = cleancss.minify(src.css, src.sourceMap);
         } else {
             data = cleancss.minify(src.css);
