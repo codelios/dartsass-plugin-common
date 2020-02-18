@@ -25,9 +25,15 @@ export class CleanCSSMinifier {
     }
 
     public minifySync(src: CSSFile, disableSourceMap: boolean): CSSFile {
-        const data = new CleanCSS({
+        const cleancss = new CleanCSS({
             sourceMap: !disableSourceMap
-        }).minify(src.css, src.sourceMap);
+        });
+        let data = null;
+        if (src.sourceMap !== undefined || src.sourceMap !== null) {
+            data = cleancss.minify(src.css, src.sourceMap);
+        } else {
+            data = cleancss.minify(src.css);
+        }
         return  {
             css: data.styles,
             sourceMap: data.sourceMap
