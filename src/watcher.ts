@@ -15,7 +15,7 @@ import { doAutoprefixCSS } from './autoprefix';
 import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './target';
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
-import { IMinifier } from './minifier';
+import { IMinifier, getSourceMapComment } from './minifier';
 import { CSSFile, writeCSSFile } from './cssfile';
 import { CleanCSSMinifier } from './cleancss';
 import { deleteFile, readFileSync } from './fileutil';
@@ -41,13 +41,15 @@ function xformSourceMap(inputSourceMap: any): any {
     return JSON.parse(JSON.stringify(inputSourceMap));
 }
 
+
 function getTransformation(contents: CSSFile, config: CompilerConfig, to: string, minifier: IMinifier, _log: ILog) : Promise<CSSFile> {
     return new Promise<CSSFile>(function(resolve, reject) {
         doAutoprefixCSS(contents, config, to, _log).then(
             (value: CSSFile) => {
                 const output = xformSourceMap(value.sourceMap);
                 value.sourceMap = output;
-                minifier.minify(value, config.disableSourceMap).then(
+                const comments = getSourceMapComment(config.disableSourceMap, to+".map");
+                minifier.minify(value, config.disableSourceMap, comments).then(
                     (minifiedValue:CSSFile) => {
                         resolve(minifiedValue);
                     },
@@ -83,7 +85,8 @@ function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): v
         css: readFileSync(docPath),
         sourceMap: (config.disableSourceMap ? null : readFileSync(inputSourceMapFile))
     };
-    getTransformation(inputCSSFile, config, path.basename(minifiedCSS), minifier, _log).then(
+    const minifiedFileOnly = path.basename(minifiedCSS);
+    getTransformation(inputCSSFile, config, minifiedFileOnly, minifier, _log).then(
         (value: CSSFile) => {
             writeCSSFile(value, minifiedCSS, _log).then(
                 (written: number) => {

@@ -17,14 +17,14 @@ export class CleanCSSMinifier {
     constructor() {
     }
 
-    public minify(src: CSSFile, disableSourceMap: boolean): Promise<CSSFile> {
+    public minify(src: CSSFile, disableSourceMap: boolean, comment: Buffer): Promise<CSSFile> {
         const self = this;
         return new Promise<CSSFile>(function(resolve, reject) {
-            resolve(self.minifySync(src, disableSourceMap));
+            resolve(self.minifySync(src, disableSourceMap, comment));
         });
     }
 
-    public minifySync(src: CSSFile, disableSourceMap: boolean): CSSFile {
+    public minifySync(src: CSSFile, disableSourceMap: boolean, comment: Buffer): CSSFile {
         const cleancss = new CleanCSS({
             sourceMap: !disableSourceMap
         });
@@ -35,7 +35,7 @@ export class CleanCSSMinifier {
             data = cleancss.minify(src.css);
         }
         return  {
-            css: data.styles,
+            css: data.styles + comment,
             sourceMap:  (!disableSourceMap ? data.sourceMap : undefined),
         };
     }

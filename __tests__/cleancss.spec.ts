@@ -14,10 +14,11 @@ describe('CleanCSSMinifier' , () => {
         const minifier = new CleanCSSMinifier();
         const minifyOutput = minifier.minifySync({
             css: Buffer.from(`a { color: brown; }`),
-            sourceMap: null}, false);
+            sourceMap: null}, false, Buffer.from('/*# sourceMappingURL*/'));
         var should = require('chai').should();
         should.exist(minifyOutput.css)
         expect(minifyOutput.css.length).to.be.greaterThan(0);
+        expect(minifyOutput.css).to.have.string('sourceMappingURL');
         should.exist(minifyOutput.sourceMap);
         // expect(minifyOutput.sourceMap.length).to.be.greaterThan(0);
     });
