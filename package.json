@@ -7,7 +7,7 @@
     "types": "lib/index.d.ts",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/dubnioci/dartsass-plugin-common.git"
+        "url": "git+https://github.com/feldci/dartsass-plugin-common.git"
     },
     "keywords": [
         "scss compiler plugin",
