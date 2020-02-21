@@ -41,7 +41,7 @@
         "@types/autoprefixer": "9.7.0",
         "postcss": "7.0.27",
         "browserslist": "4.8.7",
-        "typescript": "3.7.5",
+        "typescript": "3.8.2",
         "chokidar": "3.3.1",
         "clean-css": "4.2.3",
         "@types/clean-css": "4.2.1"
