@@ -67,20 +67,21 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, to: string
     });
 }
 
-function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
-    _log.debug(`About to listen to ${docPath}`);
-    if (!isCSSFile(docPath)) {
+function _internalMinify(cwd: string, _docPath: string, config: CompilerConfig, _log: ILog): void {
+    const fqPath = path.join(cwd, _docPath);
+    _log.debug(`File changed ${fqPath}`);
+    if (!isCSSFile(fqPath)) {
         return;
     }
-    if (isMinCSS(docPath, config.minCSSExtension)) {
+    if (isMinCSS(fqPath, config.minCSSExtension)) {
         return;
     }
-    const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
+    const minifiedCSS = getMinCSS(fqPath, config.minCSSExtension);
     const sourceMapFile = minifiedCSS + ".map";
-    const inputSourceMapFile = docPath + ".map";
-    _log.debug(`About to minify ${docPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
+    const inputSourceMapFile = fqPath + ".map";
+    _log.debug(`About to minify ${fqPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
     const inputCSSFile = {
-        css: readFileSync(docPath),
+        css: readFileSync(fqPath),
         sourceMap: (config.disableSourceMap ? null : readFileSync(inputSourceMapFile))
     };
     const minifiedFileOnly = path.basename(minifiedCSS);
@@ -114,13 +115,14 @@ function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _
         return null;
     }
     const targetDirectory = xformPath(projectRoot, getWatchTargetDirectory(srcdir, config));
-    const pattern = getWatcherPattern(targetDirectory, "css");
+    const cwd = path.dirname(targetDirectory);
+    const pattern = getWatcherPattern(path.basename(targetDirectory), "css");
     const fsWatcher = cssWatch(pattern, (docPath: string) => {
-        _internalMinify(docPath, config, _log);
+        _internalMinify(cwd, docPath, config, _log);
     },
     (docPath: string) => {
         doDelete(docPath, config, _log);
-    }, _log);
+    }, cwd, _log);
     _log.debug(`Started chokidar watcher for ${targetDirectory}`);
     return fsWatcher;
 }
