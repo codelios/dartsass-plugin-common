@@ -29,9 +29,7 @@ export function CompileCurrentFile(
             reject(`${err}`);
         });
     }
-    if (extensionConfig.debug) {
-        _log.appendLine(`About to compile ${document.getFileName()}`);
-    }
+    _log.debug(`About to compile current file: ${document.getFileName()}`);
     return getCurrentCompiler(extensionConfig, _log).compileDocument(document, extensionConfig, _log);
 }
 

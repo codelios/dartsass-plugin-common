@@ -146,3 +146,11 @@ export function killProcess(pid: number, _log: ILog) {
         });
     }
 }
+
+export function getWatcherPattern(sourceDirectory: string, ext: string) : string {
+    if (isWindows()) {
+        return sourceDirectory + "/**/*." + ext;
+    } else {
+        return sourceDirectory + "/**/*." + ext;
+    }
+}

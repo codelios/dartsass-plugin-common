@@ -10,7 +10,7 @@ import { ILog } from './log';
 
 
 
-function doWatch(pattern: string, ignorePattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, _log: ILog) : FSWatcher {
+function doWatch(pattern: string, ignorePattern: string, fnOnChangeFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, _log: ILog) : FSWatcher {
     const watcher = chokidar.watch(pattern, {
         ignored: ignorePattern,
         awaitWriteFinish: true,
@@ -19,13 +19,14 @@ function doWatch(pattern: string, ignorePattern: string, fnOnFile: (docPath: str
     });
     // Add event listeners.
     watcher
-    .on('add', docPath => fnOnFile(docPath))
-    .on('change', docPath => fnOnFile(docPath))
+    .on('add', docPath => fnOnChangeFile(docPath))
+    .on('change', docPath => fnOnChangeFile(docPath))
     .on('unlink', docPath => fnOnDeleteFile(docPath));
     return watcher;
 }
 
 export function cssWatch(pattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, _log: ILog) : FSWatcher {
+    _log.debug(`About to start css watcher for ${pattern}`);
     const ignoreBlackListRegEx =  `[*.scss|*.min.css|*.map|*.jpg|*.png|*.html|*.js|*.ts]`;
     return doWatch(pattern, ignoreBlackListRegEx, fnOnFile, fnOnDeleteFile, _log);
 }

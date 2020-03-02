@@ -7,7 +7,7 @@
 import * as path from 'path';
 import { CompilerConfig } from './config';
 import { ILog } from './log';
-import { ProcessOutput, killProcess } from './run';
+import { ProcessOutput, killProcess, getWatcherPattern } from './run';
 import { xformPath } from './util';
 import { getCurrentCompiler } from './select';
 import { ISassCompiler } from './compiler';
@@ -68,6 +68,7 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, to: string
 }
 
 function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
+    _log.debug(`About to listen to ${docPath}`);
     if (!isCSSFile(docPath)) {
         return;
     }
@@ -108,10 +109,13 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
     deleteFile(minifiedCSS, _log);
 }
 
-function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): FSWatcher {
-    const  _targetDirectory = getWatchTargetDirectory(srcdir, config);
-    const targetDirectory = xformPath(projectRoot, _targetDirectory);
-    const fsWatcher = cssWatch(targetDirectory, (docPath: string) => {
+function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog): (FSWatcher | null) {
+    if (config.disableMinifiedFileGeneration) {
+        return null;
+    }
+    const targetDirectory = xformPath(projectRoot, getWatchTargetDirectory(srcdir, config));
+    const pattern = getWatcherPattern(targetDirectory, "css");
+    const fsWatcher = cssWatch(pattern, (docPath: string) => {
         _internalMinify(docPath, config, _log);
     },
     (docPath: string) => {
@@ -160,9 +164,7 @@ export class Watcher {
                     if (config.targetDirectory.length === 0) {
                         _log.appendLine(`Warning: ${quirkyMinifiedFiles}`);
                     } else {
-                        if (!config.disableMinifiedFileGeneration) {
-                            fsWatcher = doMinify(srcdir, projectRoot, config, _log);
-                        }
+                        fsWatcher = doMinify(srcdir, projectRoot, config, _log);
                     }
                     self.watchList.set(srcdir, {
                         pid: value.pid,
