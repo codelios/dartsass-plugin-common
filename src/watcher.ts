@@ -68,9 +68,6 @@ function getTransformation(contents: CSSFile, config: CompilerConfig, to: string
 }
 
 function _internalMinify(docPath: string, config: CompilerConfig, _log: ILog): void {
-    if (config.disableMinifiedFileGeneration) {
-        return;
-    }
     if (!isCSSFile(docPath)) {
         return;
     }
@@ -163,7 +160,9 @@ export class Watcher {
                     if (config.targetDirectory.length === 0) {
                         _log.appendLine(`Warning: ${quirkyMinifiedFiles}`);
                     } else {
-                        fsWatcher = doMinify(srcdir, projectRoot, config, _log);
+                        if (!config.disableMinifiedFileGeneration) {
+                            fsWatcher = doMinify(srcdir, projectRoot, config, _log);
+                        }
                     }
                     self.watchList.set(srcdir, {
                         pid: value.pid,
@@ -187,6 +186,8 @@ export class Watcher {
             if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
                 _log.appendLine(`About to clear chokidar watcher for sass watcher pid ${watchInfo.pid}`);
                 closeChokidarWatcher(watchInfo.fsWatcher, _log);
+            } else {
+                _log.appendLine(`No chokidar watcher for ${srcdir}, sass watcher pid ${watchInfo.pid}`);
             }
             cleared = true;
         } else {
