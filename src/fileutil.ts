@@ -11,8 +11,8 @@ export function writeToFile(outPath: string, data: Buffer, _log: ILog) : Promise
     return new Promise<number>( function(resolve, reject){
         fs.writeFile(outPath, data, (err: NodeJS.ErrnoException | null) => {
             if (err !== null) {
-                _log.appendLine(`Warning: ${err} while writing ${outPath}`);
-                reject(`Error while writing to file ${outPath}`);
+                _log.warning(`Error ${err} while writing ${outPath}`);
+                reject(`Error ${err} while writing to file ${outPath}`);
                 return;
             }
             if (data === undefined || data === null) {

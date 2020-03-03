@@ -172,7 +172,7 @@ export class NativeCompiler {
     public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {
         const args = this.doGetWatchArgs(projectRoot, config, srcdir);
         const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
-        _log.appendLine(`Watching ${srcdir} by ${sassBinPath}.`);
+        _log.info(`Watching ${srcdir} by ${sassBinPath}.`);
         if (isWindows()) {
             const relativeCmd = getRelativeDirectory(projectRoot, sassBinPath);
             this.verifySassBinPath(relativeCmd, _log);

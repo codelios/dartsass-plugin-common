@@ -164,7 +164,7 @@ export class Watcher {
                     }
                     let fsWatcher = null;
                     if (config.targetDirectory.length === 0) {
-                        _log.appendLine(`Warning: ${quirkyMinifiedFiles}`);
+                        _log.warning(`${quirkyMinifiedFiles}`);
                     } else {
                         fsWatcher = doMinify(srcdir, projectRoot, config, _log);
                     }
@@ -185,17 +185,17 @@ export class Watcher {
         const watchInfo = this.watchList.get(srcdir);
         let cleared = false;
         if (watchInfo !== null && watchInfo !== undefined) {
-            _log.appendLine(`About to unwatch ${srcdir} with sass watcher pid ${watchInfo.pid}`);
+            _log.debug(`About to unwatch ${srcdir} with sass watcher pid ${watchInfo.pid}`);
             killProcess(watchInfo.pid, _log);
             if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
-                _log.appendLine(`About to clear chokidar watcher for sass watcher pid ${watchInfo.pid}`);
+                _log.debug(`About to clear chokidar watcher for sass watcher pid ${watchInfo.pid}`);
                 closeChokidarWatcher(watchInfo.fsWatcher, _log);
             } else {
-                _log.appendLine(`No chokidar watcher for ${srcdir}, sass watcher pid ${watchInfo.pid}`);
+                _log.debug(`No chokidar watcher for ${srcdir}, sass watcher pid ${watchInfo.pid}`);
             }
             cleared = true;
         } else {
-            _log.appendLine(`Trying to unwatch ${srcdir}. But no watcher launched earlier`);
+            _log.debug(`Trying to unwatch ${srcdir}. But no watcher launched earlier`);
             cleared = true;
         }
         this.watchList.delete(srcdir);
@@ -209,7 +209,7 @@ export class Watcher {
 
     public ClearAll(_log: ILog) {
         this.watchList.forEach((watchInfo: WatchInfo, key: string) => {
-            _log.appendLine(`Unwatching ${key} with pid ${watchInfo.pid}`);
+            _log.debug(`Unwatching ${key} with pid ${watchInfo.pid}`);
             killProcess(watchInfo.pid, _log);
             if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
                 closeChokidarWatcher(watchInfo.fsWatcher, _log);

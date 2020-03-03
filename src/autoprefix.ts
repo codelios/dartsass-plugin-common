@@ -42,7 +42,7 @@ export function doAutoprefixCSS(cssfile: CSSFile, config : CompilerConfig, to: s
         processor.process(cssfile.css.toString(), getProcessArgs(to, cssfile.sourceMap)).then(
             (result: postcss.Result) => {
                 result.warnings().forEach(warn => {
-                    _log.appendLine(`Warning: Autoprefixer: ${warn}`);
+                    _log.warning(`Autoprefixer: ${warn}`);
                 });
                 resolve({
                     css: Buffer.from(result.css),

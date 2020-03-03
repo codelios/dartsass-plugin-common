@@ -30,14 +30,14 @@ export function validateCmd(relativeCmd: string, args: string[], _log: ILog) : b
     let validated = true;
     if (isWindows()) {
         if (doesContainSpaces(relativeCmd)) {
-            _log.appendLine(`Warning: ${NoSpaceInPath}: ${relativeCmd}`);
+            _log.warning(`${NoSpaceInPath}: ${relativeCmd}`);
             validated = false;
         }
     }
     if (validated) {
         for (const arg of args) {
             if (doesContainSpaces(arg)) {
-                _log.appendLine(`Warning: ${NoSpaceInPath}: ${arg}`);
+                _log.warning(`${NoSpaceInPath}: ${arg}`);
                 validated = false;
                 break;
             }
@@ -60,10 +60,10 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Prom
             windowsHide: true,
         });
         if (prc.killed) {
-            _log.appendLine(`Warning: ${prefix} killed. pid - ${prc.pid}`);
+            _log.warning(`${prefix} killed. pid - ${prc.pid}`);
             reject(`${prefix} killed. pid - ${prc.pid}`);
         } else if (prc.pid === null || prc.pid === undefined) {
-            _log.appendLine(`Warning: ${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
+            _log.warning(`${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
             reject(`${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`);
         } else {
             _log.debug(`${prefix} launched with pid ${prc.pid}`);
@@ -75,7 +75,7 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Prom
         });
         prc.stderr.setEncoding('utf8');
         prc.stderr.on('data', (data: any) => {
-            _log.appendLine(`stderr: ${data}`);
+            _log.debug(`stderr: ${data}`);
         });
         prc.on('exit', (code: any) => {
             if (code === 0) {
@@ -90,7 +90,7 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Prom
 export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog) : Promise<ProcessOutput> {
     return new Promise(function(resolve, reject) {
         const relativeCmd = getRelativeDirectory(cwd, cmd);
-        _log.appendLine(`RunDetached: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`);
+        _log.info(`RunDetached: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`);
         if (!validateCmd(relativeCmd, args, _log)) {
             reject(`${NoSpaceInPath}`);
         }
@@ -109,18 +109,18 @@ export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog
             _log.warning(`Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`);
             reject(`Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`);
         } else {
-            _log.appendLine(`Detached process ${cmd} launched with pid ${prc.pid}`);
+            _log.info(`Detached process ${cmd} launched with pid ${prc.pid}`);
         }
         if (prc.stdout) {
             prc.stdout.setEncoding('utf8');
             prc.stdout.on('data', (data: any) => {
-                _log.appendLine(`Output: ${data}`);
+                _log.debug(`Output: ${data}`);
             });
         }
         if (prc.stderr) {
             prc.stderr.setEncoding('utf8');
             prc.stderr.on('data', (data: any) => {
-                _log.appendLine(`stderr: ${data}`);
+                _log.debug(`stderr: ${data}`);
             });
         }
         const processOutput: ProcessOutput = {
@@ -142,7 +142,7 @@ export function killProcess(pid: number, _log: ILog) {
         const spawn = require('child_process').spawn;
         const cmd = spawn("taskkill", ["/pid", pid, '/f', '/t']);
         cmd.on('exit',(data: any)=>{
-            _log.appendLine(`${data}`);
+            _log.debug(`${data}`);
         });
     }
 }

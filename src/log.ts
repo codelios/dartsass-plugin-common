@@ -10,7 +10,7 @@ export interface ILog {
 
     warning(msg: string): any;
 
-    appendLine(msg: string): any;
+    info(msg: string): any;
 
     clear(): any
 }

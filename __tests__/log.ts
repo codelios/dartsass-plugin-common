@@ -12,7 +12,7 @@ export function getNullLog(): ILog {
 
         warning(msg: string): any {},
 
-        appendLine(msg: string): any {},
+        info(msg: string): any {},
 
         clear(): any {},
 
@@ -31,7 +31,7 @@ export function getConsoleLog(): ILog {
             console.log(msg);
         },
 
-        appendLine(msg: string): any {
+        info(msg: string): any {
             console.log(msg);
         },
 
@@ -50,7 +50,7 @@ export class BufLog  {
 
     }
 
-    appendLine(msg: string): any {
+    info(msg: string): any {
 
     }
 

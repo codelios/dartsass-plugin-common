@@ -29,7 +29,7 @@ function doWatch(pattern: string, ignorePattern: string,
 }
 
 export function cssWatch(pattern: string, fnOnFile: (docPath: string)=>any , fnOnDeleteFile: (docPath: string)=> any, cwd: string, _log: ILog) : FSWatcher {
-    _log.debug(`About to start css watcher for ${pattern}`);
+    _log.debug(`About to start css watcher for ${pattern}. cwd: ${cwd}`);
     const ignoreBlackListRegEx =  `[*.scss|*.min.css|*.map|*.jpg|*.png|*.html|*.js|*.ts]`;
     return doWatch(pattern, ignoreBlackListRegEx, fnOnFile, fnOnDeleteFile, cwd);
 }
