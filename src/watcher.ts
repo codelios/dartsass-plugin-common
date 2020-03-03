@@ -114,6 +114,10 @@ function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _
     if (config.disableMinifiedFileGeneration) {
         return null;
     }
+    if (config.targetDirectory.length === 0) {
+        _log.warning(`${quirkyMinifiedFiles}`);
+        return null;
+    }
     const targetDirectory = xformPath(projectRoot, getWatchTargetDirectory(srcdir, config));
     const cwd = path.dirname(targetDirectory);
     const pattern = getWatcherPattern(path.basename(targetDirectory), "css");
@@ -162,12 +166,7 @@ export class Watcher {
                         reject(`Unable to launch sass watcher for ${srcdir}. pid is undefined. Please check sassBinPath property.`);
                         return;
                     }
-                    let fsWatcher = null;
-                    if (config.targetDirectory.length === 0) {
-                        _log.warning(`${quirkyMinifiedFiles}`);
-                    } else {
-                        fsWatcher = doMinify(srcdir, projectRoot, config, _log);
-                    }
+                    let fsWatcher = doMinify(srcdir, projectRoot, config, _log);
                     self.watchList.set(srcdir, {
                         pid: value.pid,
                         fsWatcher: fsWatcher
