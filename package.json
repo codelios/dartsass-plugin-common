@@ -1,6 +1,6 @@
 {
     "name": "dartsass-plugin-common",
-    "version": "0.7.51",
+    "version": "0.7.52",
     "license": "MIT",
     "description": "Common Library code to compile sass files using Dart/JS compiler",
     "main": "dist/main.js",
@@ -52,7 +52,7 @@
         "mocha": "7.1.0",
         "@types/mocha": "7.0.1",
         "chai": "4.2.0",
-        "@types/chai": "4.2.9",
+        "@types/chai": "4.2.10",
         "webpack": "4.42.0",
         "webpack-cli": "3.3.11",
         "ts-loader": "6.2.1"
