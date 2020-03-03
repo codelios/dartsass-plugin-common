@@ -171,7 +171,7 @@ export class Watcher {
                         pid: value.pid,
                         fsWatcher: fsWatcher
                     });
-                    resolve(`Launched css watchers`);
+                    resolve(`Launched scss/sass watchers`);
                 },
                 err => {
                     reject(`${srcdir} - ${err}`);
