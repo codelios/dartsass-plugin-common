@@ -115,7 +115,7 @@ function doMinify(srcdir: string, projectRoot: string, config: CompilerConfig, _
         return null;
     }
     if (config.targetDirectory.length === 0) {
-        _log.warning(`${quirkyMinifiedFiles}`);
+        _log.notify(`${quirkyMinifiedFiles}`);
         return null;
     }
     const targetDirectory = xformPath(projectRoot, getWatchTargetDirectory(srcdir, config));

@@ -86,7 +86,7 @@ export class DartSassCompiler {
     handleError(err: sass.SassException, config : CompilerConfig, _log: ILog): string {
         const fileonly = path.basename(err.file);
         const formattedMessage = ` ${err.line}:${err.column} ${err.formatted}`;
-        _log.warning(`${err.formatted}`);
+        _log.notify(`${err.formatted}`);
         return `${fileonly}: ${formattedMessage}`;
     }
 

@@ -11,7 +11,7 @@ export function writeToFile(outPath: string, data: Buffer, _log: ILog) : Promise
     return new Promise<number>( function(resolve, reject){
         fs.writeFile(outPath, data, (err: NodeJS.ErrnoException | null) => {
             if (err !== null) {
-                _log.warning(`Error ${err} while writing ${outPath}`);
+                _log.error(`Error ${err} while writing ${outPath}`);
                 reject(`Error ${err} while writing to file ${outPath}`);
                 return;
             }
@@ -28,12 +28,12 @@ export function deleteFile(docPath: string, _log: ILog) {
     try {
         fs.unlink(docPath, function(err) {
             if (err) {
-                _log.debug(`Warning: Error deleting ${docPath} - ${err}`);
+                _log.error(`Error deleting ${docPath} - ${err}`);
             }
             _log.debug(`Deleted ${docPath} successfully`);
         });
     } catch(err) {
-        _log.debug(`Warning: Error deleting ${docPath} - ${err}`)
+        _log.error(`Error deleting ${docPath} - ${err}`)
     }
 }
 
