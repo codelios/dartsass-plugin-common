@@ -12,5 +12,9 @@ export interface ILog {
 
     info(msg: string): any;
 
+    error(msg: string): any;
+
+    notify(msg: string): any;
+
     clear(): any
 }

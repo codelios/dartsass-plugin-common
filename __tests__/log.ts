@@ -14,6 +14,10 @@ export function getNullLog(): ILog {
 
         info(msg: string): any {},
 
+        error(msg: string): any {},
+
+        notify(msg: string): any {},
+
         clear(): any {},
 
     };
@@ -28,6 +32,14 @@ export function getConsoleLog(): ILog {
         },
 
         warning(msg: string): any {
+            console.log(msg);
+        },
+
+        error(msg: string): any {
+            console.log(msg);
+        },
+
+        notify(msg: string): any {
             console.log(msg);
         },
 
@@ -55,6 +67,14 @@ export class BufLog  {
     }
 
     warning(msg: string): any {
+
+    }
+
+    error(msg: string): any {
+
+    }
+
+    notify(msg: string): any {
 
     }
 
