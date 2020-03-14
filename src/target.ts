@@ -10,6 +10,9 @@ import { ILog } from './log';
 import { IDocument } from './document';
 import * as fs from 'fs';
 
+export const defaultMinCSSExtension = '.min.css';
+
+
 export function getWatchTargetDirectory(srcdir: string,  config: CompilerConfig): string {
     let targetDirectory = srcdir;
     if (config.targetDirectory.length > 0) {
@@ -70,7 +73,7 @@ function doGetMinCSS(docPath: string, dir: string, ext: string, minCSSExtension:
 
 export function getOutputMinifiedCSS(document: IDocument, config: CompilerConfig, _log: ILog): string {
     const targetDirectory = inferTargetCSSDirectory(document, config);
-    return doGetMinCSS(document.getFileName(), targetDirectory, '.scss', config.minCSSExtension);
+    return doGetMinCSS(document.getFileName(), targetDirectory, '.scss', defaultMinCSSExtension);
 }
 
 export function getMinCSS(docPath: string, minCSSExtension: string) : string {

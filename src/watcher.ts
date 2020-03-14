@@ -12,7 +12,7 @@ import { xformPath } from './util';
 import { getCurrentCompiler } from './select';
 import { ISassCompiler } from './compiler';
 import { doAutoprefixCSS } from './autoprefix';
-import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS  } from './target';
+import { getWatchTargetDirectory, isMinCSS, isCSSFile, getMinCSS, defaultMinCSSExtension  } from './target';
 import { cssWatch, closeChokidarWatcher} from './chokidar_util';
 import { FSWatcher } from 'chokidar';
 import { IMinifier, getSourceMapComment } from './minifier';
@@ -73,10 +73,10 @@ function _internalMinify(cwd: string, _docPath: string, config: CompilerConfig, 
     if (!isCSSFile(fqPath)) {
         return;
     }
-    if (isMinCSS(fqPath, config.minCSSExtension)) {
+    if (isMinCSS(fqPath, defaultMinCSSExtension)) {
         return;
     }
-    const minifiedCSS = getMinCSS(fqPath, config.minCSSExtension);
+    const minifiedCSS = getMinCSS(fqPath, defaultMinCSSExtension);
     const sourceMapFile = minifiedCSS + ".map";
     const inputSourceMapFile = fqPath + ".map";
     _log.debug(`About to minify ${fqPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`);
@@ -103,10 +103,10 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
     if (!isCSSFile(docPath)) {
         return;
     }
-    if (isMinCSS(docPath, config.minCSSExtension)) {
+    if (isMinCSS(docPath, defaultMinCSSExtension)) {
         return;
     }
-    const minifiedCSS = getMinCSS(docPath, config.minCSSExtension);
+    const minifiedCSS = getMinCSS(docPath, defaultMinCSSExtension);
     deleteFile(minifiedCSS, _log);
 }
 
