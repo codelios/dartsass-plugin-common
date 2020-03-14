@@ -97,11 +97,16 @@ export class NativeCompiler {
         return result;
     }
 
-    _internalCompileDocument(document: IDocument, config: CompilerConfig, _log: ILog): Promise<string> {
+    public compileDocument(document: IDocument, config: CompilerConfig,
+        _log: ILog): Promise<string> {
         const self = this;
         try {
             const sassBinPath  = this.getSassBinPath(document.getProjectRoot(), config.sassBinPath)
             return new Promise(function(resolve, reject) {
+                if (isBeingWatched(document, config, _log)) {
+                    resolve(`Document already being watched`);
+                    return;
+                }
                 const output = getOutputCSS(document, config, _log);
                 const args = self.getArgs(document, config, output, false);
                 self.doCompileDocument(sassBinPath, output, config, document.getProjectRoot(), _log, args).then(
@@ -123,16 +128,6 @@ export class NativeCompiler {
         } catch(err) {
             return new Promise(function(_, reject) {
                 reject(err);
-            });
-        }
-    }
-    public compileDocument(document: IDocument, config: CompilerConfig,
-        _log: ILog): Promise<string> {
-        if (!isBeingWatched(document, config, _log)) {
-            return this._internalCompileDocument(document, config, _log);
-        } else {
-            return new Promise(function(resolve, _) {
-                resolve(`Document already being watched`);
             });
         }
     }
