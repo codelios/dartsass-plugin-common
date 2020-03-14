@@ -90,7 +90,7 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Prom
 export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog) : Promise<ProcessOutput> {
     return new Promise(function(resolve, reject) {
         const relativeCmd = getRelativeDirectory(cwd, cmd);
-        _log.info(`RunDetached: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`);
+        _log.debug(`RunDetached: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join('  ')}`);
         if (!validateCmd(relativeCmd, args, _log)) {
             reject(`${NoSpaceInPath}`);
         }
@@ -109,7 +109,7 @@ export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog
             _log.warning(`Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`);
             reject(`Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`);
         } else {
-            _log.info(`Detached process ${cmd} launched with pid ${prc.pid}`);
+            _log.debug(`Detached process ${cmd} launched with pid ${prc.pid}`);
         }
         if (prc.stdout) {
             prc.stdout.setEncoding('utf8');
