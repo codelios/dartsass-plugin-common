@@ -40,7 +40,6 @@ describe('DartsassCompiler CompileDocument' , () => {
         const compiler = new DartSassCompiler();
         const document: IDocument = getDocumentForFile('hello.scss');
         const config = new CompilerConfig();
-        config.minCSSExtension = '.min.css';
         config.targetDirectory = 'out';
         const _log = getNullLog();
         expect(validateTargetDirectories(document, config)).to.be.null;

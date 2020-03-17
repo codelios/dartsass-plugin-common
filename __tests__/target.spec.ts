@@ -78,7 +78,6 @@ describe('getOutputMinifiedCSS function', () => {
     it('default', () => {
         const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
         const config = new CompilerConfig();
-        config.minCSSExtension = ".min.css";
         config.targetDirectory =  "";
         const _log = getNullLog();
         const result = getOutputMinifiedCSS(document, config, _log);
