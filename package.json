@@ -40,14 +40,14 @@
         "autoprefixer": "9.7.4",
         "@types/autoprefixer": "9.7.1",
         "postcss": "7.0.27",
-        "browserslist": "4.9.1",
+        "browserslist": "4.10.0",
         "typescript": "3.8.3",
         "chokidar": "3.3.1",
         "clean-css": "4.2.3",
         "@types/clean-css": "4.2.1"
     },
     "devDependencies": {
-        "@types/node": "13.9.1",
+        "@types/node": "13.9.2",
         "ts-node": "8.7.0",
         "mocha": "7.1.1",
         "@types/mocha": "7.0.2",
