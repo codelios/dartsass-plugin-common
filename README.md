@@ -18,4 +18,4 @@ ext install codelios.dartsass
 VSCode Marketplace Link: [codelios.dartsass](https://marketplace.visualstudio.com/items?itemName=codelios.dartsass).
 
 
-Visit the plugin home page at github - [codelios/vscode-dartsass](https://github.com/codelios/vscode-dartsass)
+Github plugin home page - [codelios/vscode-dartsass](https://github.com/codelios/vscode-dartsass)
