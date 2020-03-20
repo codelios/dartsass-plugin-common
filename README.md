@@ -1,3 +1,7 @@
+* [DartJS Sass Compiler Common Plugin](#dartjs-sass-compiler-common-plugin)
+    * [VS Code Plugin](#vs-code-plugin)
+        * [Install](#install)
+
 # DartJS Sass Compiler Common Plugin
 
 This repository contains the common code to compile using DartJS library that can be used by editor plugins as appropriate.
