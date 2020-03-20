@@ -1,13 +1,13 @@
 {
     "name": "dartsass-plugin-common",
-    "version": "0.7.57",
+    "version": "0.7.58",
     "license": "MIT",
     "description": "Common Library code to compile sass files using Dart/JS compiler",
     "main": "dist/main.js",
     "types": "lib/index.d.ts",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/feldci/dartsass-plugin-common.git"
+        "url": "git+https://github.com/codelios/dartsass-plugin-common.git"
     },
     "keywords": [
         "scss compiler plugin",
