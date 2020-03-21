@@ -4,11 +4,11 @@
 
 # DartJS Sass Compiler Common Plugin
 
-This repository contains the common code to compile using DartJS library that can be used by editor plugins as appropriate.
+This repository contains the common code to compile sass/scss files using DartJS Sass Compiler that is used by plugins specific to various IDEs/editors.
 
 ## VS Code Plugin
 
-[![VSCode Marketplace Badge](https://img.shields.io/vscode-marketplace/v/codeios.dartsass.svg?label=VSCode%20Marketplace&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=codelios.dartsass) [![Total Downloads](https://img.shields.io/visual-studio-marketplace/d/codelios.dartsass.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=codelios.dartsass) [![Average Rating Badge](https://img.shields.io/vscode-marketplace/r/codelios.dartsass.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=codelios.dartsass) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/codelios/vscode-dartsass/)
+[![VSCode Marketplace Badge](https://img.shields.io/vscode-marketplace/v/codelios.dartsass.svg?label=VSCode%20Marketplace&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=codelios.dartsass) [![Total Downloads](https://img.shields.io/visual-studio-marketplace/d/codelios.dartsass.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=codelios.dartsass) [![Average Rating Badge](https://img.shields.io/vscode-marketplace/r/codelios.dartsass.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=codelios.dartsass) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/codelios/vscode-dartsass/)
 
 
 ### Install
