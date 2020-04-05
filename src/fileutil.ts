@@ -33,7 +33,7 @@ export function deleteFile(docPath: string, _log: ILog) {
             _log.debug(`Deleted ${docPath} successfully`);
         });
     } catch(err) {
-        _log.error(`Error deleting ${docPath} - ${err}`)
+        _log.error(`Error deleting ${docPath} - ${err}`);
     }
 }
 

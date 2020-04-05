@@ -89,7 +89,7 @@ function _internalMinify(cwd: string, _docPath: string, config: CompilerConfig, 
         (value: CSSFile) => {
             writeCSSFile(value, minifiedCSS, _log).then(
                 (written: number) => {
-                    _log.debug(`Wrote to ${minifiedCSS}[.map]`)
+                    _log.debug(`Wrote to ${minifiedCSS}[.map]`);
                 },
                 err =>_log.debug(`Error writing css file to ${minifiedCSS} - ${err}`)
             );

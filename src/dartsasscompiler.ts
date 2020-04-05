@@ -66,14 +66,14 @@ export class DartSassCompiler {
                                 _log.debug(`Error compiling minified file ${document.getFileName()} -> ${output}:   ${err}`);
                                 reject(err);
                             }
-                        )
+                        );
                     }
                 },
                 err => {
                     _log.debug(`Error compiling ${document.getFileName()} -> ${output}:   ${err}`);
                     reject(err);
                 }
-            )
+            );
         });
     }
 

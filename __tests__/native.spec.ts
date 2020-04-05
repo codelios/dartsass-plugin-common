@@ -30,7 +30,7 @@ describe('Native SayVersion' , () => {
                 expect(err).to.be.not.null;
             }
         ).finally(done);
-    })
+    });
 });
 
 describe('Native CompileDocument' , () => {

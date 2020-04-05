@@ -16,7 +16,7 @@ describe('CleanCSSMinifier' , () => {
             css: Buffer.from(`a { color: brown; }`),
             sourceMap: null}, false, Buffer.from('/*# sourceMappingURL*/'));
         var should = require('chai').should();
-        should.exist(minifyOutput.css)
+        should.exist(minifyOutput.css);
         expect(minifyOutput.css.length).to.be.greaterThan(0);
         expect(minifyOutput.css).to.have.string('sourceMappingURL');
         should.exist(minifyOutput.sourceMap);

@@ -37,7 +37,7 @@ export class NativeCompiler {
     }
 
     public sayVersion(config: CompilerConfig, projectRoot: string, _log: ILog): Promise<string> {
-        const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
+        const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
         const args = VersionArgs;
         let runPromise = Run(sassBinPath, args, projectRoot, _log);
         if (isWindows()) {
@@ -50,7 +50,7 @@ export class NativeCompiler {
     }
 
     public validate(config: CompilerConfig, projectRoot: string): Promise<string> {
-        const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath)
+        const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
         return new Promise(function(resolve, reject) {
             if (!fs.existsSync(sassBinPath)) {
                 reject(`ProjectRoot: ${projectRoot}. Sass Binary Path ${sassBinPath} does not exist`);
@@ -82,7 +82,7 @@ export class NativeCompiler {
                     }, config, _log).then(
                         autoPrefixvalue => resolve(output),
                         err => reject(err)
-                    )
+                    );
                },
                err => reject(err)
             );
@@ -101,7 +101,7 @@ export class NativeCompiler {
         _log: ILog): Promise<string> {
         const self = this;
         try {
-            const sassBinPath  = this.getSassBinPath(document.getProjectRoot(), config.sassBinPath)
+            const sassBinPath  = this.getSassBinPath(document.getProjectRoot(), config.sassBinPath);
             return new Promise(function(resolve, reject) {
                 if (isBeingWatched(document, config, _log)) {
                     resolve(`Document already being watched`);
@@ -161,7 +161,7 @@ export class NativeCompiler {
         const relativeSrcDir = getRelativeDirectory(projectRoot, _srcdir);
         let targetDirectory = getWatchTargetDirectory(relativeSrcDir, config);
         args.push(util.format("%s:%s", relativeSrcDir, targetDirectory));
-        return args
+        return args;
     }
 
     public watch(srcdir: string, projectRoot: string, config: CompilerConfig, _log: ILog) : Promise<ProcessOutput> {

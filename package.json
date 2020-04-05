@@ -28,6 +28,7 @@
         "prepublishOnly": "npm run prod",
         "clean": "rm -fr lib",
         "compile": "npm run clean && tsc",
+        "lint": "eslint src --ext ts && eslint __tests__ --ext ts",
         "dev": "rm -fr node_modules/fsevents && npm run compile && webpack --mode development",
         "prod": "rm -fr node_modules/fsevents && npm run compile && webpack --mode production",
         "test": "npm run dev && mocha --timeout 5000 -r ts-node/register __tests__/**/*.spec.ts"
@@ -56,6 +57,9 @@
         "webpack": "4.42.1",
         "webpack-cli": "3.3.11",
         "ts-loader": "6.2.2",
-        "minimist": ">=1.2.3"
+        "minimist": ">=1.2.3",
+        "eslint": "6.8.0",
+        "@typescript-eslint/parser": "2.26.0",
+        "@typescript-eslint/eslint-plugin": "2.26.0"
     }
 }

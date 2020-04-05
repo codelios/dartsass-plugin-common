@@ -41,7 +41,7 @@ export function safeMkdir(directory: string): any {
     try {
         // https://stackoverflow.com/questions/31645738/how-to-create-full-path-with-nodes-fs-mkdirsync
         // Since nodejs 10.12.0
-        fs.mkdirSync(directory, { recursive: true })
+        fs.mkdirSync(directory, { recursive: true });
         return null;
     } catch (err) {
         if (err.code === 'EEXIST') {
@@ -55,7 +55,7 @@ export function validateTargetDirectories(document: IDocument, config : Compiler
     const targetCSSDirectory = inferTargetCSSDirectory(document, config);
     let err = safeMkdir(targetCSSDirectory);
     if (err) {
-        return err
+        return err;
     }
     return null;
 }

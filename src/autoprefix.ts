@@ -10,7 +10,7 @@ import browserslist from 'browserslist';
 import { CompilerConfig } from './config';
 import { Info } from './version';
 import { ILog } from './log';
-import { CSSFile, writeCSSFile } from './cssfile'
+import { CSSFile, writeCSSFile } from './cssfile';
 
 function getProcessArgs(to: string, sourceMap: Buffer|null): any {
     if (sourceMap !== undefined && sourceMap !== null && sourceMap.length > 0) {
@@ -20,7 +20,7 @@ function getProcessArgs(to: string, sourceMap: Buffer|null): any {
                 prev: sourceMap.toString(),
                 inline: false,
             },
-        }
+        };
     } else {
         return {
             to: to
@@ -65,7 +65,7 @@ export function autoPrefixCSSBytes(output: string, inFile: CSSFile,
                 writeCSSFile(value, output, _log).then(
                     (value: number) => resolve(value),
                     err => reject(err)
-                )
+                );
             },
             err => reject(err)
         );

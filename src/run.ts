@@ -84,7 +84,7 @@ export function Run(cmd: string, args: string[], cwd: string, _log: ILog) : Prom
                 reject(`Process exited with code: ${code}`);
             }
         });
-    })
+    });
 }
 
 export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog) : Promise<ProcessOutput> {
@@ -126,9 +126,9 @@ export function RunDetached(cmd: string, cwd: string, args: string[], _log: ILog
         const processOutput: ProcessOutput = {
             pid: prc.pid,
             killed: prc.killed
-        }
+        };
         resolve(processOutput);
-    })
+    });
 }
 
 export function removeLineBreaks(value: string): string {
