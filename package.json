@@ -35,19 +35,19 @@
     },
     "dependencies": {
         "sass": "1.26.3",
-        "@types/sass": "1.16.0",
         "fibers": "4.0.2",
-        "@types/fibers": "3.1.0",
         "autoprefixer": "9.7.6",
-        "@types/autoprefixer": "9.7.2",
         "postcss": "7.0.27",
         "browserslist": "4.11.1",
         "typescript": "3.8.3",
         "chokidar": "3.3.1",
-        "clean-css": "4.2.3",
-        "@types/clean-css": "4.2.1"
+        "clean-css": "4.2.3"
     },
     "devDependencies": {
+        "@types/sass": "1.16.0",
+        "@types/fibers": "3.1.0",
+        "@types/autoprefixer": "9.7.2",
+        "@types/clean-css": "4.2.1",
         "@types/node": "13.9.8",
         "ts-node": "8.8.2",
         "mocha": "7.1.1",
