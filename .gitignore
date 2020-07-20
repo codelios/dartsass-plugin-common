@@ -6,3 +6,6 @@ __tests__/out
 __tests__/**/*.css
 __tests__/**/*.css.map
 __tests__/**/*.min.css
+
+# No npm . use yarn please
+package-lock.json
