@@ -15,7 +15,7 @@ export async function writeToFile(
   if (data === undefined || data === null) {
     return 0;
   }
-  fs.writeFileSync(outPath, data);
+  await fs.promises.writeFile(outPath, data);
   return data.length;
 }
 
