@@ -2,37 +2,36 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-'use strict';
+"use strict";
 
 export const DefaultBrowsersList: Array<string> = ["> 1%", "last 2 versions"];
 
 export class CompilerConfig {
+  sassBinPath = "";
 
-    sassBinPath: string = "";
+  includePath: Array<string> = [];
 
-    includePath: Array<string> = [];
+  disableMinifiedFileGeneration = false;
 
-    disableMinifiedFileGeneration: boolean = false;
+  disableSourceMap = false;
 
-    disableSourceMap: boolean = false;
+  sourceEncoding = "utf-8";
 
-    sourceEncoding:string = "utf-8";
+  nodeExePath = "node.exe";
 
-    nodeExePath = "node.exe";
+  debug = false;
 
-    debug: boolean = false;
+  disableCompileOnSave = false;
 
-    disableCompileOnSave: boolean = false;
+  pauseInterval = 3;
 
-    pauseInterval: number = 3;
+  enableStartWithUnderscores = false;
 
-    enableStartWithUnderscores: boolean = false;
+  disableAutoPrefixer = false;
 
-    disableAutoPrefixer: boolean = false;
+  autoPrefixBrowsersList: Array<string> = DefaultBrowsersList;
 
-    autoPrefixBrowsersList: Array<string> = DefaultBrowsersList;
+  targetDirectory = "";
 
-    targetDirectory: string = "";
-
-    watchDirectories: Array<string> = [];
+  watchDirectories: Array<string> = [];
 }

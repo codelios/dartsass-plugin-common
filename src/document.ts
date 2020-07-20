@@ -2,14 +2,14 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-'use strict';
+"use strict";
 
 export interface IDocument {
-    isSass(): boolean;
+  isSass(): boolean;
 
-    getFileName(): string
+  getFileName(): string;
 
-    getFileOnly(): string
+  getFileOnly(): string;
 
-    getProjectRoot(): string
+  getProjectRoot(): string;
 }
