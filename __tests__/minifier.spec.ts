@@ -3,13 +3,9 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-'use strict';
-import 'mocha';
+"use strict";
+import "mocha";
 
-
-describe('minifier' , () => {
-
-    it('removeStdIn', () => {
-    });
-
+describe("minifier", () => {
+  it("removeStdIn", () => {});
 });

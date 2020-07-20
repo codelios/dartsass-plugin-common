@@ -17,7 +17,7 @@ export async function CompileCurrentFile(
   _log: ILog
 ): Promise<string> {
   if (!validateDocument(document, extensionConfig, _log)) {
-    return '';
+    return "";
   }
   const err = validateTargetDirectories(document, extensionConfig);
   if (err) {

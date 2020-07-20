@@ -9,7 +9,6 @@ import { CSSFile } from "./cssfile";
 const CleanCSS = require("clean-css");
 
 export class CleanCSSMinifier {
-
   public async minify(
     src: CSSFile,
     disableSourceMap: boolean,

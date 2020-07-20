@@ -28,7 +28,6 @@ const VersionArgs = ["--version"];
  * NativeCompiler uses the sass executable present in config.sassBinPath and uses the cmd line to compile the same.
  */
 export class NativeCompiler {
-
   getSassBinPath(projectRoot: string, sassBinPath: string): string {
     return xformPath(projectRoot, sassBinPath);
   }
@@ -69,7 +68,7 @@ export class NativeCompiler {
         `ProjectRoot: ${projectRoot}. Sass Binary Path ${sassBinPath} is a directory`
       );
     }
-    return '';
+    return "";
   }
 
   async doCompileDocument(
@@ -130,7 +129,7 @@ export class NativeCompiler {
       config.sassBinPath
     );
     if (isBeingWatched(document, config, _log)) {
-      return 'Document already being watched';
+      return "Document already being watched";
     }
     const output = getOutputCSS(document, config, _log);
     const args = this.getArgs(document, config, output, false);

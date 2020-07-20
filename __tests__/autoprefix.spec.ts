@@ -3,13 +3,13 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-'use strict';
-import 'mocha';
-import { CompilerConfig } from '../src/config';
-import { CSSFile } from '../src/cssfile';
-import { doAutoprefixCSS } from '../src/autoprefix';
-import { getNullLog } from './log';
-import { expect } from 'chai';
+"use strict";
+import "mocha";
+import { CompilerConfig } from "../src/config";
+import { CSSFile } from "../src/cssfile";
+import { doAutoprefixCSS } from "../src/autoprefix";
+import { getNullLog } from "./log";
+import { expect } from "chai";
 
 const InputCSS = `
 .example {
@@ -20,25 +20,30 @@ const InputCSS = `
 }
 `;
 
-describe('autoprefix' , () => {
-
-    it('doAutoprefixCSS', (done) => {
-        const config = new CompilerConfig();
-        const _log = getNullLog();
-        doAutoprefixCSS({
-            css: Buffer.from(InputCSS),
-            sourceMap: null,
-        }, config, 'main.css', _log).then(
-            (value: CSSFile) => {
-                expect(value.css).to.be.not.null;
-                // expect(value.sourceMap).to.be.not.null;
-                // expect(value.sourceMap).to.be.not.undefined;
-                // console.log(value);
-            },
-            err => {
-                expect(err).to.be.not.null;
-            }
-        ).finally(done);
-    });
-
+describe("autoprefix", () => {
+  it("doAutoprefixCSS", (done) => {
+    const config = new CompilerConfig();
+    const _log = getNullLog();
+    doAutoprefixCSS(
+      {
+        css: Buffer.from(InputCSS),
+        sourceMap: null,
+      },
+      config,
+      "main.css",
+      _log
+    )
+      .then(
+        (value: CSSFile) => {
+          expect(value.css).to.be.not.null;
+          // expect(value.sourceMap).to.be.not.null;
+          // expect(value.sourceMap).to.be.not.undefined;
+          // console.log(value);
+        },
+        (err) => {
+          expect(err).to.be.not.null;
+        }
+      )
+      .finally(done);
+  });
 });

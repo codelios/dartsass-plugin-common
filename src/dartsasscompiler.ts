@@ -29,12 +29,11 @@ const NativeSassMessage = `
  * https://github.com/sass/dart-sass/blob/master/README.md#javascript-api .
  */
 export class DartSassCompiler {
-
   public async validate(
     config: CompilerConfig,
     projectRoot: string
   ): Promise<string> {
-    return '';
+    return "";
   }
 
   public async sayVersion(
@@ -63,7 +62,7 @@ export class DartSassCompiler {
       const compressedOutput = getOutputMinifiedCSS(document, config, _log);
       await this.asyncCompile(document, true, compressedOutput, config, _log);
     }
-    return '';
+    return "";
   }
 
   public async watch(
