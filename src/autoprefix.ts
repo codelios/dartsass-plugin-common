@@ -9,8 +9,9 @@ import { CompilerConfig } from "./config";
 import { Info } from "./version";
 import { ILog } from "./log";
 import { CSSFile, writeCSSFile } from "./cssfile";
-import postcss = require("postcss");
-import autoprefixer = require("autoprefixer");
+const postcss = require("postcss");
+import { Warning } from "postcss";
+import autoprefixer from "autoprefixer";
 
 function getProcessArgs(to: string, sourceMap: Buffer | null): any {
   if (sourceMap !== undefined && sourceMap !== null && sourceMap.length > 0) {
@@ -37,16 +38,16 @@ export async function doAutoprefixCSS(
   if (config.disableAutoPrefixer) {
     return cssfile;
   }
-  const processor = postcss().use(
+  const processor = postcss([
     autoprefixer({
       browsers: config.autoPrefixBrowsersList,
-    })
-  );
+    }),
+  ]);
   const result = await processor.process(
     cssfile.css.toString(),
     getProcessArgs(to, cssfile.sourceMap)
   );
-  result.warnings().forEach((warn) => {
+  result.warnings().forEach((warn: Warning[]) => {
     _log.warning(`Autoprefixer: ${warn}`);
   });
   return {
