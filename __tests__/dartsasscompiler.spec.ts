@@ -12,29 +12,38 @@ import { CompilerConfig } from "../src/config";
 import { validateTargetDirectories } from "../src/target";
 import { getDocumentForFile } from "./document";
 import { getNullLog, getBufLog } from "./log";
-const path = require("path");
+import path from "path";
 import fs from "fs";
+import { getLocalSass } from "./testutil";
 
 describe("DartsassCompiler SayVersion", () => {
+  let localSass: string;
+
+  before(function (done) {
+    localSass = getLocalSass();
+    if (!fs.existsSync(localSass)) {
+      done(`${localSass} does not exist`);
+    } else {
+      done();
+    }
+  });
+
   it("sayVersion", (done) => {
     const compiler = new DartSassCompiler();
     const config = new CompilerConfig();
-    config.sassBinPath = "/usr/local/bin/sass";
+    config.sassBinPath = getLocalSass();
     const _log = getBufLog();
-    compiler
-      .sayVersion(config, "", _log)
-      .then(
-        function (data: any) {
-          // This value comes from the version installed using Dockerfile. Hence hardcoded. YMMV locally.
-          expect(data).to.equal(
-            "dart-sass\t1.26.3\t(Sass Compiler)\t[Dart]\ndart2js\t2.7.1\t(Dart Compiler)\t[Dart]"
-          );
-        },
-        function (err: any) {
-          expect(err).to.be.not.null;
-        }
-      )
-      .finally(done);
+    compiler.sayVersion(config, "", _log).then(
+      (data: string) => {
+        expect(data).to.equal(
+          "dart-sass\t1.27.0\t(Sass Compiler)\t[Dart]\ndart2js\t2.10.1\t(Dart Compiler)\t[Dart]"
+        );
+        done();
+      },
+      (err) => {
+        done(err);
+      }
+    );
   });
 });
 
@@ -47,19 +56,17 @@ describe("DartsassCompiler CompileDocument", () => {
     const _log = getNullLog();
     expect(validateTargetDirectories(document, config)).to.be.null;
     const outputDirectory = path.join(__dirname, "out");
-    compiler
-      .compileDocument(document, config, _log)
-      .then(
-        (result) => {
-          expect(result).to.equal(path.join(outputDirectory, "hello.min.css"));
-          fs.stat(path.join(outputDirectory, "hello.css.map"), (exists) => {
-            expect(exists).to.be.null;
-          });
-        },
-        (err) => {
-          expect(err).to.be.null;
-        }
-      )
-      .finally(done);
+    compiler.compileDocument(document, config, _log).then(
+      (result) => {
+        expect(result).to.equal(path.join(outputDirectory, "hello.min.css"));
+        fs.stat(path.join(outputDirectory, "hello.css.map"), (exists) => {
+          expect(exists).to.be.null;
+        });
+        done();
+      },
+      (err) => {
+        done(err);
+      }
+    );
   });
 });

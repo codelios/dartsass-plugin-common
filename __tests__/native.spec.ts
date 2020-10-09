@@ -7,55 +7,73 @@
 import { expect } from "chai";
 import "mocha";
 import * as fs from "fs";
+import path from "path";
 import { NativeCompiler } from "../src/native";
 import { IDocument } from "../src/document";
 import { CompilerConfig } from "../src/config";
 import { getDocumentForFile } from "./document";
 import { getNullLog, getBufLog } from "./log";
-const path = require("path");
+import { getLocalSass } from "./testutil";
 
 describe("Native SayVersion", () => {
+  let localSass: string;
+
+  before(function (done) {
+    localSass = getLocalSass();
+    if (!fs.existsSync(localSass)) {
+      done(`${localSass} does not exist`);
+    } else {
+      done();
+    }
+  });
+
   it("sayVersion", (done) => {
     const native = new NativeCompiler();
     const config = new CompilerConfig();
-    config.sassBinPath = "/usr/local/bin/sass";
+    config.sassBinPath = localSass;
     const _log = getBufLog();
-    native
-      .sayVersion(config, "", _log)
-      .then(
-        function (data: any) {
-          // This value comes from the version installed using Dockerfile. Hence hardcoded. YMMV locally.
-          expect(data).to.equal("1.19.0 compiled with dart2js 2.2.0");
-        },
-        function (err: any) {
-          expect(err).to.be.not.null;
-        }
-      )
-      .finally(done);
+    native.sayVersion(config, "", _log).then(
+      (data: string) => {
+        expect(data).to.match(/compiled with dart2js/);
+        done();
+      },
+      (err) => {
+        done(err);
+      }
+    );
   });
 });
 
 describe("Native CompileDocument", () => {
+  let localSass: string;
+
+  before(function (done) {
+    localSass = getLocalSass();
+    if (!fs.existsSync(localSass)) {
+      done(`${localSass} does not exist`);
+    } else {
+      done();
+    }
+  });
+
   it("compileDocument correct", (done) => {
     const native = new NativeCompiler();
     const document: IDocument = getDocumentForFile("cmd.scss");
     const config = new CompilerConfig();
     config.targetDirectory = "out";
-    config.sassBinPath = "/usr/local/bin/sass";
+    config.sassBinPath = localSass;
     config.disableMinifiedFileGeneration = true;
     const _log = getNullLog();
-    native
-      .compileDocument(document, config, _log)
-      .then(
-        (result) => {
-          const output = path.join(document.getProjectRoot(), "out/cmd.css");
-          expect(result).to.equal(output);
-        },
-        (err) => {
-          expect(err).to.be.null;
-        }
-      )
-      .finally(done);
+    native.compileDocument(document, config, _log).then(
+      (result) => {
+        const output = path.join(document.getProjectRoot(), "out/cmd.css");
+        expect(result).to.equal(output);
+        done();
+      },
+      (err) => {
+        done(err);
+      }
+    );
   });
 
   it("compileDocument invalid/nonexistent/incorrect scss should result in error", (done) => {
@@ -63,7 +81,7 @@ describe("Native CompileDocument", () => {
     const document: IDocument = getDocumentForFile("invalid.scss");
     const config = new CompilerConfig();
     config.targetDirectory = "out";
-    config.sassBinPath = "/usr/local/bin/sass";
+    config.sassBinPath = localSass;
     const _log = getNullLog();
     native
       .compileDocument(document, config, _log)
@@ -83,7 +101,7 @@ describe("Native CompileDocument", () => {
     const document: IDocument = getDocumentForFile("autoprefixer_example.scss");
     const config = new CompilerConfig();
     config.targetDirectory = "out";
-    config.sassBinPath = "/usr/local/bin/sass";
+    config.sassBinPath = localSass;
     config.autoPrefixBrowsersList = ["last 2 version"];
     config.disableMinifiedFileGeneration = true;
     const _log = getNullLog();
@@ -130,10 +148,21 @@ describe("Native CompileDocument", () => {
 });
 
 describe("Native Validate", () => {
+  let localSass: string;
+
+  before(function (done) {
+    localSass = getLocalSass();
+    if (!fs.existsSync(localSass)) {
+      done(`${localSass} does not exist`);
+    } else {
+      done();
+    }
+  });
+
   it("directory value for sassBinPath should fail", (done) => {
     const native = new NativeCompiler();
     const config = new CompilerConfig();
-    config.sassBinPath = "/usr/local/bin";
+    config.sassBinPath = localSass;
     native
       .validate(config, "")
       .then(
@@ -167,7 +196,7 @@ describe("Native Validate", () => {
   it("Valid Path for sassBinPath should succeed", (done) => {
     const native = new NativeCompiler();
     const config = new CompilerConfig();
-    config.sassBinPath = "/usr/local/bin/sass";
+    config.sassBinPath = localSass;
     native
       .validate(config, "")
       .then(

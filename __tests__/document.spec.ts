@@ -9,13 +9,9 @@ import "mocha";
 import { getDocumentForFile } from "./document";
 import { IDocument } from "../src/document";
 
-describe("getDocumentForFile function", () => {
+describe("documet.spec.ts:: getDocumentForFile function", () => {
   it("getDocumentForFile", () => {
     const document: IDocument = getDocumentForFile("hello.scss");
     expect(document.getFileOnly()).to.equal("hello");
-    expect(document.getProjectRoot()).to.equal("/tmp/dartsass/__tests__");
-    expect(document.getFileName()).to.equal(
-      "/tmp/dartsass/__tests__/hello.scss"
-    );
   });
 });
