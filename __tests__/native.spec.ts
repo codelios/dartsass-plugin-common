@@ -105,45 +105,43 @@ describe("Native CompileDocument", () => {
     config.autoPrefixBrowsersList = ["last 2 version"];
     config.disableMinifiedFileGeneration = true;
     const _log = getNullLog();
-    native
-      .compileDocument(document, config, _log)
-      .then(
-        (result) => {
-          const output = path.join(
-            document.getProjectRoot(),
-            "out/autoprefixer_example.css"
-          );
-          const normalOuput = path.join(
-            document.getProjectRoot(),
-            "out/autoprefixer_example.css"
-          );
-          expect(result).to.equal(output);
-          fs.readFile(output, "utf8", function (err, contents) {
-            if (err) {
-              expect(err).to.be.null;
-              return;
-            }
-            expect(
-              contents.indexOf("-webkit-gradient"),
-              "autoprefixer should have -webkit-gradient in the minified output"
-            ).to.be.above(-1);
-          });
-          fs.readFile(normalOuput, "utf8", function (err, contents) {
-            if (err) {
-              expect(err).to.be.null;
-              return;
-            }
-            expect(
-              contents.indexOf("-webkit-gradient"),
-              "autoprefixer should have -webkit-gradient in the normal unminified output"
-            ).to.be.above(-1);
-          });
-        },
-        (err) => {
-          expect(err).to.be.null;
-        }
-      )
-      .finally(done);
+    native.compileDocument(document, config, _log).then(
+      (result) => {
+        const output = path.join(
+          document.getProjectRoot(),
+          "out/autoprefixer_example.css"
+        );
+        const normalOuput = path.join(
+          document.getProjectRoot(),
+          "out/autoprefixer_example.css"
+        );
+        expect(result).to.equal(output);
+        fs.readFile(output, "utf8", function (err, contents) {
+          if (err) {
+            expect(err).to.be.null;
+            return;
+          }
+          expect(
+            contents.indexOf("-webkit-gradient"),
+            "autoprefixer should have -webkit-gradient in the minified output"
+          ).to.be.above(-1);
+        });
+        fs.readFile(normalOuput, "utf8", function (err, contents) {
+          if (err) {
+            expect(err).to.be.null;
+            return;
+          }
+          expect(
+            contents.indexOf("-webkit-gradient"),
+            "autoprefixer should have -webkit-gradient in the normal unminified output"
+          ).to.be.above(-1);
+        });
+        done();
+      },
+      (err) => {
+        done(err);
+      }
+    );
   });
 });
 

@@ -141,20 +141,19 @@ export class NativeCompiler {
       _log,
       args
     );
-    if (!config.disableMinifiedFileGeneration) {
-      const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
-      const args = this.getArgs(document, config, minifiedOutput, true);
-      return await this.doCompileDocument(
-        sassBinPath,
-        minifiedOutput,
-        config,
-        document.getProjectRoot(),
-        _log,
-        args
-      );
-    } else {
+    if (config.disableMinifiedFileGeneration) {
       return value;
     }
+    const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
+    const minArgs = this.getArgs(document, config, minifiedOutput, true);
+    return await this.doCompileDocument(
+      sassBinPath,
+      minifiedOutput,
+      config,
+      document.getProjectRoot(),
+      _log,
+      minArgs
+    );
   }
 
   doGetArgs(

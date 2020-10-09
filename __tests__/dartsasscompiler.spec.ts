@@ -54,6 +54,7 @@ describe("DartsassCompiler CompileDocument", () => {
     const config = new CompilerConfig();
     config.targetDirectory = "out";
     const _log = getNullLog();
+    console.info(`Compiling ${document.getFileName()}`);
     expect(validateTargetDirectories(document, config)).to.be.null;
     const outputDirectory = path.join(__dirname, "out");
     compiler.compileDocument(document, config, _log).then(

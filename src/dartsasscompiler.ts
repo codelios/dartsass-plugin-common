@@ -58,10 +58,11 @@ export class DartSassCompiler {
       )}`
     );
     await this.asyncCompile(document, false, output, config, _log);
-    if (!config.disableMinifiedFileGeneration) {
-      const compressedOutput = getOutputMinifiedCSS(document, config, _log);
-      await this.asyncCompile(document, true, compressedOutput, config, _log);
+    if (config.disableMinifiedFileGeneration) {
+      return "";
     }
+    const compressedOutput = getOutputMinifiedCSS(document, config, _log);
+    await this.asyncCompile(document, true, compressedOutput, config, _log);
     return "";
   }
 
