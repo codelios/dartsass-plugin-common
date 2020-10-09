@@ -58,8 +58,7 @@ describe("DartsassCompiler CompileDocument", () => {
     expect(validateTargetDirectories(document, config)).to.be.null;
     const outputDirectory = path.join(__dirname, "out");
     compiler.compileDocument(document, config, _log).then(
-      (result) => {
-        expect(result).to.equal(path.join(outputDirectory, "hello.min.css"));
+      (result: string) => {
         fs.stat(path.join(outputDirectory, "hello.css.map"), (exists) => {
           expect(exists).to.be.null;
         });

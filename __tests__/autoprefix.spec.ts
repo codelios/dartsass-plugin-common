@@ -20,7 +20,7 @@ const InputCSS = `
 }
 `;
 
-describe("autoprefix", () => {
+describe("autoprefix API", () => {
   it("doAutoprefixCSS", (done) => {
     const config = new CompilerConfig();
     const _log = getNullLog();
@@ -32,18 +32,19 @@ describe("autoprefix", () => {
       config,
       "main.css",
       _log
-    )
-      .then(
-        (value: CSSFile) => {
-          expect(value.css).to.be.not.null;
-          // expect(value.sourceMap).to.be.not.null;
-          // expect(value.sourceMap).to.be.not.undefined;
-          // console.log(value);
-        },
-        (err) => {
-          expect(err).to.be.not.null;
-        }
-      )
-      .finally(done);
+    ).then(
+      (value: CSSFile) => {
+        expect(value.css).to.be.not.null;
+        // expect(value.sourceMap).to.be.not.null;
+        // expect(value.sourceMap).to.be.not.undefined;
+        const defaultString = value.css.toString();
+        expect(defaultString).to.match(/-webkit-transition/);
+        expect(defaultString).to.match(/-moz-user-select/);
+        done();
+      },
+      (err) => {
+        done(err);
+      }
+    );
   });
 });
