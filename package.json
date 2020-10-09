@@ -32,16 +32,17 @@
         "compile": "yarn clean && tsc",
         "dev": "rm -fr node_modules/fsevents && yarn compile && webpack --mode development",
         "prod": "rm -fr node_modules/fsevents && yarn compile && webpack --mode production",
-        "test": "yarn dev && mocha --timeout 5000 -r ts-node/register __tests__/**/*.spec.ts"
+        "testonly": "mocha --timeout 5000 -r ts-node/register __tests__/**/*.spec.ts",
+        "test": "yarn dev && yarn testonly"
     },
     "dependencies": {
-        "autoprefixer": "10.0.0",
+        "autoprefixer": "10.0.1",
         "browserslist": "4.14.5",
         "chokidar": "3.4.2",
         "clean-css": "4.2.3",
         "fibers": "5.0.0",
-        "postcss": "8.0.9",
-        "sass": "^1.26.11"
+        "postcss": "8.1.1",
+        "sass": "^1.27.0"
     },
     "devDependencies": {
         "@types/autoprefixer": "9.7.2",
@@ -51,10 +52,10 @@
         "@types/mocha": "8.0.3",
         "@types/node": "14.11.2",
         "@types/sass": "1.16.0",
-        "@typescript-eslint/eslint-plugin": "4.2.0",
-        "@typescript-eslint/parser": "4.2.0",
+        "@typescript-eslint/eslint-plugin": "4.4.0",
+        "@typescript-eslint/parser": "4.4.0",
         "chai": "4.2.0",
-        "eslint": "7.9.0",
+        "eslint": "7.10.0",
         "eslint-config-prettier": "6.11.0",
         "eslint-plugin-prettier": "3.1.4",
         "minimist": ">=1.2.3",
