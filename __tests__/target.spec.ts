@@ -73,7 +73,7 @@ describe("getOutputCSS function", () => {
   });
 });
 
-describe("getOutputMinifiedCSS function", () => {
+describe("getOutputCSS function - minified=true", () => {
   it("default", () => {
     const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
     const config = new CompilerConfig();
