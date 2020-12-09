@@ -4,6 +4,8 @@
 // https://opensource.org/licenses/MIT
 "use strict";
 
+import { SASSOutputFormat } from "./outputformat";
+
 export const DefaultBrowsersList: Array<string> = ["> 1%", "last 2 versions"];
 
 export class CompilerConfig {
@@ -11,7 +13,7 @@ export class CompilerConfig {
 
   includePath: Array<string> = [];
 
-  disableMinifiedFileGeneration = false;
+  outputFormat: SASSOutputFormat = SASSOutputFormat.Both;
 
   disableSourceMap = false;
 

@@ -5,6 +5,7 @@
 
 export { DartSassCompiler } from "./dartsasscompiler";
 export { CompilerConfig } from "./config";
+export { SASSOutputFormat } from "./outputformat";
 export { ILog } from "./log";
 export { IDocument } from "./document";
 export { ISassCompiler } from "./compiler";

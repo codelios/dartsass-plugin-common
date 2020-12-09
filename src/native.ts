@@ -18,7 +18,7 @@ import {
 import { autoPrefixCSSBytes } from "./autoprefix";
 import { readFileSync } from "./fileutil";
 import { isBeingWatched } from "./compiler";
-
+import { canCompileCSS, canCompileMinified } from "./outputformat";
 import util from "util";
 import fs from "fs";
 
@@ -133,15 +133,18 @@ export class NativeCompiler {
     }
     const output = getOutputCSS(document, config, _log);
     const args = this.getArgs(document, config, output, false);
-    const value = await this.doCompileDocument(
-      sassBinPath,
-      output,
-      config,
-      document.getProjectRoot(),
-      _log,
-      args
-    );
-    if (config.disableMinifiedFileGeneration) {
+    let value = "";
+    if (canCompileCSS(config.outputFormat)) {
+      value = await this.doCompileDocument(
+        sassBinPath,
+        output,
+        config,
+        document.getProjectRoot(),
+        _log,
+        args
+      );
+    }
+    if (!canCompileMinified(config.outputFormat)) {
       return value;
     }
     const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
