@@ -10,7 +10,7 @@ import * as fs from "fs";
 import path from "path";
 import { NativeCompiler } from "../src/native";
 import { IDocument } from "../src/document";
-import { CompilerConfig } from "../src/config";
+import { CompilerConfig, SASSOutputFormat } from "../src/config";
 import { getDocumentForFile } from "./document";
 import { getNullLog, getBufLog } from "./log";
 import { getLocalSass } from "./testutil";
@@ -62,7 +62,7 @@ describe("Native CompileDocument", () => {
     const config = new CompilerConfig();
     config.targetDirectory = "out";
     config.sassBinPath = localSass;
-    config.disableMinifiedFileGeneration = true;
+    config.outputFormat = SASSOutputFormat.CompiledCSSOnly;
     const _log = getNullLog();
     native.compileDocument(document, config, _log).then(
       (result) => {
@@ -103,7 +103,7 @@ describe("Native CompileDocument", () => {
     config.targetDirectory = "out";
     config.sassBinPath = localSass;
     config.autoPrefixBrowsersList = ["last 2 version"];
-    config.disableMinifiedFileGeneration = true;
+    config.outputFormat = SASSOutputFormat.CompiledCSSOnly;
     const _log = getNullLog();
     native.compileDocument(document, config, _log).then(
       (result) => {

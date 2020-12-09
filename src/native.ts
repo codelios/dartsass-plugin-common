@@ -12,7 +12,6 @@ import { xformPath, xformPaths } from "./util";
 import {
   getWatchTargetDirectory,
   getOutputCSS,
-  getOutputMinifiedCSS,
   getRelativeDirectory,
 } from "./target";
 import { autoPrefixCSSBytes } from "./autoprefix";
@@ -130,10 +129,10 @@ export class NativeCompiler {
     if (isBeingWatched(document, config, _log)) {
       return "Document already being watched";
     }
-    const output = getOutputCSS(document, config, _log);
-    const args = this.getArgs(document, config, output, false);
     let value = "";
     if (config.canCompileCSS()) {
+      const output = getOutputCSS(document, config, false);
+      const args = this.getArgs(document, config, output, false);
       value = await this.doCompileDocument(
         sassBinPath,
         output,
@@ -146,7 +145,7 @@ export class NativeCompiler {
     if (!config.canCompileMinified()) {
       return value;
     }
-    const minifiedOutput = getOutputMinifiedCSS(document, config, _log);
+    const minifiedOutput = getOutputCSS(document, config, true);
     const minArgs = this.getArgs(document, config, minifiedOutput, true);
     return await this.doCompileDocument(
       sassBinPath,

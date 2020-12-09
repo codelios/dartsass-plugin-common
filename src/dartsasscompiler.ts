@@ -9,7 +9,7 @@ import { CompilerConfig } from "./config";
 import { xformPaths } from "./util";
 import { IDocument } from "./document";
 import { ILog } from "./log";
-import { getOutputCSS, getOutputMinifiedCSS } from "./target";
+import { getOutputCSS } from "./target";
 import { autoPrefixCSSBytes } from "./autoprefix";
 import { ProcessOutput } from "./run";
 import { Info } from "./version";
@@ -52,7 +52,7 @@ export class DartSassCompiler {
     config: CompilerConfig,
     _log: ILog
   ): Promise<string> {
-    const output = getOutputCSS(document, config, _log);
+    const output = getOutputCSS(document, config, false);
     _log.debug(
       `${document.getFileName()} -> ${output}, include path: ${config.includePath.join(
         ","
@@ -64,7 +64,7 @@ export class DartSassCompiler {
     if (!config.canCompileMinified()) {
       return "";
     }
-    const compressedOutput = getOutputMinifiedCSS(document, config, _log);
+    const compressedOutput = getOutputCSS(document, config, true);
     await this.asyncCompile(document, true, compressedOutput, config, _log);
     return "";
   }
