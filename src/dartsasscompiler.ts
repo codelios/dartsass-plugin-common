@@ -13,7 +13,6 @@ import { getOutputCSS, getOutputMinifiedCSS } from "./target";
 import { autoPrefixCSSBytes } from "./autoprefix";
 import { ProcessOutput } from "./run";
 import { Info } from "./version";
-import { canCompileCSS, canCompileMinified } from "./outputformat";
 
 import sass = require("sass");
 
@@ -59,10 +58,10 @@ export class DartSassCompiler {
         ","
       )}`
     );
-    if (canCompileCSS(config.outputFormat)) {
+    if (config.canCompileCSS()) {
       await this.asyncCompile(document, false, output, config, _log);
     }
-    if (!canCompileMinified(config.outputFormat)) {
+    if (!config.canCompileMinified()) {
       return "";
     }
     const compressedOutput = getOutputMinifiedCSS(document, config, _log);

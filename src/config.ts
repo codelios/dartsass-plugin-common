@@ -4,9 +4,13 @@
 // https://opensource.org/licenses/MIT
 "use strict";
 
-import { SASSOutputFormat } from "./outputformat";
-
 export const DefaultBrowsersList: Array<string> = ["> 1%", "last 2 versions"];
+
+export enum SASSOutputFormat {
+  Both = 1,
+  CompiledCSSOnly,
+  MinifiedOnly,
+}
 
 export class CompilerConfig {
   sassBinPath = "";
@@ -36,4 +40,21 @@ export class CompilerConfig {
   targetDirectory = "";
 
   watchDirectories: Array<string> = [];
+
+  canCompileCSS(): boolean {
+    const outputformat = this.outputFormat;
+    return (
+      outputformat === SASSOutputFormat.Both ||
+      outputformat === SASSOutputFormat.CompiledCSSOnly
+    );
+  }
+
+  canCompileMinified(): boolean {
+    const outputformat = this.outputFormat;
+    return (
+      outputformat === SASSOutputFormat.Both ||
+      outputformat === SASSOutputFormat.MinifiedOnly
+    );
+  }
+
 }

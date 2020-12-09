@@ -4,8 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 export { DartSassCompiler } from "./dartsasscompiler";
-export { CompilerConfig } from "./config";
-export { SASSOutputFormat } from "./outputformat";
+export { CompilerConfig, SASSOutputFormat } from "./config";
 export { ILog } from "./log";
 export { IDocument } from "./document";
 export { ISassCompiler } from "./compiler";

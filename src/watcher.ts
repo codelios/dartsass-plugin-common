@@ -25,7 +25,6 @@ import { IMinifier, getSourceMapComment } from "./minifier";
 import { CSSFile, writeCSSFile } from "./cssfile";
 import { CleanCSSMinifier } from "./cleancss";
 import { deleteFile, readFileSync } from "./fileutil";
-import { canCompileMinified } from "./outputformat";
 
 const minifier: IMinifier = new CleanCSSMinifier();
 
@@ -124,7 +123,7 @@ function doMinify(
   config: CompilerConfig,
   _log: ILog
 ): FSWatcher | null {
-  if (!canCompileMinified(config.outputFormat)) {
+  if (!config.canCompileMinified()) {
     return null;
   }
   if (config.targetDirectory.length === 0) {
