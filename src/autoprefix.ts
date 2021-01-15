@@ -38,11 +38,7 @@ export async function doAutoprefixCSS(
   if (config.disableAutoPrefixer) {
     return cssfile;
   }
-  const processor = postcss([
-    autoprefixer({
-      browsers: config.autoPrefixBrowsersList,
-    }),
-  ]);
+  const processor = postcss([autoprefixer(config.autoPrefixBrowsersList)]);
   const result = await processor.process(
     cssfile.css.toString(),
     getProcessArgs(to, cssfile.sourceMap)
