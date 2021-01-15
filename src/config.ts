@@ -56,5 +56,4 @@ export class CompilerConfig {
       outputformat === SASSOutputFormat.MinifiedOnly
     );
   }
-
 }
