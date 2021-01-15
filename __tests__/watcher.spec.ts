@@ -8,7 +8,7 @@ import { expect } from "chai";
 import "mocha";
 import path from "path";
 import fs from "fs";
-import { CompilerConfig } from "../src/config";
+import { CompilerConfig, SASSOutputFormat } from "../src/config";
 import { getNullLog, getConsoleLog } from "./log";
 import { Watcher, watchDirectory, unwatchDirectory } from "../src/watcher";
 import { getLocalSass } from "./testutil";
@@ -32,7 +32,7 @@ describe("doLaunch", () => {
     config.sassBinPath = localSass;
     const _log = getNullLog();
     const srcdir = path.join(__dirname, "input");
-    config.disableMinifiedFileGeneration = true;
+    config.outputFormat = SASSOutputFormat.CompiledCSSOnly;
     watcher
       .doLaunch(srcdir, __dirname, config, _log)
       .then(

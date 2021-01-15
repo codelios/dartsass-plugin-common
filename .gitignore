@@ -2,7 +2,7 @@ node_modules
 *.vsix
 lib
 dist
-__tests__/out
+__tests__/out*
 __tests__/**/*.css
 __tests__/**/*.css.map
 __tests__/**/*.min.css

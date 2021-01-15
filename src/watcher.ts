@@ -123,7 +123,7 @@ function doMinify(
   config: CompilerConfig,
   _log: ILog
 ): FSWatcher | null {
-  if (config.disableMinifiedFileGeneration) {
+  if (!config.canCompileMinified()) {
     return null;
   }
   if (config.targetDirectory.length === 0) {
@@ -172,6 +172,7 @@ export class Watcher {
     if (pids !== null && pids !== undefined) {
       throw new Error(`${srcdir} already being watched ( pids ${pids} )`);
     }
+    const existingOutputFormat = config.outputFormat;
     const value = await doSingleLaunch(
       compiler,
       srcdir,
@@ -190,6 +191,7 @@ export class Watcher {
         `Unable to launch sass watcher for ${srcdir}. pid is undefined. Please check sassBinPath property.`
       );
     }
+    config.outputFormat = existingOutputFormat;
     const fsWatcher = doMinify(srcdir, projectRoot, config, _log);
     this.watchList.set(srcdir, {
       pid: value.pid,

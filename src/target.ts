@@ -6,7 +6,6 @@
 import * as path from "path";
 import { CompilerConfig } from "./config";
 import { xformPath } from "./util";
-import { ILog } from "./log";
 import { IDocument } from "./document";
 import * as fs from "fs";
 
@@ -71,14 +70,32 @@ export function validateTargetDirectories(
   return null;
 }
 
-export function getOutputCSS(
-  document: IDocument,
-  config: CompilerConfig,
-  _log: ILog
-): string {
+function doGetOutputCSS(document: IDocument, config: CompilerConfig): string {
   const targetDirectory = inferTargetCSSDirectory(document, config);
   const fileonly = document.getFileOnly();
   return path.join(targetDirectory, fileonly + ".css");
+}
+
+function doGetOutputMinifiedCSS(
+  document: IDocument,
+  config: CompilerConfig
+): string {
+  const targetDirectory = inferTargetCSSDirectory(document, config);
+  return doGetMinCSS(
+    document.getFileName(),
+    targetDirectory,
+    ".scss",
+    defaultMinCSSExtension
+  );
+}
+export function getOutputCSS(
+  document: IDocument,
+  config: CompilerConfig,
+  minified: boolean
+): string {
+  return !minified
+    ? doGetOutputCSS(document, config)
+    : doGetOutputMinifiedCSS(document, config);
 }
 
 function doGetMinCSS(
@@ -91,29 +108,15 @@ function doGetMinCSS(
   return path.join(dir, fileNameOnly + minCSSExtension);
 }
 
-export function getOutputMinifiedCSS(
-  document: IDocument,
-  config: CompilerConfig,
-  _log: ILog
-): string {
-  const targetDirectory = inferTargetCSSDirectory(document, config);
-  return doGetMinCSS(
-    document.getFileName(),
-    targetDirectory,
-    ".scss",
-    defaultMinCSSExtension
-  );
-}
-
 export function getMinCSS(docPath: string, minCSSExtension: string): string {
   return doGetMinCSS(docPath, path.dirname(docPath), ".css", minCSSExtension);
 }
 
-export function isMinCSS(docPath: string, minCSSExtension: string) {
+export function isMinCSS(docPath: string, minCSSExtension: string): boolean {
   return docPath.endsWith(minCSSExtension);
 }
 
-export function isCSSFile(docPath: string) {
+export function isCSSFile(docPath: string): boolean {
   return docPath.endsWith(".css");
 }
 

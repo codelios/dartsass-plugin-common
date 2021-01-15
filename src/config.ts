@@ -6,12 +6,18 @@
 
 export const DefaultBrowsersList: Array<string> = ["> 1%", "last 2 versions"];
 
+export enum SASSOutputFormat {
+  Both = 1,
+  CompiledCSSOnly,
+  MinifiedOnly,
+}
+
 export class CompilerConfig {
   sassBinPath = "";
 
   includePath: Array<string> = [];
 
-  disableMinifiedFileGeneration = false;
+  outputFormat: SASSOutputFormat = SASSOutputFormat.Both;
 
   disableSourceMap = false;
 
@@ -34,4 +40,21 @@ export class CompilerConfig {
   targetDirectory = "";
 
   watchDirectories: Array<string> = [];
+
+  canCompileCSS(): boolean {
+    const outputformat = this.outputFormat;
+    return (
+      outputformat === SASSOutputFormat.Both ||
+      outputformat === SASSOutputFormat.CompiledCSSOnly
+    );
+  }
+
+  canCompileMinified(): boolean {
+    const outputformat = this.outputFormat;
+    return (
+      outputformat === SASSOutputFormat.Both ||
+      outputformat === SASSOutputFormat.MinifiedOnly
+    );
+  }
+
 }

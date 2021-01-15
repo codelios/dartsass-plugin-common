@@ -10,7 +10,7 @@ import * as fs from "fs";
 import path from "path";
 import { NativeCompiler } from "../src/native";
 import { IDocument } from "../src/document";
-import { CompilerConfig } from "../src/config";
+import { CompilerConfig, SASSOutputFormat } from "../src/config";
 import { getDocumentForFile } from "./document";
 import { getNullLog, getBufLog } from "./log";
 import { getLocalSass } from "./testutil";
@@ -56,18 +56,82 @@ describe("Native CompileDocument", () => {
     }
   });
 
-  it("compileDocument correct", (done) => {
+  it("compileDocument css only", (done) => {
     const native = new NativeCompiler();
     const document: IDocument = getDocumentForFile("cmd.scss");
     const config = new CompilerConfig();
     config.targetDirectory = "out";
     config.sassBinPath = localSass;
-    config.disableMinifiedFileGeneration = true;
+    config.outputFormat = SASSOutputFormat.CompiledCSSOnly;
     const _log = getNullLog();
     native.compileDocument(document, config, _log).then(
       (result) => {
-        const output = path.join(document.getProjectRoot(), "out/cmd.css");
-        expect(result).to.equal(output);
+        const outputDirectory = path.join(
+          document.getProjectRoot(),
+          config.targetDirectory
+        );
+        fs.stat(path.join(outputDirectory, "cmd.css"), (exists) => {
+          expect(exists).to.be.null;
+        });
+        fs.stat(path.join(outputDirectory, "cmd.min.css"), (exists) => {
+          expect(exists).to.be.not.null;
+        });
+        done();
+      },
+      (err) => {
+        done(err);
+      }
+    );
+  });
+
+  it("compileDocument minified", (done) => {
+    const native = new NativeCompiler();
+    const document: IDocument = getDocumentForFile("cmd.scss");
+    const config = new CompilerConfig();
+    config.targetDirectory = "outnativemin";
+    config.sassBinPath = localSass;
+    config.outputFormat = SASSOutputFormat.MinifiedOnly;
+    const _log = getNullLog();
+    native.compileDocument(document, config, _log).then(
+      (result) => {
+        const outputDirectory = path.join(
+          document.getProjectRoot(),
+          config.targetDirectory
+        );
+        fs.stat(path.join(outputDirectory, "cmd.css"), (exists) => {
+          expect(exists).to.be.not.null;
+        });
+        fs.stat(path.join(outputDirectory, "cmd.min.css"), (exists) => {
+          expect(exists).to.be.null;
+        });
+        done();
+      },
+      (err) => {
+        done(err);
+      }
+    );
+  });
+
+  it("compileDocument Both", (done) => {
+    const native = new NativeCompiler();
+    const document: IDocument = getDocumentForFile("cmd.scss");
+    const config = new CompilerConfig();
+    config.targetDirectory = "outnativeboth";
+    config.sassBinPath = localSass;
+    config.outputFormat = SASSOutputFormat.Both;
+    const _log = getNullLog();
+    native.compileDocument(document, config, _log).then(
+      (result) => {
+        const outputDirectory = path.join(
+          document.getProjectRoot(),
+          config.targetDirectory
+        );
+        fs.stat(path.join(outputDirectory, "cmd.css"), (exists) => {
+          expect(exists).to.be.null;
+        });
+        fs.stat(path.join(outputDirectory, "cmd.min.css"), (exists) => {
+          expect(exists).to.be.null;
+        });
         done();
       },
       (err) => {
@@ -95,6 +159,19 @@ describe("Native CompileDocument", () => {
       )
       .finally(done);
   });
+});
+
+describe("Native Autoprefixer", () => {
+  let localSass: string;
+
+  before(function (done) {
+    localSass = getLocalSass();
+    if (!fs.existsSync(localSass)) {
+      done(`${localSass} does not exist`);
+    } else {
+      done();
+    }
+  });
 
   it("compileDocument autoprefix", (done) => {
     const native = new NativeCompiler();
@@ -103,7 +180,7 @@ describe("Native CompileDocument", () => {
     config.targetDirectory = "out";
     config.sassBinPath = localSass;
     config.autoPrefixBrowsersList = ["last 2 version"];
-    config.disableMinifiedFileGeneration = true;
+    config.outputFormat = SASSOutputFormat.CompiledCSSOnly;
     const _log = getNullLog();
     native.compileDocument(document, config, _log).then(
       (result) => {

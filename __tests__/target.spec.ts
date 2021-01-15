@@ -9,7 +9,6 @@ import "mocha";
 import {
   inferTargetCSSDirectory,
   getOutputCSS,
-  getOutputMinifiedCSS,
   getRelativeDirectory,
   doesContainSpaces,
   getMinCSS,
@@ -20,7 +19,6 @@ import {
 import { IDocument } from "../src/document";
 import { CompilerConfig } from "../src/config";
 import { getSassDocument } from "./document";
-import { getNullLog } from "./log";
 
 describe("inferTargetCSSDirectory function", () => {
   it("inferTargetCSSDirectory for empty config", () => {
@@ -70,19 +68,17 @@ describe("getOutputCSS function", () => {
     const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
     const config = new CompilerConfig();
     config.targetDirectory = "";
-    const _log = getNullLog();
-    const result = getOutputCSS(document, config, _log);
+    const result = getOutputCSS(document, config, false);
     expect(result).to.equal("/tmp/abc.css");
   });
 });
 
-describe("getOutputMinifiedCSS function", () => {
+describe("getOutputCSS function - minified=true", () => {
   it("default", () => {
     const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "abc");
     const config = new CompilerConfig();
     config.targetDirectory = "";
-    const _log = getNullLog();
-    const result = getOutputMinifiedCSS(document, config, _log);
+    const result = getOutputCSS(document, config, true);
     expect(result).to.equal("/tmp/abc.min.css");
   });
 });
