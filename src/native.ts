@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 "use strict";
-import { CompilerConfig } from "./config";
+import { CompilerConfig, SASSOutputFormat } from "./config";
 import { IDocument } from "./document";
 import { ILog } from "./log";
 import { Run, RunDetached, ProcessOutput, isWindows } from "./run";
@@ -189,7 +189,8 @@ export class NativeCompiler {
     config: CompilerConfig,
     _srcdir: string
   ): Array<string> {
-    const args = this.doGetArgs(projectRoot, config, false);
+    const minified = config.outputFormat === SASSOutputFormat.MinifiedOnly;
+    const args = this.doGetArgs(projectRoot, config, minified);
     args.push("--watch");
     const relativeSrcDir = getRelativeDirectory(projectRoot, _srcdir);
     const targetDirectory = getWatchTargetDirectory(relativeSrcDir, config);
