@@ -124,8 +124,8 @@ function doMinify(
   _log: ILog
 ): FSWatcher | null {
   if (
-    !config.canCompileMinified() ||
-    config.outputFormat === SASSOutputFormat.MinifiedOnly
+    config.outputFormat === SASSOutputFormat.MinifiedOnly ||
+    config.outputFormat === SASSOutputFormat.CompiledCSSOnly
   ) {
     return null;
   }
