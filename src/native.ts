@@ -6,7 +6,7 @@
 "use strict";
 import { CompilerConfig, SASSOutputFormat } from "./config";
 import { IDocument } from "./document";
-import { ILog } from "./log";
+import { Log } from "./log";
 import { Run, RunDetached, ProcessOutput, isWindows } from "./run";
 import { xformPath, xformPaths } from "./util";
 import {
@@ -30,23 +30,22 @@ export class NativeCompiler {
     return xformPath(projectRoot, sassBinPath);
   }
 
-  verifySassBinPath(sassBinPath: string, _log: ILog): boolean {
+  verifySassBinPath(sassBinPath: string): boolean {
     return true;
   }
 
   public async sayVersion(
     config: CompilerConfig,
-    projectRoot: string,
-    _log: ILog
+    projectRoot: string
   ): Promise<string> {
     const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
     const args = VersionArgs;
-    let runPromise = Run(sassBinPath, args, projectRoot, _log);
+    let runPromise = Run(sassBinPath, args, projectRoot);
     if (isWindows()) {
       const relativeCmd = getRelativeDirectory(projectRoot, sassBinPath);
-      this.verifySassBinPath(relativeCmd, _log);
+      this.verifySassBinPath(relativeCmd);
       args.unshift(relativeCmd);
-      runPromise = Run(config.nodeExePath, args, projectRoot, _log);
+      runPromise = Run(config.nodeExePath, args, projectRoot);
     }
     return await runPromise;
   }
@@ -74,15 +73,14 @@ export class NativeCompiler {
     output: string,
     config: CompilerConfig,
     cwd: string,
-    _log: ILog,
     args: string[]
   ): Promise<string> {
-    let runPromise = Run(sassBinPath, args, cwd, _log);
+    let runPromise = Run(sassBinPath, args, cwd);
     if (isWindows()) {
       const relativeCmd = getRelativeDirectory(cwd, sassBinPath);
-      this.verifySassBinPath(relativeCmd, _log);
+      this.verifySassBinPath(relativeCmd);
       args.unshift(relativeCmd);
-      runPromise = Run(config.nodeExePath, args, cwd, _log);
+      runPromise = Run(config.nodeExePath, args, cwd);
     }
     await runPromise;
     const data = readFileSync(output);
@@ -92,8 +90,7 @@ export class NativeCompiler {
         css: data,
         sourceMap: readFileSync(output + ".map"),
       },
-      config,
-      _log
+      config
     );
     return output;
   }
@@ -119,14 +116,13 @@ export class NativeCompiler {
 
   public async compileDocument(
     document: IDocument,
-    config: CompilerConfig,
-    _log: ILog
+    config: CompilerConfig
   ): Promise<string> {
     const sassBinPath = this.getSassBinPath(
       document.getProjectRoot(),
       config.sassBinPath
     );
-    if (isBeingWatched(document, config, _log)) {
+    if (isBeingWatched(document, config)) {
       return "Document already being watched";
     }
     let value = "";
@@ -138,7 +134,6 @@ export class NativeCompiler {
         output,
         config,
         document.getProjectRoot(),
-        _log,
         args
       );
     }
@@ -152,7 +147,6 @@ export class NativeCompiler {
       minifiedOutput,
       config,
       document.getProjectRoot(),
-      _log,
       minArgs
     );
   }
@@ -201,19 +195,18 @@ export class NativeCompiler {
   public watch(
     srcdir: string,
     projectRoot: string,
-    config: CompilerConfig,
-    _log: ILog
+    config: CompilerConfig
   ): Promise<ProcessOutput> {
     const args = this.doGetWatchArgs(projectRoot, config, srcdir);
     const sassBinPath = this.getSassBinPath(projectRoot, config.sassBinPath);
-    _log.debug(`Watching ${srcdir} by ${sassBinPath}.`);
+    Log.debug(`Watching ${srcdir} by ${sassBinPath}.`);
     if (isWindows()) {
       const relativeCmd = getRelativeDirectory(projectRoot, sassBinPath);
-      this.verifySassBinPath(relativeCmd, _log);
+      this.verifySassBinPath(relativeCmd);
       args.unshift(relativeCmd);
-      return RunDetached(config.nodeExePath, projectRoot, args, _log);
+      return RunDetached(config.nodeExePath, projectRoot, args);
     } else {
-      return RunDetached(sassBinPath, projectRoot, args, _log);
+      return RunDetached(sassBinPath, projectRoot, args);
     }
   }
 }

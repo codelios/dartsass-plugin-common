@@ -11,10 +11,11 @@ import { IDocument } from "../src/document";
 import { CompilerConfig, SASSOutputFormat } from "../src/config";
 import { validateTargetDirectories } from "../src/target";
 import { getDocumentForFile } from "./document";
-import { getNullLog, getBufLog } from "./log";
+import { getBufLog } from "./log";
 import path from "path";
 import fs from "fs";
 import { getLocalSass } from "./testutil";
+import { setLog } from "../src/log";
 
 describe("DartsassCompiler SayVersion", () => {
   let localSass: string;
@@ -32,8 +33,8 @@ describe("DartsassCompiler SayVersion", () => {
     const compiler = new DartSassCompiler();
     const config = new CompilerConfig();
     config.sassBinPath = getLocalSass();
-    const _log = getBufLog();
-    compiler.sayVersion(config, "", _log).then(
+    setLog(getBufLog());
+    compiler.sayVersion(config, "").then(
       (data: string) => {
         done();
       },
@@ -50,11 +51,10 @@ describe("DartsassCompiler CompileDocument", () => {
     const document: IDocument = getDocumentForFile("hello.scss");
     const config = new CompilerConfig();
     config.targetDirectory = "out";
-    const _log = getNullLog();
     console.info(`Compiling ${document.getFileName()}`);
     expect(validateTargetDirectories(document, config)).to.be.null;
     const outputDirectory = path.join(__dirname, config.targetDirectory);
-    compiler.compileDocument(document, config, _log).then(
+    compiler.compileDocument(document, config).then(
       (result: string) => {
         fs.stat(path.join(outputDirectory, "hello.css.map"), (exists) => {
           expect(exists).to.be.null;
@@ -72,11 +72,10 @@ describe("DartsassCompiler CompileDocument", () => {
     const document: IDocument = getDocumentForFile("hello.scss");
     const config = new CompilerConfig();
     config.targetDirectory = "outboth";
-    const _log = getNullLog();
     console.info(`Compiling ${document.getFileName()}`);
     expect(validateTargetDirectories(document, config)).to.be.null;
     const outputDirectory = path.join(__dirname, config.targetDirectory);
-    compiler.compileDocument(document, config, _log).then(
+    compiler.compileDocument(document, config).then(
       (result: string) => {
         fs.stat(path.join(outputDirectory, "hello.css"), (exists) => {
           expect(exists).to.be.null;
@@ -98,11 +97,10 @@ describe("DartsassCompiler CompileDocument", () => {
     const config = new CompilerConfig();
     config.outputFormat = SASSOutputFormat.MinifiedOnly;
     config.targetDirectory = "outmin";
-    const _log = getNullLog();
     console.info(`Compiling ${document.getFileName()}`);
     expect(validateTargetDirectories(document, config)).to.be.null;
     const outputDirectory = path.join(__dirname, config.targetDirectory);
-    compiler.compileDocument(document, config, _log).then(
+    compiler.compileDocument(document, config).then(
       (result: string) => {
         fs.stat(path.join(outputDirectory, "hello.css"), (exists) => {
           expect(exists).to.be.not.null;
@@ -124,11 +122,10 @@ describe("DartsassCompiler CompileDocument", () => {
     const config = new CompilerConfig();
     config.outputFormat = SASSOutputFormat.CompiledCSSOnly;
     config.targetDirectory = "outcompiled";
-    const _log = getNullLog();
     console.info(`Compiling ${document.getFileName()}`);
     expect(validateTargetDirectories(document, config)).to.be.null;
     const outputDirectory = path.join(__dirname, config.targetDirectory);
-    compiler.compileDocument(document, config, _log).then(
+    compiler.compileDocument(document, config).then(
       (result: string) => {
         fs.stat(path.join(outputDirectory, "hello.css"), (exists) => {
           expect(exists).to.be.null;

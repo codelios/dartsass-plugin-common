@@ -6,7 +6,7 @@
 "use strict";
 import * as path from "path";
 import { CompilerConfig, SASSOutputFormat } from "./config";
-import { ILog } from "./log";
+import { Log } from "./log";
 import { ProcessOutput, killProcess, getWatcherPattern } from "./run";
 import { xformPath } from "./util";
 import { getCurrentCompiler } from "./select";
@@ -36,10 +36,9 @@ function doSingleLaunch(
   compiler: ISassCompiler,
   srcdir: string,
   projectRoot: string,
-  config: CompilerConfig,
-  _log: ILog
+  config: CompilerConfig
 ): Promise<ProcessOutput> {
-  return compiler.watch(srcdir, projectRoot, config, _log);
+  return compiler.watch(srcdir, projectRoot, config);
 }
 
 function xformSourceMap(inputSourceMap: unknown): unknown {
@@ -56,10 +55,9 @@ async function getTransformation(
   contents: CSSFile,
   config: CompilerConfig,
   to: string,
-  minifier: IMinifier,
-  _log: ILog
+  minifier: IMinifier
 ): Promise<CSSFile> {
-  const cssfile = await doAutoprefixCSS(contents, config, to, _log);
+  const cssfile = await doAutoprefixCSS(contents, config, to);
   const output = xformSourceMap(cssfile.sourceMap);
   cssfile.sourceMap = output;
   const comments = getSourceMapComment(config.disableSourceMap, to + ".map");
@@ -69,11 +67,10 @@ async function getTransformation(
 async function _internalMinify(
   cwd: string,
   _docPath: string,
-  config: CompilerConfig,
-  _log: ILog
+  config: CompilerConfig
 ): Promise<void> {
   const fqPath = path.join(cwd, _docPath);
-  _log.debug(`File changed ${fqPath}`);
+  Log.debug(`File changed ${fqPath}`);
   if (!isCSSFile(fqPath)) {
     return;
   }
@@ -83,7 +80,7 @@ async function _internalMinify(
   const minifiedCSS = getMinCSS(fqPath, defaultMinCSSExtension);
   const sourceMapFile = minifiedCSS + ".map";
   const inputSourceMapFile = fqPath + ".map";
-  _log.debug(
+  Log.debug(
     `About to minify ${fqPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`
   );
   const inputCSSFile = {
@@ -97,16 +94,15 @@ async function _internalMinify(
     inputCSSFile,
     config,
     minifiedFileOnly,
-    minifier,
-    _log
+    minifier
   );
-  await writeCSSFile(cssfile, minifiedCSS, _log);
-  _log.debug(`Wrote to ${minifiedCSS}[.map]`);
+  await writeCSSFile(cssfile, minifiedCSS);
+  Log.debug(`Wrote to ${minifiedCSS}[.map]`);
   return;
 }
 
-function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
-  _log.debug(`Deletion event received for ${docPath}`);
+function doDelete(docPath: string, config: CompilerConfig): any {
+  Log.debug(`Deletion event received for ${docPath}`);
   if (!isCSSFile(docPath)) {
     return;
   }
@@ -114,14 +110,13 @@ function doDelete(docPath: string, config: CompilerConfig, _log: ILog): any {
     return;
   }
   const minifiedCSS = getMinCSS(docPath, defaultMinCSSExtension);
-  deleteFile(minifiedCSS, _log);
+  deleteFile(minifiedCSS);
 }
 
 function doMinify(
   srcdir: string,
   projectRoot: string,
-  config: CompilerConfig,
-  _log: ILog
+  config: CompilerConfig
 ): FSWatcher | null {
   if (
     config.outputFormat === SASSOutputFormat.MinifiedOnly ||
@@ -130,7 +125,7 @@ function doMinify(
     return null;
   }
   if (config.targetDirectory.length === 0) {
-    _log.notify(`${quirkyMinifiedFiles}`);
+    Log.notify(`${quirkyMinifiedFiles}`);
     return null;
   }
   const targetDirectory = xformPath(
@@ -142,15 +137,14 @@ function doMinify(
   const fsWatcher = cssWatch(
     pattern,
     (docPath: string) => {
-      _internalMinify(cwd, docPath, config, _log);
+      _internalMinify(cwd, docPath, config);
     },
     (docPath: string) => {
-      doDelete(docPath, config, _log);
+      doDelete(docPath, config);
     },
-    cwd,
-    _log
+    cwd
   );
-  _log.debug(`Started chokidar watcher for ${targetDirectory}`);
+  Log.debug(`Started chokidar watcher for ${targetDirectory}`);
   return fsWatcher;
 }
 
@@ -166,11 +160,10 @@ export class Watcher {
   async doLaunch(
     _srcdir: string,
     projectRoot: string,
-    config: CompilerConfig,
-    _log: ILog
+    config: CompilerConfig
   ): Promise<string> {
     const srcdir = xformPath(projectRoot, _srcdir);
-    const compiler = getCurrentCompiler(config, _log);
+    const compiler = getCurrentCompiler(config);
     const pids = this.watchList.get(srcdir);
     if (pids !== null && pids !== undefined) {
       throw new Error(`${srcdir} already being watched ( pids ${pids} )`);
@@ -179,8 +172,7 @@ export class Watcher {
       compiler,
       srcdir,
       projectRoot,
-      config,
-      _log
+      config
     );
     if (value.killed) {
       throw new Error(
@@ -193,7 +185,7 @@ export class Watcher {
         `Unable to launch sass watcher for ${srcdir}. pid is undefined. Please check sassBinPath property.`
       );
     }
-    const fsWatcher = doMinify(srcdir, projectRoot, config, _log);
+    const fsWatcher = doMinify(srcdir, projectRoot, config);
     this.watchList.set(srcdir, {
       pid: value.pid,
       fsWatcher: fsWatcher,
@@ -201,46 +193,44 @@ export class Watcher {
     return `Launched scss/sass watchers`;
   }
 
-  public ClearWatchDirectory(srcdir: string, _log: ILog): boolean {
+  public ClearWatchDirectory(srcdir: string): boolean {
     const watchInfo = this.watchList.get(srcdir);
     let cleared = false;
     if (watchInfo !== null && watchInfo !== undefined) {
-      _log.debug(
+      Log.debug(
         `About to unwatch ${srcdir} with sass watcher pid ${watchInfo.pid}`
       );
-      killProcess(watchInfo.pid, _log);
+      killProcess(watchInfo.pid);
       if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
-        _log.debug(
+        Log.debug(
           `About to clear chokidar watcher for sass watcher pid ${watchInfo.pid}`
         );
-        closeChokidarWatcher(watchInfo.fsWatcher, _log);
+        closeChokidarWatcher(watchInfo.fsWatcher);
       } else {
-        _log.debug(
+        Log.debug(
           `No chokidar watcher for ${srcdir}, sass watcher pid ${watchInfo.pid}`
         );
       }
       cleared = true;
     } else {
-      _log.debug(
-        `Trying to unwatch ${srcdir}. But no watcher launched earlier`
-      );
+      Log.debug(`Trying to unwatch ${srcdir}. But no watcher launched earlier`);
       cleared = true;
     }
     this.watchList.delete(srcdir);
     return cleared;
   }
 
-  public ClearWatch(_srcdir: string, projectRoot: string, _log: ILog): boolean {
+  public ClearWatch(_srcdir: string, projectRoot: string): boolean {
     const srcdir = xformPath(projectRoot, _srcdir);
-    return this.ClearWatchDirectory(srcdir, _log);
+    return this.ClearWatchDirectory(srcdir);
   }
 
-  public ClearAll(_log: ILog) {
+  public ClearAll() {
     this.watchList.forEach((watchInfo: WatchInfo, key: string) => {
-      _log.debug(`Unwatching ${key} with pid ${watchInfo.pid}`);
-      killProcess(watchInfo.pid, _log);
+      Log.debug(`Unwatching ${key} with pid ${watchInfo.pid}`);
+      killProcess(watchInfo.pid);
       if (watchInfo.fsWatcher !== undefined && watchInfo.fsWatcher !== null) {
-        closeChokidarWatcher(watchInfo.fsWatcher, _log);
+        closeChokidarWatcher(watchInfo.fsWatcher);
       }
     });
     this.watchList.clear();
@@ -251,12 +241,11 @@ export class Watcher {
    */
   public Relaunch(
     projectRoot: string,
-    config: CompilerConfig,
-    _log: ILog
+    config: CompilerConfig
   ): Array<Promise<string>> {
-    this.ClearAll(_log);
+    this.ClearAll();
     return config.watchDirectories.map((_srcdir: string, _: number) => {
-      return this.doLaunch(_srcdir, projectRoot, config, _log);
+      return this.doLaunch(_srcdir, projectRoot, config);
     });
   }
 

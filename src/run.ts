@@ -3,7 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 "use strict";
-import { ILog } from "./log";
+import { Log } from "./log";
 import * as child from "child_process";
 import * as os from "os";
 import { SIGINT } from "constants";
@@ -25,22 +25,18 @@ export function isWindows(): boolean {
   return os.platform() === "win32";
 }
 
-export function validateCmd(
-  relativeCmd: string,
-  args: string[],
-  _log: ILog
-): boolean {
+export function validateCmd(relativeCmd: string, args: string[]): boolean {
   let validated = true;
   if (isWindows()) {
     if (doesContainSpaces(relativeCmd)) {
-      _log.warning(`${NoSpaceInPath}: ${relativeCmd}`);
+      Log.warning(`${NoSpaceInPath}: ${relativeCmd}`);
       validated = false;
     }
   }
   if (validated) {
     for (const arg of args) {
       if (doesContainSpaces(arg)) {
-        _log.warning(`${NoSpaceInPath}: ${arg}`);
+        Log.warning(`${NoSpaceInPath}: ${arg}`);
         validated = false;
         break;
       }
@@ -52,12 +48,11 @@ export function validateCmd(
 export async function Run(
   cmd: string,
   args: string[],
-  cwd: string,
-  _log: ILog
+  cwd: string
 ): Promise<string> {
   const relativeCmd = getRelativeDirectory(cwd, cmd);
   let output = "";
-  if (!validateCmd(relativeCmd, args, _log)) {
+  if (!validateCmd(relativeCmd, args)) {
     throw new Error(NoSpaceInPath);
   }
   const prefix = `Run: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join("  ")}`;
@@ -67,26 +62,26 @@ export async function Run(
     windowsHide: true,
   });
   if (prc.killed) {
-    _log.warning(`${prefix} killed. pid - ${prc.pid}`);
+    Log.warning(`${prefix} killed. pid - ${prc.pid}`);
     throw new Error(`${prefix} killed. pid - ${prc.pid}`);
   } else if (prc.pid === null || prc.pid === undefined) {
-    _log.warning(
+    Log.warning(
       `${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`
     );
     throw new Error(
       `${prefix} did not launch correctly. pid is null / undefined - ${prc.pid}`
     );
   } else {
-    _log.debug(`${prefix} launched with pid ${prc.pid}`);
+    Log.debug(`${prefix} launched with pid ${prc.pid}`);
   }
   prc.stdout.setEncoding("utf8");
   prc.stdout.on("data", (data: any) => {
-    _log.debug(`${data}`);
+    Log.debug(`${data}`);
     output = data;
   });
   prc.stderr.setEncoding("utf8");
   prc.stderr.on("data", (data: any) => {
-    _log.debug(`stderr: ${data}`);
+    Log.debug(`stderr: ${data}`);
   });
   const execPromise = new Promise<string>((resolve, reject) => {
     prc.on("exit", (code: any) => {
@@ -103,14 +98,13 @@ export async function Run(
 export async function RunDetached(
   cmd: string,
   cwd: string,
-  args: string[],
-  _log: ILog
+  args: string[]
 ): Promise<ProcessOutput> {
   const relativeCmd = getRelativeDirectory(cwd, cmd);
-  _log.debug(
+  Log.debug(
     `RunDetached: Cwd: ${cwd}. Exec: ${relativeCmd} ${args.join("  ")}`
   );
-  if (!validateCmd(relativeCmd, args, _log)) {
+  if (!validateCmd(relativeCmd, args)) {
     throw new Error(NoSpaceInPath);
   }
   const prc = child.spawn(relativeCmd, args, {
@@ -122,28 +116,28 @@ export async function RunDetached(
   });
   prc.unref(); // Parent should not be waiting for the child process at all
   if (prc.killed) {
-    _log.warning(`Detached Process ${cmd} killed. pid - ${prc.pid}`);
+    Log.warning(`Detached Process ${cmd} killed. pid - ${prc.pid}`);
     throw new Error(`Detached Process ${cmd} killed. pid - ${prc.pid}`);
   } else if (prc.pid === null || prc.pid === undefined) {
-    _log.warning(
+    Log.warning(
       `Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`
     );
     throw new Error(
       `Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`
     );
   } else {
-    _log.debug(`Detached process ${cmd} launched with pid ${prc.pid}`);
+    Log.debug(`Detached process ${cmd} launched with pid ${prc.pid}`);
   }
   if (prc.stdout) {
     prc.stdout.setEncoding("utf8");
     prc.stdout.on("data", (data: any) => {
-      _log.debug(`Output: ${data}`);
+      Log.debug(`Output: ${data}`);
     });
   }
   if (prc.stderr) {
     prc.stderr.setEncoding("utf8");
     prc.stderr.on("data", (data: any) => {
-      _log.debug(`stderr: ${data}`);
+      Log.debug(`stderr: ${data}`);
     });
   }
   const processOutput: ProcessOutput = {
@@ -157,7 +151,7 @@ export function removeLineBreaks(value: string): string {
   return value.replace(/(\r\n|\n|\r)/gm, "");
 }
 
-export function killProcess(pid: number, _log: ILog) {
+export function killProcess(pid: number) {
   if (!isWindows()) {
     process.kill(-pid, SIGINT);
   } else {
@@ -165,7 +159,7 @@ export function killProcess(pid: number, _log: ILog) {
     const spawn = require("child_process").spawn;
     const cmd = spawn("taskkill", ["/pid", pid, "/f", "/t"]);
     cmd.on("exit", (data: any) => {
-      _log.debug(`${data}`);
+      Log.debug(`${data}`);
     });
   }
 }

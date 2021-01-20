@@ -8,7 +8,7 @@ import * as path from "path";
 import { CompilerConfig } from "./config";
 import { xformPaths } from "./util";
 import { IDocument } from "./document";
-import { ILog } from "./log";
+import { Log } from "./log";
 import { getOutputCSS } from "./target";
 import { autoPrefixCSSBytes } from "./autoprefix";
 import { ProcessOutput } from "./run";
@@ -40,7 +40,6 @@ export class DartSassCompiler {
   public async sayVersion(
     config: CompilerConfig,
     projectRoot: string,
-    _log: ILog
   ): Promise<string> {
     const info = (sass as unknown) as Info;
     const version = info.info;
@@ -50,42 +49,39 @@ export class DartSassCompiler {
   public async compileDocument(
     document: IDocument,
     config: CompilerConfig,
-    _log: ILog
   ): Promise<string> {
     const output = getOutputCSS(document, config, false);
-    _log.debug(
+    Log.debug(
       `${document.getFileName()} -> ${output}, include path: ${config.includePath.join(
         ","
       )}`
     );
     if (config.canCompileCSS()) {
-      await this.asyncCompile(document, false, output, config, _log);
+      await this.asyncCompile(document, false, output, config);
     }
     if (!config.canCompileMinified()) {
       return "";
     }
     const compressedOutput = getOutputCSS(document, config, true);
-    await this.asyncCompile(document, true, compressedOutput, config, _log);
+    await this.asyncCompile(document, true, compressedOutput, config);
     return "";
   }
 
   public async watch(
     srcdir: string,
     projectRoot: string,
-    config: CompilerConfig,
-    _log: ILog
+    config: CompilerConfig
   ): Promise<ProcessOutput> {
     throw new Error(NativeSassMessage);
   }
 
   handleError(
     err: sass.SassException,
-    config: CompilerConfig,
-    _log: ILog
+    config: CompilerConfig
   ): string {
     const fileonly = path.basename(err.file);
     const formattedMessage = ` ${err.line}:${err.column} ${err.formatted}`;
-    _log.warning(`${err.formatted}`);
+    Log.warning(`${err.formatted}`);
     return `${fileonly}: ${formattedMessage}`;
   }
 
@@ -93,14 +89,13 @@ export class DartSassCompiler {
     document: IDocument,
     compressed: boolean,
     output: string,
-    config: CompilerConfig,
-    _log: ILog
+    config: CompilerConfig
   ): Promise<string> {
     const includePaths = xformPaths(
       document.getProjectRoot(),
       config.includePath
     );
-    _log.debug(
+    Log.debug(
       `asyncCompile (compileOnSave) ${document.getFileName()} to ${output}, IncludePaths: ${includePaths}, minified: ${compressed}`
     );
     try {
@@ -111,22 +106,17 @@ export class DartSassCompiler {
         outFile: output,
         sourceMap: !config.disableSourceMap,
       });
-      _log.debug(
+      Log.debug(
         `Completed asyncCompile(compileOnSave) ${document.getFileName()} to ${output}. Starting autoprefix - sourceMap`
       );
       const inputCSSFile = {
         css: result.css,
         sourceMap: result.map,
       };
-      const value = await autoPrefixCSSBytes(
-        output,
-        inputCSSFile,
-        config,
-        _log
-      );
+      const value = await autoPrefixCSSBytes(output, inputCSSFile, config);
       return `${value}`;
     } catch (err) {
-      const msg = this.handleError(err as sass.SassException, config, _log);
+      const msg = this.handleError(err as sass.SassException, config);
       throw new Error(`${msg}`);
     }
   }

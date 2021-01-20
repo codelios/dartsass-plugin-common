@@ -5,7 +5,6 @@
 
 "use strict";
 import { CompilerConfig } from "./config";
-import { ILog } from "./log";
 import { ISassCompiler } from "./compiler";
 import { DartSassCompiler } from "./dartsasscompiler";
 import { NativeCompiler } from "./native";
@@ -14,8 +13,7 @@ const sassCompiler: ISassCompiler = new DartSassCompiler();
 const nativeCompiler: ISassCompiler = new NativeCompiler();
 
 export function getCurrentCompiler(
-  extensionConfig: CompilerConfig,
-  _log: ILog
+  extensionConfig: CompilerConfig
 ): ISassCompiler {
   if (extensionConfig.sassBinPath.length > 0) {
     return nativeCompiler;

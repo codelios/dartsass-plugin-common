@@ -5,7 +5,7 @@
 
 "use strict";
 import { CompilerConfig } from "./config";
-import { ILog } from "./log";
+import { Log } from "./log";
 import { IDocument } from "./document";
 
 let lastCompiledTime = Date.now() - 100 * 1000;
@@ -25,8 +25,7 @@ export function doesStartWithUnderscore(document: IDocument) {
 
 export function validateDocument(
   document: IDocument,
-  extensionConfig: CompilerConfig,
-  _log: ILog
+  extensionConfig: CompilerConfig
 ): boolean {
   const fileonly = document.getFileOnly();
   if (fileonly.length === 0) {
@@ -43,7 +42,7 @@ export function validateDocument(
     return false;
   }
   if (isTooSoon(extensionConfig.pauseInterval)) {
-    _log.debug(
+    Log.debug(
       `Last Compiled Time: ${lastCompiledTime}. Saved too soon and ignoring compile on save hence`
     );
     return false;

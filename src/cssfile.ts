@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 "use strict";
-import { ILog } from "./log";
+import { Log } from "./log";
 import { writeToFile, deleteFile } from "./fileutil";
 
 export interface CSSFile {
@@ -15,26 +15,24 @@ export interface CSSFile {
 
 async function writeSourceMap(
   value: any,
-  sourceMapFile: string,
-  _log: ILog
+  sourceMapFile: string
 ): Promise<number> {
   if (value === undefined || value === null) {
-    _log.debug(
+    Log.debug(
       `Warning: sourcemap is null. Hence ${sourceMapFile} not being written but deleted`
     );
-    deleteFile(sourceMapFile, _log);
+    deleteFile(sourceMapFile);
     return 0;
   } else {
-    return writeToFile(sourceMapFile, value, _log);
+    return writeToFile(sourceMapFile, value);
   }
 }
 
 export async function writeCSSFile(
   src: CSSFile,
-  output: string,
-  _log: ILog
+  output: string
 ): Promise<number> {
-  await writeToFile(output, src.css, _log);
+  await writeToFile(output, src.css);
   const sourceMapFile = output + ".map";
-  return await writeSourceMap(src.sourceMap, sourceMapFile, _log);
+  return await writeSourceMap(src.sourceMap, sourceMapFile);
 }

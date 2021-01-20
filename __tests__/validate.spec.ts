@@ -10,7 +10,6 @@ import { validateDocument, doesStartWithUnderscore } from "../src/validate";
 import { IDocument } from "../src/document";
 import { CompilerConfig } from "../src/config";
 import { getSassDocument } from "./document";
-import { getNullLog } from "./log";
 
 describe("doesStartWithUnderscore function", () => {
   it("normal files without underscores", () => {
@@ -41,8 +40,7 @@ describe("validateDocument function", () => {
   it("empty fileOnly", () => {
     const document: IDocument = getSassDocument("/tmp", "/tmp/abc.scss", "");
     const config = new CompilerConfig();
-    const _log = getNullLog();
-    const result = validateDocument(document, config, _log);
+    const result = validateDocument(document, config);
     expect(false).to.equal(result);
   });
 
@@ -53,8 +51,7 @@ describe("validateDocument function", () => {
       "_abc.scss"
     );
     const config = new CompilerConfig();
-    const _log = getNullLog();
-    const result = validateDocument(document, config, _log);
+    const result = validateDocument(document, config);
     expect(false).to.equal(result);
   });
 
@@ -66,8 +63,7 @@ describe("validateDocument function", () => {
     );
     const config = new CompilerConfig();
     config.pauseInterval = 150; // 150 seconds beyond the threshold
-    const _log = getNullLog();
-    const result = validateDocument(document, config, _log);
+    const result = validateDocument(document, config);
     expect(false).to.equal(result);
   });
 
@@ -78,8 +74,7 @@ describe("validateDocument function", () => {
       "abc.scss"
     );
     const config = new CompilerConfig();
-    const _log = getNullLog();
-    const result = validateDocument(document, config, _log);
+    const result = validateDocument(document, config);
     expect(true).to.equal(result);
   });
 });

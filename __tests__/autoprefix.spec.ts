@@ -8,7 +8,6 @@ import "mocha";
 import { CompilerConfig } from "../src/config";
 import { CSSFile } from "../src/cssfile";
 import { doAutoprefixCSS } from "../src/autoprefix";
-import { getNullLog } from "./log";
 import { expect } from "chai";
 
 const InputCSS = `
@@ -23,15 +22,13 @@ const InputCSS = `
 describe("autoprefix API", () => {
   it("doAutoprefixCSS", (done) => {
     const config = new CompilerConfig();
-    const _log = getNullLog();
     doAutoprefixCSS(
       {
         css: Buffer.from(InputCSS),
         sourceMap: null,
       },
       config,
-      "main.css",
-      _log
+      "main.css"
     ).then(
       (value: CSSFile) => {
         expect(value.css).to.be.not.null;

@@ -5,7 +5,7 @@
 
 "use strict";
 import { CompilerConfig } from "./config";
-import { ILog } from "./log";
+import { Log } from "./log";
 import { IDocument } from "./document";
 import { validateDocument } from "./validate";
 import { validateTargetDirectories } from "./target";
@@ -13,42 +13,37 @@ import { getCurrentCompiler } from "./select";
 
 export async function CompileCurrentFile(
   document: IDocument,
-  extensionConfig: CompilerConfig,
-  _log: ILog
+  extensionConfig: CompilerConfig
 ): Promise<string> {
-  if (!validateDocument(document, extensionConfig, _log)) {
+  if (!validateDocument(document, extensionConfig)) {
     return "";
   }
   const err = validateTargetDirectories(document, extensionConfig);
   if (err) {
     throw new Error(err);
   }
-  _log.debug(`About to compile current file: ${document.getFileName()}`);
-  return getCurrentCompiler(extensionConfig, _log).compileDocument(
+  Log.debug(`About to compile current file: ${document.getFileName()}`);
+  return getCurrentCompiler(extensionConfig).compileDocument(
     document,
-    extensionConfig,
-    _log
+    extensionConfig
   );
 }
 
 export function SayVersion(
   extensionConfig: CompilerConfig,
-  projectRoot: string,
-  _log: ILog
+  projectRoot: string
 ): Promise<string> {
-  return getCurrentCompiler(extensionConfig, _log).sayVersion(
+  return getCurrentCompiler(extensionConfig).sayVersion(
     extensionConfig,
-    projectRoot,
-    _log
+    projectRoot
   );
 }
 
 export function Validate(
   extensionConfig: CompilerConfig,
-  projectRoot: string,
-  _log: ILog
+  projectRoot: string
 ): Promise<string> {
-  return getCurrentCompiler(extensionConfig, _log).validate(
+  return getCurrentCompiler(extensionConfig).validate(
     extensionConfig,
     projectRoot
   );

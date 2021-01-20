@@ -17,3 +17,24 @@ export interface ILog {
 
   clear(): any;
 }
+
+export class NullLog {
+
+  debug(msg: string): any {}
+
+  warning(msg: string): any {}
+
+  info(msg: string): any {}
+
+  error(msg: string): any {}
+
+  notify(msg: string): any {}
+
+  clear(): any {}
+}
+
+export let Log: ILog = new NullLog();
+
+export function setLog(_log: ILog) {
+  Log = _log;
+}

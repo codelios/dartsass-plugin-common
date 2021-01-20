@@ -5,23 +5,6 @@
 "use strict";
 import { ILog } from "../src/log";
 
-export function getNullLog(): ILog {
-  const _log: ILog = {
-    debug(msg: string): any {},
-
-    warning(msg: string): any {},
-
-    info(msg: string): any {},
-
-    error(msg: string): any {},
-
-    notify(msg: string): any {},
-
-    clear(): any {},
-  };
-  return _log;
-}
-
 export function getConsoleLog(): ILog {
   const _log: ILog = {
     debug(msg: string): any {

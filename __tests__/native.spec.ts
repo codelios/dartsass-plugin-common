@@ -12,8 +12,9 @@ import { NativeCompiler } from "../src/native";
 import { IDocument } from "../src/document";
 import { CompilerConfig, SASSOutputFormat } from "../src/config";
 import { getDocumentForFile } from "./document";
-import { getNullLog, getBufLog } from "./log";
+import { getBufLog } from "./log";
 import { getLocalSass } from "./testutil";
+import { setLog } from "../src/log";
 
 describe("Native SayVersion", () => {
   let localSass: string;
@@ -31,8 +32,8 @@ describe("Native SayVersion", () => {
     const native = new NativeCompiler();
     const config = new CompilerConfig();
     config.sassBinPath = localSass;
-    const _log = getBufLog();
-    native.sayVersion(config, "", _log).then(
+    setLog(getBufLog());
+    native.sayVersion(config, "").then(
       (data: string) => {
         expect(data).to.match(/compiled with dart2js/);
         done();
@@ -63,8 +64,7 @@ describe("Native CompileDocument", () => {
     config.targetDirectory = "out";
     config.sassBinPath = localSass;
     config.outputFormat = SASSOutputFormat.CompiledCSSOnly;
-    const _log = getNullLog();
-    native.compileDocument(document, config, _log).then(
+    native.compileDocument(document, config).then(
       (result) => {
         const outputDirectory = path.join(
           document.getProjectRoot(),
@@ -91,8 +91,7 @@ describe("Native CompileDocument", () => {
     config.targetDirectory = "outnativemin";
     config.sassBinPath = localSass;
     config.outputFormat = SASSOutputFormat.MinifiedOnly;
-    const _log = getNullLog();
-    native.compileDocument(document, config, _log).then(
+    native.compileDocument(document, config).then(
       (result) => {
         const outputDirectory = path.join(
           document.getProjectRoot(),
@@ -119,8 +118,7 @@ describe("Native CompileDocument", () => {
     config.targetDirectory = "outnativeboth";
     config.sassBinPath = localSass;
     config.outputFormat = SASSOutputFormat.Both;
-    const _log = getNullLog();
-    native.compileDocument(document, config, _log).then(
+    native.compileDocument(document, config).then(
       (result) => {
         const outputDirectory = path.join(
           document.getProjectRoot(),
@@ -146,9 +144,8 @@ describe("Native CompileDocument", () => {
     const config = new CompilerConfig();
     config.targetDirectory = "out";
     config.sassBinPath = localSass;
-    const _log = getNullLog();
     native
-      .compileDocument(document, config, _log)
+      .compileDocument(document, config)
       .then(
         (result) => {
           expect(result).to.be.null;
@@ -181,8 +178,7 @@ describe("Native Autoprefixer", () => {
     config.sassBinPath = localSass;
     config.autoPrefixBrowsersList = ["last 2 version"];
     config.outputFormat = SASSOutputFormat.CompiledCSSOnly;
-    const _log = getNullLog();
-    native.compileDocument(document, config, _log).then(
+    native.compileDocument(document, config).then(
       (result) => {
         const output = path.join(
           document.getProjectRoot(),

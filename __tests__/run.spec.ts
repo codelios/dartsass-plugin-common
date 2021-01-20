@@ -5,29 +5,22 @@
 
 "use strict";
 import "mocha";
-import { validateCmd } from "../src/run";
-import { getNullLog } from "./log";
-
 import { expect } from "chai";
+import { validateCmd } from "../src/run";
 
 describe("validateCmd", () => {
   it("no spaces", () => {
-    const _log = getNullLog();
-    expect(validateCmd("node_modules/.bin/sass", ["--version"], _log)).to.equal(
-      true
-    );
+    expect(validateCmd("node_modules/.bin/sass", ["--version"])).to.equal(true);
   });
 
   it("spaces in args", () => {
-    const _log = getNullLog();
-    expect(
-      validateCmd("node_modules/.bin/sass", [" --version"], _log)
-    ).to.equal(false);
+    expect(validateCmd("node_modules/.bin/sass", [" --version"])).to.equal(
+      false
+    );
   });
   it("spaces in includepath", () => {
-    const _log = getNullLog();
-    expect(
-      validateCmd("node_modules/.bin/sass", ["-I", "My Folder"], _log)
-    ).to.equal(false);
+    expect(validateCmd("node_modules/.bin/sass", ["-I", "My Folder"])).to.equal(
+      false
+    );
   });
 });

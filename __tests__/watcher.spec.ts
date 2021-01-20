@@ -9,9 +9,10 @@ import "mocha";
 import path from "path";
 import fs from "fs";
 import { CompilerConfig, SASSOutputFormat } from "../src/config";
-import { getNullLog, getConsoleLog } from "./log";
+import { getConsoleLog } from "./log";
 import { Watcher, watchDirectory, unwatchDirectory } from "../src/watcher";
 import { getLocalSass } from "./testutil";
+import { setLog } from "../src/log";
 
 describe("doLaunch", () => {
   let localSass: string;
@@ -30,16 +31,15 @@ describe("doLaunch", () => {
     const config = new CompilerConfig();
     config.targetDirectory = "out";
     config.sassBinPath = localSass;
-    const _log = getNullLog();
     const srcdir = path.join(__dirname, "input");
     config.outputFormat = SASSOutputFormat.CompiledCSSOnly;
     watcher
-      .doLaunch(srcdir, __dirname, config, _log)
+      .doLaunch(srcdir, __dirname, config)
       .then(
         (result) => {
           const watchList = watcher.GetWatchList();
           expect(watchList.size).to.be.equal(1);
-          expect(watcher.ClearWatch(srcdir, __dirname, _log)).to.be.true;
+          expect(watcher.ClearWatch(srcdir, __dirname)).to.be.true;
           expect(watchList.size).to.be.equal(0);
         },
         (err) => {
@@ -54,15 +54,14 @@ describe("doLaunch", () => {
     const config = new CompilerConfig();
     config.targetDirectory = "out";
     config.sassBinPath = localSass;
-    const _log = getNullLog();
     const srcdir = path.join(__dirname, "input");
     watcher
-      .doLaunch(srcdir, __dirname, config, _log)
+      .doLaunch(srcdir, __dirname, config)
       .then(
         (result) => {
           const watchList = watcher.GetWatchList();
           expect(watchList.size).to.be.equal(1);
-          expect(watcher.ClearWatch(srcdir, __dirname, _log)).to.be.true;
+          expect(watcher.ClearWatch(srcdir, __dirname)).to.be.true;
           expect(watchList.size).to.be.equal(0);
         },
         (err) => {
@@ -77,13 +76,13 @@ describe("doLaunch", () => {
     const config = new CompilerConfig();
     config.targetDirectory = "out";
     config.sassBinPath = localSass;
-    const _log = getConsoleLog();
+    setLog(getConsoleLog());
     const srcdir = path.join(__dirname, "input");
     config.watchDirectories.push(srcdir);
-    const promises = watcher.Relaunch(__dirname, config, _log);
+    const promises = watcher.Relaunch(__dirname, config);
     Promise.all(promises).then(
       (result) => {
-        expect(watcher.ClearWatchDirectory(srcdir, _log)).to.be.equal(true);
+        expect(watcher.ClearWatchDirectory(srcdir)).to.be.equal(true);
         done();
       },
       (err) => {

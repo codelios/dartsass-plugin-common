@@ -7,7 +7,7 @@ import * as path from "path";
 import browserslist from "browserslist";
 import { CompilerConfig } from "./config";
 import { Info } from "./version";
-import { ILog } from "./log";
+import { Log } from "./log";
 import { CSSFile, writeCSSFile } from "./cssfile";
 const postcss = require("postcss");
 import { Warning } from "postcss";
@@ -32,8 +32,7 @@ function getProcessArgs(to: string, sourceMap: Buffer | null): any {
 export async function doAutoprefixCSS(
   cssfile: CSSFile,
   config: CompilerConfig,
-  to: string,
-  _log: ILog
+  to: string
 ): Promise<CSSFile> {
   if (config.disableAutoPrefixer) {
     return cssfile;
@@ -44,7 +43,7 @@ export async function doAutoprefixCSS(
     getProcessArgs(to, cssfile.sourceMap)
   );
   result.warnings().forEach((warn: Warning[]) => {
-    _log.warning(`Autoprefixer: ${warn}`);
+    Log.warning(`Autoprefixer: ${warn}`);
   });
   return {
     css: Buffer.from(result.css),
@@ -55,16 +54,10 @@ export async function doAutoprefixCSS(
 export async function autoPrefixCSSBytes(
   output: string,
   inFile: CSSFile,
-  config: CompilerConfig,
-  _log: ILog
+  config: CompilerConfig
 ): Promise<number> {
-  const cssfile = await doAutoprefixCSS(
-    inFile,
-    config,
-    path.basename(output),
-    _log
-  );
-  const value = await writeCSSFile(cssfile, output, _log);
+  const cssfile = await doAutoprefixCSS(inFile, config, path.basename(output));
+  const value = await writeCSSFile(cssfile, output);
   return value;
 }
 
