@@ -36,7 +36,7 @@
         "test": "yarn dev && yarn testonly"
     },
     "dependencies": {
-        "autoprefixer": "10.2.4",
+        "autoprefixer": "10.2.5",
         "browserslist": "^4.16.3",
         "chokidar": "3.5.1",
         "clean-css": "5.1.1",
@@ -51,8 +51,8 @@
         "@types/mocha": "8.2.0",
         "@types/node": "14.14.22",
         "@types/sass": "1.16.0",
-        "@typescript-eslint/eslint-plugin": "4.16.1",
-        "@typescript-eslint/parser": "4.16.1",
+        "@typescript-eslint/eslint-plugin": "4.17.0",
+        "@typescript-eslint/parser": "4.17.0",
         "chai": "4.3.3",
         "eslint": "7.21.0",
         "eslint-config-prettier": "8.1.0",
