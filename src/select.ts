@@ -15,7 +15,9 @@ const nativeCompiler: ISassCompiler = new NativeCompiler();
 export function getCurrentCompiler(
   extensionConfig: CompilerConfig
 ): ISassCompiler {
-  if (extensionConfig.sassBinPath.length > 0) {
+  if (extensionConfig.sassBinPath !== null &&
+    extensionConfig.sassBinPath !== undefined &&
+    extensionConfig.sassBinPath.length > 0) {
     return nativeCompiler;
   } else {
     return sassCompiler;
