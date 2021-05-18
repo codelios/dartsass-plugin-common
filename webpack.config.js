@@ -18,7 +18,6 @@ const config = {
   },
   devtool: 'source-map',
   externals: {
-    fsevents: "require('fsevents')",
     vscode: 'commonjs' // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
   },
   resolve: {
@@ -27,6 +26,10 @@ const config = {
   },
   module: {
     rules: [
+      {
+        test: /\.node$/,
+        loader: 'node-loader',
+      },
       {
         test: /\.ts$/,
         exclude: /node_modules/,

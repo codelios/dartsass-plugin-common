@@ -57,6 +57,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["minimist", "npm:1.2.5"],
             ["mocha", "npm:8.4.0"],
             ["node-gyp", "npm:8.0.0"],
+            ["node-loader", "virtual:43962424a228b46f73ceba06eb45c50c8a0b77bf34506df2d3124e4e0e73a024ffa9025dadf1fbb4ed18e1dbb127a1de9325444334cfa6cdd0e677dc8a1b2ae7#npm:2.0.0"],
             ["postcss", "npm:8.2.15"],
             ["prettier", "npm:2.3.0"],
             ["sass", "npm:1.32.13"],
@@ -1018,6 +1019,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["big.js", [
+        ["npm:5.2.2", {
+          "packageLocation": "./.yarn/cache/big.js-npm-5.2.2-e147c30820-ea33d7d256.zip/node_modules/big.js/",
+          "packageDependencies": [
+            ["big.js", "npm:5.2.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["binary-extensions", [
         ["npm:2.2.0", {
           "packageLocation": "./.yarn/cache/binary-extensions-npm-2.2.0-180c33fec7-0f5f5685f3.zip/node_modules/binary-extensions/",
@@ -1397,6 +1407,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["minimist", "npm:1.2.5"],
             ["mocha", "npm:8.4.0"],
             ["node-gyp", "npm:8.0.0"],
+            ["node-loader", "virtual:43962424a228b46f73ceba06eb45c50c8a0b77bf34506df2d3124e4e0e73a024ffa9025dadf1fbb4ed18e1dbb127a1de9325444334cfa6cdd0e677dc8a1b2ae7#npm:2.0.0"],
             ["postcss", "npm:8.2.15"],
             ["prettier", "npm:2.3.0"],
             ["sass", "npm:1.32.13"],
@@ -1554,6 +1565,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/emoji-regex-npm-8.0.0-213764015c-87cf3f89ef.zip/node_modules/emoji-regex/",
           "packageDependencies": [
             ["emoji-regex", "npm:8.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["emojis-list", [
+        ["npm:3.0.0", {
+          "packageLocation": "./.yarn/cache/emojis-list-npm-3.0.0-7faa48e6fd-a79126b55b.zip/node_modules/emojis-list/",
+          "packageDependencies": [
+            ["emojis-list", "npm:3.0.0"]
           ],
           "linkType": "HARD",
         }]
@@ -2642,6 +2662,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["json5", [
+        ["npm:2.2.0", {
+          "packageLocation": "./.yarn/cache/json5-npm-2.2.0-da49dc7cb5-07b1f90c28.zip/node_modules/json5/",
+          "packageDependencies": [
+            ["json5", "npm:2.2.0"],
+            ["minimist", "npm:1.2.5"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["kind-of", [
         ["npm:6.0.3", {
           "packageLocation": "./.yarn/cache/kind-of-npm-6.0.3-ab15f36220-5de5d65777.zip/node_modules/kind-of/",
@@ -2667,6 +2697,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/loader-runner-npm-4.2.0-427f0e7134-e8b103ae98.zip/node_modules/loader-runner/",
           "packageDependencies": [
             ["loader-runner", "npm:4.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["loader-utils", [
+        ["npm:2.0.0", {
+          "packageLocation": "./.yarn/cache/loader-utils-npm-2.0.0-cf7d5aadbf-a1c2e48781.zip/node_modules/loader-utils/",
+          "packageDependencies": [
+            ["loader-utils", "npm:2.0.0"],
+            ["big.js", "npm:5.2.2"],
+            ["emojis-list", "npm:3.0.0"],
+            ["json5", "npm:2.2.0"]
           ],
           "linkType": "HARD",
         }]
@@ -3027,6 +3069,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.3.5"],
             ["tar", "npm:6.1.0"],
             ["which", "npm:2.0.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["node-loader", [
+        ["npm:2.0.0", {
+          "packageLocation": "./.yarn/cache/node-loader-npm-2.0.0-61cb05ae91-b3412ab26d.zip/node_modules/node-loader/",
+          "packageDependencies": [
+            ["node-loader", "npm:2.0.0"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:43962424a228b46f73ceba06eb45c50c8a0b77bf34506df2d3124e4e0e73a024ffa9025dadf1fbb4ed18e1dbb127a1de9325444334cfa6cdd0e677dc8a1b2ae7#npm:2.0.0", {
+          "packageLocation": "./.yarn/$$virtual/node-loader-virtual-c3961a6846/0/cache/node-loader-npm-2.0.0-61cb05ae91-b3412ab26d.zip/node_modules/node-loader/",
+          "packageDependencies": [
+            ["node-loader", "virtual:43962424a228b46f73ceba06eb45c50c8a0b77bf34506df2d3124e4e0e73a024ffa9025dadf1fbb4ed18e1dbb127a1de9325444334cfa6cdd0e677dc8a1b2ae7#npm:2.0.0"],
+            ["@types/webpack", null],
+            ["loader-utils", "npm:2.0.0"],
+            ["webpack", "virtual:43962424a228b46f73ceba06eb45c50c8a0b77bf34506df2d3124e4e0e73a024ffa9025dadf1fbb4ed18e1dbb127a1de9325444334cfa6cdd0e677dc8a1b2ae7#npm:5.37.0"]
+          ],
+          "packagePeers": [
+            "@types/webpack",
+            "webpack"
           ],
           "linkType": "HARD",
         }]
