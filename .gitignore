@@ -9,3 +9,6 @@ __tests__/**/*.min.css
 
 # No npm . use yarn please
 package-lock.json
+
+# yarn 2
+.yarn
