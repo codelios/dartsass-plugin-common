@@ -57,7 +57,7 @@ export class CompilerConfig {
     );
   }
 
-  encodingFrom(encoding: string): BufferEncoding {
+  public static encodingFrom(encoding: string): BufferEncoding {
     if (encoding === undefined || encoding === null) {
       return 'utf-8'
     }
