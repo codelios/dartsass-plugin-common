@@ -84,10 +84,10 @@ async function _internalMinify(
     `About to minify ${fqPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`
   );
   const inputCSSFile = {
-    css: readFileSync(fqPath),
+    css: readFileSync(fqPath, config.sourceEncoding),
     sourceMap: config.disableSourceMap
       ? null
-      : readFileSync(inputSourceMapFile),
+      : readFileSync(inputSourceMapFile, config.sourceEncoding),
   };
   const minifiedFileOnly = path.basename(minifiedCSS);
   const cssfile = await getTransformation(

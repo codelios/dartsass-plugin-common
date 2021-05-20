@@ -83,12 +83,12 @@ export class NativeCompiler {
       runPromise = Run(config.nodeExePath, args, cwd);
     }
     await runPromise;
-    const data = readFileSync(output);
+    const data = readFileSync(output, config.sourceEncoding);
     await autoPrefixCSSBytes(
       output,
       {
         css: data,
-        sourceMap: readFileSync(output + ".map"),
+        sourceMap: readFileSync(output + ".map", config.sourceEncoding),
       },
       config
     );

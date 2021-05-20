@@ -21,7 +21,7 @@ export class CompilerConfig {
 
   disableSourceMap = false;
 
-  sourceEncoding = "utf-8";
+  sourceEncoding: BufferEncoding = 'utf-8';
 
   nodeExePath = "node.exe";
 
@@ -55,5 +55,22 @@ export class CompilerConfig {
       outputformat === SASSOutputFormat.Both ||
       outputformat === SASSOutputFormat.MinifiedOnly
     );
+  }
+
+  encodingFrom(encoding: string): BufferEncoding {
+    if (encoding === undefined || encoding === null) {
+      return 'utf-8'
+    }
+    switch(encoding) {
+      case 'ascii':
+        return 'ascii';
+      case 'utf-8':
+      case 'utf8':
+        return 'utf-8';
+      case 'utf161e':
+        return 'utf16le';
+      default:
+        return 'utf-8';
+    }
   }
 }

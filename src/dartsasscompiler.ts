@@ -110,7 +110,7 @@ export class DartSassCompiler {
         `Completed asyncCompile(compileOnSave) ${document.getFileName()} to ${output}. Starting autoprefix - sourceMap`
       );
       const inputCSSFile = {
-        css: result.css,
+        css: result.css.toString(config.sourceEncoding),
         sourceMap: result.map,
       };
       const value = await autoPrefixCSSBytes(output, inputCSSFile, config);

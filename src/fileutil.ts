@@ -9,7 +9,7 @@ import { Log } from "./log";
 
 export async function writeToFile(
   outPath: string,
-  data: Buffer
+  data: string
 ): Promise<number> {
   if (data === undefined || data === null) {
     return 0;
@@ -31,10 +31,10 @@ export function deleteFile(docPath: string) {
   }
 }
 
-export function readFileSync(docPath: string): Buffer {
+export function readFileSync(docPath: string, encoding: BufferEncoding): string {
   if (fs.existsSync(docPath)) {
-    return fs.readFileSync(docPath);
+    return fs.readFileSync(docPath, encoding);
   } else {
-    return Buffer.from("");
+    return "";
   }
 }

@@ -46,7 +46,7 @@ export async function doAutoprefixCSS(
     Log.warning(`Autoprefixer: ${warn}`);
   });
   return {
-    css: Buffer.from(result.css),
+    css: result.css,
     sourceMap: config.disableSourceMap ? null : result.map,
   };
 }

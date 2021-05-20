@@ -8,7 +8,7 @@ import { Log } from "./log";
 import { writeToFile, deleteFile } from "./fileutil";
 
 export interface CSSFile {
-  css: Buffer;
+  css: string;
 
   sourceMap: any;
 }
