@@ -38,10 +38,12 @@ export async function doAutoprefixCSS(
     return cssfile;
   }
   const processor = postcss([autoprefixer(config.autoPrefixBrowsersList)]);
+  Log.debug(`Postcss: About to process`);
   const result = await processor.process(
     cssfile.css.toString(),
     getProcessArgs(to, cssfile.sourceMap)
   );
+  Log.debug(`Postcss: processor.process completed`);
   result.warnings().forEach((warn: Warning[]) => {
     Log.warning(`Autoprefixer: ${warn}`);
   });
@@ -57,7 +59,9 @@ export async function autoPrefixCSSBytes(
   config: CompilerConfig
 ): Promise<number> {
   const cssfile = await doAutoprefixCSS(inFile, config, path.basename(output));
+  Log.debug(`doAutoprefixCSS completed to ${output}`);
   const value = await writeCSSFile(cssfile, output);
+  Log.debug(`writeCSSFile completed to ${output}`);
   return value;
 }
 

@@ -88,7 +88,7 @@ export class NativeCompiler {
       output,
       {
         css: data,
-        sourceMap: readFileSync(output + ".map", config.sourceEncoding),
+        sourceMap: readFileSync(output + ".map", 'utf-8'),
       },
       config
     );

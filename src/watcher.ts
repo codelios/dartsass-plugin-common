@@ -87,7 +87,7 @@ async function _internalMinify(
     css: readFileSync(fqPath, config.sourceEncoding),
     sourceMap: config.disableSourceMap
       ? null
-      : readFileSync(inputSourceMapFile, config.sourceEncoding),
+      : readFileSync(inputSourceMapFile, 'utf8'),
   };
   const minifiedFileOnly = path.basename(minifiedCSS);
   const cssfile = await getTransformation(
