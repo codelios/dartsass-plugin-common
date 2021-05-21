@@ -41,8 +41,8 @@
         "chokidar": "3.5.1",
         "clean-css": "5.1.2",
         "fibers": "5.0.0",
-        "postcss": "8.2.15",
-        "sass": "^1.32.13"
+        "postcss": "8.3.0",
+        "sass": "^1.33.0"
     },
     "devDependencies": {
         "@types/chai": "4.2.18",
@@ -62,7 +62,7 @@
         "node-gyp": "^8.0.0",
         "node-loader": "^2.0.0",
         "prettier": "2.3.0",
-        "ts-loader": "9.1.2",
+        "ts-loader": "9.2.1",
         "ts-node": "9.1.1",
         "typescript": "4.2.4",
         "webpack": "5.37.1",
