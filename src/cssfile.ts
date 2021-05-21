@@ -33,9 +33,9 @@ export async function writeCSSFile(
   cssfile: CSSFile,
 ): Promise<number> {
   await writeToFile(filename, cssfile.css);
-  Log.debug(`wrote raw css file to ${filename}`);
+  Log.debug(`wrote raw css to ${filename}`);
   const sourceMapFile = filename + ".map";
   const value = await writeSourceMap(sourceMapFile, cssfile.sourceMap);
-  Log.debug(`wrote css.map file to ${sourceMapFile}`);
+  Log.debug(`wrote css.map to ${sourceMapFile}`);
   return value;
 }
