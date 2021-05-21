@@ -96,7 +96,7 @@ async function _internalMinify(
     minifiedFileOnly,
     minifier
   );
-  await writeCSSFile(cssfile, minifiedCSS);
+  await writeCSSFile(minifiedCSS, cssfile);
   Log.debug(`Wrote to ${minifiedCSS}[.map]`);
   return;
 }

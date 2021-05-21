@@ -29,13 +29,13 @@ async function writeSourceMap(
 }
 
 export async function writeCSSFile(
-  src: CSSFile,
-  output: string
+  filename: string,
+  cssfile: CSSFile,
 ): Promise<number> {
-  await writeToFile(output, src.css);
-  Log.debug(`wrote raw css file to ${output}`);
-  const sourceMapFile = output + ".map";
-  const value = await writeSourceMap(src.sourceMap, sourceMapFile);
+  await writeToFile(filename, cssfile.css);
+  Log.debug(`wrote raw css file to ${filename}`);
+  const sourceMapFile = filename + ".map";
+  const value = await writeSourceMap(cssfile.sourceMap, sourceMapFile);
   Log.debug(`wrote css.map file to ${sourceMapFile}`);
   return value;
 }

@@ -60,7 +60,7 @@ export async function autoPrefixCSSBytes(
 ): Promise<number> {
   const cssfile = await doAutoprefixCSS(inFile, config, path.basename(output));
   Log.debug(`doAutoprefixCSS completed to ${output}`);
-  const value = await writeCSSFile(cssfile, output);
+  const value = await writeCSSFile(output, cssfile);
   Log.debug(`writeCSSFile completed to ${output}`);
   return value;
 }
