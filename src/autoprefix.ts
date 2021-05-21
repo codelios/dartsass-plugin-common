@@ -47,6 +47,7 @@ export async function doAutoprefixCSS(
   result.warnings().forEach((warn: Warning[]) => {
     Log.warning(`Autoprefixer: ${warn}`);
   });
+  Log.debug(`Typeof result.css ${typeof result.css}`)
   return {
     css: result.css,
     sourceMap: config.disableSourceMap ? null : result.map,
