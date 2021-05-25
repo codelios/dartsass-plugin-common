@@ -40,7 +40,7 @@ export async function doAutoprefixCSS(
   const processor = postcss([autoprefixer(config.autoPrefixBrowsersList)]);
   Log.debug(`Postcss: About to process`);
   const result = await processor.process(
-    cssfile.css.toString(),
+    cssfile.css,
     getProcessArgs(to, cssfile.sourceMap)
   );
   Log.debug(`Postcss: processor.process completed`);
