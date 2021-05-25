@@ -50,7 +50,8 @@ export async function doAutoprefixCSS(
   Log.debug(`Typeof result.css ${typeof result.css}`)
   return {
     css: result.css,
-    sourceMap: config.disableSourceMap ? null : result.map,
+    sourceMap: config.disableSourceMap ? null
+      : (result.map ? result.map.toString() : null),
   };
 }
 
