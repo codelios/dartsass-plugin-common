@@ -81,10 +81,10 @@ function doGetOutputMinifiedCSS(
   config: CompilerConfig
 ): string {
   const targetDirectory = inferTargetCSSDirectory(document, config);
+  const fileNameOnly = path.basename(document.getFileName(), ".scss");
   return doGetMinCSS(
-    document.getFileName(),
+    fileNameOnly,
     targetDirectory,
-    ".scss",
     defaultMinCSSExtension
   );
 }
@@ -99,17 +99,16 @@ export function getOutputCSS(
 }
 
 function doGetMinCSS(
-  docPath: string,
+  fileNameOnly: string,
   dir: string,
-  ext: string,
   minCSSExtension: string
 ): string {
-  const fileNameOnly = path.basename(docPath, ext);
   return path.join(dir, fileNameOnly + minCSSExtension);
 }
 
 export function getMinCSS(docPath: string, minCSSExtension: string): string {
-  return doGetMinCSS(docPath, path.dirname(docPath), ".css", minCSSExtension);
+  const fileNameOnly = path.basename(docPath, ".css");
+  return doGetMinCSS(fileNameOnly, path.dirname(docPath), minCSSExtension);
 }
 
 export function isMinCSS(docPath: string, minCSSExtension: string): boolean {

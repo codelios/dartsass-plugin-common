@@ -10,7 +10,7 @@ import { writeToFile, deleteFile } from "./fileutil";
 export interface CSSFile {
   css: string;
 
-  sourceMap: any;
+  sourceMap: string | null;
 }
 
 async function writeSourceMap(

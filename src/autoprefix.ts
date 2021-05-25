@@ -13,26 +13,26 @@ const postcss = require("postcss");
 import { Warning } from "postcss";
 import autoprefixer from "autoprefixer";
 
-function getProcessArgs(to: string, sourceMap: Buffer | null): any {
-  if (sourceMap !== undefined && sourceMap !== null && sourceMap.length > 0) {
-    return {
-      to: to,
-      map: {
-        prev: sourceMap.toString(),
-        inline: false,
-      },
-    };
-  } else {
+function getProcessArgs(to: string, sourceMap: string | null): any {
+  if (sourceMap === undefined || sourceMap === null || sourceMap.length === 0) {
     return {
       to: to,
     };
+
   }
+  return {
+    to: to,
+    map: {
+      prev: sourceMap.toString(),
+      inline: false,
+    },
+  };
 }
 
 export async function doAutoprefixCSS(
+  input: string,
   cssfile: CSSFile,
-  config: CompilerConfig,
-  to: string
+  config: CompilerConfig
 ): Promise<CSSFile> {
   if (config.disableAutoPrefixer) {
     return cssfile;
@@ -41,7 +41,7 @@ export async function doAutoprefixCSS(
   Log.debug(`Postcss: About to process`);
   const result = await processor.process(
     cssfile.css,
-    getProcessArgs(to, cssfile.sourceMap)
+    getProcessArgs(input, cssfile.sourceMap)
   );
   Log.debug(`Postcss: processor.process completed`);
   result.warnings().forEach((warn: Warning[]) => {
@@ -60,7 +60,7 @@ export async function autoPrefixCSSBytes(
   inFile: CSSFile,
   config: CompilerConfig
 ): Promise<number> {
-  const cssfile = await doAutoprefixCSS(inFile, config, path.basename(output));
+  const cssfile = await doAutoprefixCSS(path.basename(output), inFile, config);
   Log.debug(`doAutoprefixCSS completed to ${output}`);
   const value = await writeCSSFile(output, cssfile);
   Log.debug(`writeCSSFile completed to ${output}`);

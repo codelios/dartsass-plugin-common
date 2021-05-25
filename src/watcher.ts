@@ -41,25 +41,13 @@ function doSingleLaunch(
   return compiler.watch(srcdir, projectRoot, config);
 }
 
-function xformSourceMap(inputSourceMap: unknown): unknown {
-  if (inputSourceMap === null) {
-    return null;
-  }
-  if (inputSourceMap === undefined) {
-    return undefined;
-  }
-  return JSON.parse(JSON.stringify(inputSourceMap));
-}
-
 async function getTransformation(
   contents: CSSFile,
   config: CompilerConfig,
   to: string,
   minifier: IMinifier
 ): Promise<CSSFile> {
-  const cssfile = await doAutoprefixCSS(contents, config, to);
-  const output = xformSourceMap(cssfile.sourceMap);
-  cssfile.sourceMap = output;
+  const cssfile = await doAutoprefixCSS(to, contents, config);
   const comments = getSourceMapComment(config.disableSourceMap, to + ".map");
   return await minifier.minify(cssfile, config.disableSourceMap, comments);
 }
@@ -70,18 +58,17 @@ async function _internalMinify(
   config: CompilerConfig
 ): Promise<void> {
   const fqPath = path.join(cwd, _docPath);
-  Log.debug(`File changed ${fqPath}`);
   if (!isCSSFile(fqPath)) {
     return;
   }
   if (isMinCSS(fqPath, defaultMinCSSExtension)) {
     return;
   }
+  Log.debug(`CSS File changed ${fqPath}`);
   const minifiedCSS = getMinCSS(fqPath, defaultMinCSSExtension);
-  const sourceMapFile = minifiedCSS + ".map";
   const inputSourceMapFile = fqPath + ".map";
   Log.debug(
-    `About to minify ${fqPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}  (sourcemap: ${sourceMapFile})`
+    `About to minify ${fqPath} (inputSourceMap: ${inputSourceMapFile}) to ${minifiedCSS}`
   );
   const inputCSSFile = {
     css: readFileSync(fqPath, config.sourceEncoding),

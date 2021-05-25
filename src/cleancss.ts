@@ -5,6 +5,7 @@
 
 "use strict";
 import { CSSFile } from "./cssfile";
+import { Log } from "./log";
 
 const CleanCSS = require("clean-css");
 
@@ -27,13 +28,17 @@ export class CleanCSSMinifier {
     });
     let data = null;
     if (src.sourceMap !== undefined && src.sourceMap !== null) {
-      data = cleancss.minify(src.css, src.sourceMap);
+      const jsonSourceMap = JSON.parse(src.sourceMap);
+      data = cleancss.minify(src.css, jsonSourceMap);
+      Log.debug(`typeof sourcemap : ${typeof data.sourceMap}`);
     } else {
       data = cleancss.minify(src.css);
     }
     return {
       css: data.styles + comment,
-      sourceMap: !disableSourceMap ? data.sourceMap : undefined,
+      sourceMap: !disableSourceMap 
+        ? (data.sourceMap ? JSON.stringify(data.sourceMap): null) 
+        : null,
     };
   }
 }
