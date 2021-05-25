@@ -70,7 +70,7 @@ export class NativeCompiler {
 
   async doCompileDocument(
     sassBinPath: string,
-    output: string,
+    csspath: string,
     config: CompilerConfig,
     cwd: string,
     args: string[]
@@ -83,16 +83,15 @@ export class NativeCompiler {
       runPromise = Run(config.nodeExePath, args, cwd);
     }
     await runPromise;
-    const data = readFileSync(output, config.sourceEncoding);
     await autoPrefixCSSBytes(
-      output,
+      csspath,
       {
-        css: data,
-        sourceMap: readFileSync(output + ".map", 'utf-8'),
+        css: readFileSync(csspath, config.sourceEncoding),
+        sourceMap: readFileSync(csspath + ".map", 'utf-8'),
       },
       config
     );
-    return output;
+    return csspath;
   }
 
   getArgs(
