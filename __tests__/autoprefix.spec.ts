@@ -23,12 +23,12 @@ describe("autoprefix API", () => {
   it("doAutoprefixCSS", (done) => {
     const config = new CompilerConfig();
     doAutoprefixCSS(
+      "main.css",
       {
-        css: Buffer.from(InputCSS),
+        css: InputCSS,
         sourceMap: null,
       },
       config,
-      "main.css"
     ).then(
       (value: CSSFile) => {
         expect(value.css).to.be.not.null;

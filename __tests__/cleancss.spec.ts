@@ -13,7 +13,7 @@ describe("CleanCSSMinifier", () => {
     const minifier = new CleanCSSMinifier();
     const minifyOutput = minifier.minifySync(
       {
-        css: Buffer.from(`a { color: brown; }`),
+        css: `a { color: brown; }`,
         sourceMap: null,
       },
       false,

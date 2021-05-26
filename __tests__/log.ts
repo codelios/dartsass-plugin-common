@@ -7,6 +7,11 @@ import { ILog } from "../src/log";
 
 export function getConsoleLog(): ILog {
   const _log: ILog = {
+
+    line(msg: string): any {
+      console.log(`${msg}`);
+    },
+
     debug(msg: string): any {
       console.log(`DEBUG: ${msg}`);
     },
@@ -34,6 +39,9 @@ export function getConsoleLog(): ILog {
 
 export class BufLog {
   buf = Buffer.alloc(20);
+
+
+  line(msg: string): any {}
 
   debug(msg: string): any {}
 
