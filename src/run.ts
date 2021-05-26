@@ -114,32 +114,31 @@ export async function RunDetached(
     shell: false,
     windowsHide: true,
   });
-  prc.unref(); // Parent should not be waiting for the child process at all
   if (prc.killed) {
-    Log.warning(`Detached Process ${cmd} killed. pid - ${prc.pid}`);
-    throw new Error(`Detached Process ${cmd} killed. pid - ${prc.pid}`);
+    const killMsg =  `Detached Process ${cmd} killed. pid - ${prc.pid}`;
+    Log.warning(killMsg);
+    prc.unref(); // Parent should not be waiting for the child process at all
+    throw new Error(killMsg);
   } else if (prc.pid === null || prc.pid === undefined) {
-    Log.warning(
-      `Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`
-    );
-    throw new Error(
-      `Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`
-    );
-  } else {
-    Log.debug(`Detached process ${cmd} launched with pid ${prc.pid}`);
-  }
+    const launchMsg =  `Detached process ${cmd} did not launch correctly. pid is null / undefined - ${prc.pid}`;
+    Log.warning(launchMsg);
+    prc.unref(); // Parent should not be waiting for the child process at all
+    throw new Error(launchMsg);
+  } 
+  Log.debug(`Detached process ${cmd} launched with pid ${prc.pid}`);
   if (prc.stdout) {
     prc.stdout.setEncoding("utf8");
     prc.stdout.on("data", (data: any) => {
-      Log.debug(`Output: ${data}`);
+      Log.line(`${data}`);
     });
   }
   if (prc.stderr) {
     prc.stderr.setEncoding("utf8");
     prc.stderr.on("data", (data: any) => {
-      Log.debug(`stderr: ${data}`);
+      Log.line(`Error: ${data}`);
     });
   }
+  prc.unref(); // Parent should not be waiting for the child process at all
   const processOutput: ProcessOutput = {
     pid: prc.pid,
     killed: prc.killed,
