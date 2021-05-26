@@ -76,12 +76,12 @@ export async function Run(
   }
   prc.stdout.setEncoding("utf8");
   prc.stdout.on("data", (data: any) => {
-    Log.debug(`${data}`);
+    Log.line(`${data}`);
     output = data;
   });
   prc.stderr.setEncoding("utf8");
   prc.stderr.on("data", (data: any) => {
-    Log.debug(`stderr: ${data}`);
+    Log.warning(`Error: ${data}`);
   });
   const execPromise = new Promise<string>((resolve, reject) => {
     prc.on("exit", (code: any) => {

@@ -5,6 +5,8 @@
 "use strict";
 
 export interface ILog {
+  line(msg: string): any;
+
   debug(msg: string): any;
 
   warning(msg: string): any;
@@ -19,6 +21,7 @@ export interface ILog {
 }
 
 export class NullLog {
+  line(msg: string): any {}
 
   debug(msg: string): any {}
 
